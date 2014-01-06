@@ -30,6 +30,7 @@ For the moment the only browser I'm using is Firefox. There are some minor probl
 ### Installation
 - node.js and mongodb must be installed and running
 - download brumba
+- from the brumba directory install dependences **npm install mongodb connect cheerio pdfkit**
 - from the brumba directory call the short command **node server** 
   it will default to brumba webserver port 8080 and mongodb localhost:27017
 - to change the defaults: **node server webserverport mongohost:mongoport**
@@ -52,9 +53,9 @@ Ver1.0:
 - [x] Users/Groups/Permissions: r/w/d on menu entries, user will see only entries with read permission
 - [x] Search: search on all form fields
 - [x] Form/select/autocomplete: data from server script
-- [ ] Reports: PDF generated on server
-- [ ] Https
-- [ ] Multilaguage
+- [x] Reports: PDF generated on server
+- [x] Https
+- [x] Multilaguage
 - [ ] Export selected data in Excel format
 
 Ver2.0:

@@ -101,6 +101,13 @@ The form must have this fields set as disable, or at least readonly
 <br />The autocomplete field will be saved as an object <code>{val:.., lab:..}</code>. 
 Any condition on such a field will be <code>patient_id.val:...</code>
 
+<p>.</p><h4>References</h4>
+References are used for referential integrity, to block delete operation on documents that 
+have been used as select or autocomplete in other documents.
+<br />Ex.: for the field patient_id in the Prescription form should be defined 
+<br /><code>FROM coll: Prescription field: patient_id => TO coll: Patients</code>
+<br />TO field: _id is implicit.  
+
 <p>.</p><h4>Run application</h4>
 <ul style="list-style-type: none;">http://localhost:8080
 	<li>Application: myapp</li>
@@ -141,5 +148,6 @@ Open events dialog from <i>Events</i> menu. It is always relative to the current
 Open it from <i>Server scripts</i> menu. It is ready for a new script. Give it a name and write the cod, then <i>Save</i>. Remember that only exported functions are visible from outside.
 <br />Call a server script from client with:
 <br /><code>{ cmd: 'SRV', app: 'appName', script: 'scriptName.functionName', args for the function... }</code>
+
 </body>
 </html>
