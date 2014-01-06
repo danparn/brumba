@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Brumba HowTo</title>
+</head>
+<body  style="width: 800px;">
+<div style="text-align: center"><h2>Brumba IDE HowTo</h2></div>
+<div style="text-align: center">by Dan Parnete</div><div style="text-align: right">updated: 7 Apr 2013</div>
+<br />
+<p>For now the only browser I'm using is Firefox. Chrome has some minor problems. I didn't test the others.</p>
+<p>Suppose your Brumba server is running on http://localhost:8080
+<br />Open IDE from http://localhost:8080/ide.html</p>
+<a href="http://81.196.2.213:8080">Demo aplication</a>
+<code>Application: demo
+Database: demodb
+User: demo
+Password: demo</code>
+<br /><a href="http://81.196.2.213:8080/ide.html">Demo IDE</a>
+
+<p>.</p><h4>Application</h4>
+<b>Name</b>: Write application name in the only field you see (left to <i>Load App</i> button). 
+<br /><b>Load</b>: <i>Enter</i> key on the field, or click on <i>Load App</i> button. 
+Open Application menu to see it's components.
+
+<p>.</p><h4>Forms</h4>
+<b>Create</b>: <i>Tools</i> menu. Write fields names separated by comma. 
+Field name should not include spaces or special characters. Just alphanumerics and underscore. 
+Click <i>New Form</i> or <i>New Tabular</i> menu.
+<br /><b>Properties</b>: Open it from <i>Properties</i> menu. 
+Click on form/field/label to see it's properties. <i>Id</i> is the id/name of the element.
+<br /><b>Select fields</b>: click on the field, or CTRL+click to add to selection, or mouse drag over.
+<br /><b>Move selected fields</b>: mouse click and drag, or arrow keys, or write new left/top coordinates in <i>Properties</i>
+<br /><b>Resize selected fields</b>: SHIFT+mouse click and drag, or SHIFT+arrow keys, 
+or write new width/height in <i>Properties</i>
+<br /><b>Add fields</b>: From the <i>Tool</i> menu, write new fields names, 
+click the mouse on the form in position you want to add, then click <i>Add Fields</i> menu button. 
+For adding just one element, use right click to the desired position, 
+choose the element  to add from the context menu.
+<br /><b>Save</b>: Use <i>Save</i> button in the toolbar.
+<br /><b>Open</b>: <i>Application / FORMS</i> menu.
+<br /><b>Delete</b>: Use <i>Delete</i> button in the toolbar.
+
+<p>.</p><h4>Pages</h4>
+<b>Create</b>: <i>Tools / New Page</i> menu. A page with horizontal splitter is created. 
+Use <i>Split horizontal</i> or <i>Split vertical</i> from context menu to divide in more parts. 
+Drag splitters to redimension the layout. To see page properties doubleckick on it.
+<br /><b>Set forms</b>: <i>Set form</i> from context menu on each panel.
+<br /><b>Tabs</b>: Context menu <i>Add Tab</i> in panel you want to add tabbed forms. 
+Select a tab and <i>Set Form</i> in it.
+<br /><b>Save</b>: Use <i>Save</i> button in the toolbar.
+<br /><b>Open</b>: <i>Application / PAGES</i> menu.
+<br /><b>Delete</b>: <i>Delete</i> from context menu.
+
+<p>.</p><h4>Menu</h4>
+<b>Create/Modify</b>: Use <i>Application / MENU</i> menu.
+The menu is a simple text, TAB indentation is the level separator. 
+Single forms are called as <i>forms.FormName</i> , pages as <i>pages.PageName</i>  ex.:
+<code><ul style="list-style-type: none;">
+<li>“Header 1”</li>
+	<ul style="list-style-type: none;"><li>“Sub level 1”</li>
+		<ul style="list-style-type: none;">
+			<li>“Item 1” forms.Form1</li>
+			<li>“Item 2” pages.Page2</li>
+		</ul>
+		<li>“Item 3” forms.Form3</li>
+	</ul>
+<li>“Item 4” pages.Page4</li>
+</ul></code>
+<b>Save</b>: Use <i>Save</i> button in the toolbar.
+
+<p>.</p><h4>Forms query</h4>
+Query has the format:
+<br /><code>{ coll: 'collectionName', fields: 'field1, field2, …', where: {condition}, sort: {field1: 1, field2:-1} }</code>
+<br />Condition has the <a href="http://docs.mongodb.org/manual/reference/operator/query/">MongoDb find format</a>. 
+Sort 1 is ascending, -1 descending. 
+<br />If the form is the main plain form, the query is for the records list. 
+In this case, <i>fields</i> defines the list columns:
+<code>fieldName : width : headerText , …</code>
+<br />If the form is a Tabular, <i>query</i> is for the table, <i>fields</i> has no meaning.
+<br />A tabular could display an array field of it's master (embedded array in a document), 
+and the query will be <code>{ field: 'arrayFieldName' }</code> 
+(see <i>PrescriptionDrugs</i> form in the <a href="http://81.196.2.213:8080">demo application</a>).
+<br />A tabular could display the concatenation for more records of an array field, 
+and the query will be <code>{ concat: 'arrayFieldName', add: 'field1,fields2,...' }</code> 
+(see <i>Patient_prescriptions</i> form in the demo application). Add master fields to each record of the result with "add" parameter.
+<br />If the form is just an extension of the main form (record divided in more tabpages), 
+use an empty query <code>{}</code> (see <i>Patient_address</i> form in the demo application).
+
+<p>.</p><h4>Select query</h4>
+<i>Query</i>: could be a database query (as for the form) or a JSON array (fixed options) 
+<br /><code>[ {val:.., lab:..}, … ]</code> (see <i>Patients</i> form <i>sex</i> field in the demo application).
+<br /><i>Fields</i>: (just for database query) the first one is the value, the others separated by ' - ' creates the text. 
+To use just a space as separator, start the field name with '+' : <code>_id,name,+surname</code>
+
+<p>.</p><h4>Autocomplete query</h4>
+Query could have property <code>extra : 'filed1,field2,...'</code> 
+used for displaying additional readonly data from the autocomplete collection in the current form. 
+The form must have this fields set as disable, or at least readonly 
+(see <i>Prescriptions</i> form in the demo application).
+<br />The autocomplete field will be saved as an object <code>{val:.., lab:..}</code>. 
+Any condition on such a field will be <code>patient_id.val:...</code>
+
+<p>.</p><h4>Run application</h4>
+<ul style="list-style-type: none;">http://localhost:8080
+	<li>Application: myapp</li>
+	<li>Database: mydb</li>
+	<li>User: user</li>
+	<li>Password: pass</li>
+</ul>
+
+<p>.</p><h4>Events</h4>
+Open events dialog from <i>Events</i> menu. It is always relative to the current form.
+<br />Brumba defines this form events:
+<br />- <i>open</i> (on form open, prior to any other event)
+<br />- <i>new</i> (new button, for some document initialization)
+<br />- <i>save</i> (before save, to check values or alter form.modif)
+<br />- <i>retrieve</i> (after retrieve, to alter dataset before display)
+<br />Inside the open event you can write all other component events:
+<code><ul style="list-style-type: none;">
+<li>var form = this</li>
+	<li>$(form).on( 'open', function(ev) {</li>
+	<ul style="list-style-type: none;"><li>form.tag.find('#field').on('change', function(ev) {</li>
+		<ul style="list-style-type: none;"><li>console.log( $(this).val() )</li>
+		</ul>
+	<li>})</li>
+	<li>form.tag.find('#button').on('click', function(ev) {</li>
+		<ul style="list-style-type: none;"><li>doSomething()</li>
+		</ul>
+	<li>})</li>
+	</ul>
+<li>}).on( 'save', function(ev) {</li>
+	<ul style="list-style-type: none;"><li>// form.modif is the object that collects all modified fields to save</li>
+	<li>// add an "updated" field that is not inserted by the user</li>
+	<li>form.modif.updated = new Date().getTime()</li>
+	</ul>
+<li>})</li>
+</ul></code>
+
+<p>.</p><h4>Server scripts</h4>
+Open it from <i>Server scripts</i> menu. It is ready for a new script. Give it a name and write the cod, then <i>Save</i>. Remember that only exported functions are visible from outside.
+<br />Call a server script from client with:
+<br /><code>{ cmd: 'SRV', app: 'appName', script: 'scriptName.functionName', args for the function... }</code>
+</body>
+</html>
