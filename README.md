@@ -14,7 +14,7 @@ The application is saved entierly in a database with the same name. You can use 
 modified application database on the server, or just copy the modified component from IDE with _Copy to App_ 
 option. But you can even open IDE on the deployment site and make corrections on the fly, if necessary.
 
-Take a look at this first minimal [DEMO application](http://81.196.2.213:8080/). Login:
+Take a look at this first minimal [DEMO application](https://81.196.2.213:8080/). Login:
 * Application: demo
 * Database: demodb
 * User: demo
@@ -34,8 +34,8 @@ For the moment the only browser I'm using is Firefox. There are some minor probl
 - from the brumba directory call the short command **node server** 
   it will default to brumba webserver port 8080 and mongodb localhost:27017
 - to change defaults: **node server webserverport mongohost:mongoport**
-- open Brunba IDE in the browser http://localhost:8080/ide.html, write _yourApp_ name in the field, then create forms/pages/reports/menu
-- open application  http://localhost:8080 and login:
+- open Brunba IDE in the browser https://localhost:8080/ide.html, write _yourApp_ name in the field, then create forms/pages/reports/menu
+- open application  https://localhost:8080 and login:
   * Application: yourApp
   * Database: yourDb
   * User: demo          (users non yet implemented use demo)
