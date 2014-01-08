@@ -20,10 +20,10 @@ Take a look at this first minimal [DEMO application](http://81.196.2.213:8080/).
 * User: demo
 * Password: demo
 
-Then open the [IDE](http://81.196.2.213:8080/ide.html) and see it's structure. Write _demo_ in the field and _Load App_ button.
+Then open the [IDE](https://81.196.2.213:8080/ide.html) and see it's structure. Write _demo_ in the field and _Load App_ button.
 
-Here is a brief [IDE HowTo](http://81.196.2.213:8080/howto.html).
-Try it [online](http://81.196.2.213:8080/) with application: **tryme** database: **trydb** (a copy of demo). Feel free to add/modify it.
+Here is a brief [IDE HowTo](https://81.196.2.213:8080/howto.html).
+Try it [online](https://81.196.2.213:8080/) with application: **tryme** database: **trydb** (a copy of demo). Feel free to add/modify it.
 
 For the moment the only browser I'm using is Firefox. There are some minor problems with Chrome. I didn't test the others.
 
