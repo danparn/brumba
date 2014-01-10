@@ -522,7 +522,7 @@ function openScript() {
 /*********************************************
  * 				REFERENCES
  *********************************************/
-/* Open relations
+/* Open references
 */
 function openReferences() {
 	if ( !page ) page = new Page()
@@ -712,7 +712,6 @@ function onSave() {
 						if ( !id )  onLoad()
 						if ( res._id )  id = res._id
 						loadForm(id, isrep)											// reaload form
-						relations($el)													// realations
 					}
 				}, dat)
 			

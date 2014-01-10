@@ -55,7 +55,7 @@ $(function() {
 
 	// Translate
 	if ( main.lang ) {
-		var par = {cmd: 'GET', db: main.db, coll: 'translate',
+		var par = {cmd: 'GET', db: main.app, coll: 'translate',
 							fields: {default: 1}, 
 							where: {}, usercode: main.usercode}
 		par.fields[main.lang] = 1
@@ -97,15 +97,15 @@ function pageLoad( pgname ) {
 	remote( {cmd: 'GET', db: main.app, coll: sp[0], where: {name: sp[1]}, usercode: main.usercode}, function(res) {
 		if ( res.err || !res[0] )  return
 		
-		page.tag = $('div#page')
-		page.tag.empty()
-		var pg = $( res[0].html )
-			, pans = pg.find('.br-panel')
-		if ( pans.length == 0 && res[0].events )  pg.data('events', res[0].events)
-		pg.find('span.ui-icon-close').remove()
-		pg.find('.watermark').remove()
+		var $pg = $('div#page')
+		$pg.empty()
+		page.tag = $(res[0].html)
+		var pans = page.tag.find('.br-panel')
+		if ( pans.length == 0 && res[0].events )  page.tag.data('events', res[0].events)
+		page.tag.find('span.ui-icon-close').remove()
+		page.tag.find('.watermark').remove()
 		
-		pg.find( 'input[type="filelink"]' ).each( function() {						// filelink
+		page.tag.find( 'input[type="filelink"]' ).each( function() {						// filelink
 			var $this = $(this)
 				, img = $( '<span class="ui-icon ui-icon-folder-open" style="position: absolute"></span>' )
 				, l = parseInt($this.css('left'), 10) + parseInt($this.css('width'), 10) - parseInt(img.css('width'), 10) + 2
@@ -122,10 +122,10 @@ function pageLoad( pgname ) {
 				fileShow( main.db, $this.data('id') )	
 			})
 			$this.prop( 'readonly', true )
-			pg.append( img )
+			page.tag.append( img )
 		})
 		
-		page.tag.append( pg )
+		$pg.append( page.tag )
 		if ( pans.length == 0 ) {
 			pageInit()
 		} else {
@@ -170,7 +170,7 @@ function pageInit() {
 	
 	// Add Forms	page.recid = null
 	page.forms = []
-	page.tag.find( '.br-form' ).each( function(i) {
+	$('.br-form').each( function(i) {
 		var f,  $this = $(this),  name = $this.attr( 'id' )
 		if ( $this.hasClass('br-tabular') )  f = new Tabular( name, $this )
 		else  f = new Form( name, $this )

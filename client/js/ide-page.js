@@ -140,7 +140,7 @@ function setPanel( pane ) {
 
 function loadPage( id ) {
 	closeEvents()
-	remote( {cmd: 'GET', db: appName(), coll: 'pages', where: {_id: id}}, function(res) {
+	remote( {cmd: 'GET', db: appName(), coll: 'pages', where: {_id: id}, usercode: 'ide'}, function(res) {
 		if ( ! res.dbret ) {
 			ws.empty()
 			ws.removeAttr('style')
@@ -154,7 +154,7 @@ $('.br-pane').removeClass('br-pane').addClass('br-panel')
 					fname = p.attr('data-form')
 				setPanel( p )
 				if ( fname ) {
-					remote( {cmd:'GET',	db:appName(), coll:'forms', where:{name:fname}}, function(res) {
+					remote( {cmd:'GET',	db:appName(), coll:'forms', where:{name:fname}, usercode: 'ide'}, function(res) {
 						if ( res.dbret )
 							alert( res.dbret )
 						else {

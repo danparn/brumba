@@ -34,7 +34,8 @@ Page.prototype = {
 
 	// Call command
 	command : function( cmd, i ) {
-		if ( i < this.forms.length ) { 
+		if ( i < this.forms.length &&
+					(cmd != 'S' || this.tag.attr('readonly') != 'readonly') ) {
 			var self = this
 			this.forms[i].command( cmd, function(err) {
 				if ( !err )  self.command( cmd, i+1 )
@@ -193,8 +194,7 @@ Form.prototype = {
 	
 	// Save record
 	save : function( callback ) {
-		if ( this.query.coll && this.modif ) { 
-			if ( !this.modif )  this.modif = {}
+		if ( this.query.coll && this.modif && this.tag.attr('readonly') != 'readonly' ) { 
 			if ( !this.modif._id && this.rec && this.rec._id )  this.modif._id = this.rec._id
 			if ( $(this).triggerHandler('save', this.modif) )  return callback(true)
 			else {
@@ -211,7 +211,7 @@ Form.prototype = {
 					}
 				}, this.modif)
 			}
-		} else  	callback()
+		} else callback()
 	},
 	
 	
@@ -356,7 +356,8 @@ Form.prototype = {
 		var q = cloneJSON( this.query )
 		if ( !q.cmd )  q.cmd = cmd
 		q.app = main.app
-		q.db = main.db
+		if ( q.coll == 'translate' ) q.db = main.app
+		else q.db = main.db
 		q.usercode = main.usercode
 		
 		if ( fields ) {

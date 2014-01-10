@@ -6,7 +6,7 @@
 */
 
 var U = require('./client/js/util')
-	, Db = require('mongodb').Db
+	, MongoClient = require('mongodb').MongoClient
 	, GridStore = require('mongodb').GridStore
 	, ObjectID = require('mongodb').ObjectID
 	
@@ -36,7 +36,7 @@ function dbOpen( dbname, callback ) {
 		}
 	}
 	
-	Db.connect( 'mongodb://' + mongoURL + '/' + dbname + '?w=1', function(err, db) {
+	MongoClient.connect( 'mongodb://' + mongoURL + '/' + dbname + '?w=1', {native_parser:true}, function(err, db) {
 		if ( err ) {
 			console.log('err = ' + err )
 			console.log('dbOpen: cannot open ' + dbname + ' database' )
