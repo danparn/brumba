@@ -74,7 +74,12 @@ Page.prototype = {
 		if ( this.srcmode ) {
 			this.srcmode = false
 			$( '.br-form' ).css( 'background', '' )
-			this.srcond = this.forms[0].modif
+console.log( this.forms[0].dataset[0] )
+			if ( this.forms[0] instanceof Tabular ) {
+				this.srcond = this.forms[0].dataset[0]
+				if ( this.srcond ) delete this.srcond._idx
+				this.forms[0].recs = 0
+			} else this.srcond = this.forms[0].modif
 			for ( var k in this.srcond ) {
 				var val = this.srcond[k]
 					, op = ['>=', '>', '<=', '<', '=']
@@ -89,13 +94,20 @@ Page.prototype = {
 				}
 				if ( i == op.length )  this.srcond[k] = { '$regex': val, '$options': 'i' }
 			}
-			this.list.flexReload()
+console.log( 'Page.search' )
+console.log( this.srcond )
+			if ( this.list ) this.list.flexReload()
+			else this.command('R', 0)
 
 		} else {
 			this.srcmode = true
-			$( '.br-form' ).css( 'background', '#D55' )
-			this.command( 'C', 0 )
-			this.list.flexAddData( {} )
+			$('.br-form').css('background', '#D55')
+			this.command('C', 0)
+			if ( this.forms[0] instanceof Tabular ) {
+				this.forms[0].dataset = []
+				this.forms[0].recs = 1
+			}
+			if ( this.list ) this.list.flexAddData({})
 		}
 	},
 	
@@ -220,6 +232,10 @@ Form.prototype = {
 		var self = this
 		if ( this.query.coll ) {
 			var par = self.querySet('GET')
+			if ( page.srcond ) {
+				if ( par.where )  $.extend( par.where, page.srcond )
+				else  par.where = page.srcond
+			}
 			remote( par, function(res) {
 				if ( res.err )  return callback(res)
 				else {
@@ -245,11 +261,10 @@ Form.prototype = {
 								var flds = q.extra.split(/\s*,\s*/)
 									, par = {
 										cmd : q.cmd || 'GET',
-										db : main.db,
+										db : br.db,
 										coll : q.coll,
 										fields : {},
-										where : { _id : rec[f].val },
-										usercode : main.usercode
+										where : { _id : rec[f].val }
 									}
 								for ( var i=0; i < flds.length; i++ )  par.fields[flds[i]] = 1
 								remote( par, function(res) {
@@ -355,10 +370,9 @@ Form.prototype = {
 	querySet : function( cmd, fields, noid ) {
 		var q = cloneJSON( this.query )
 		if ( !q.cmd )  q.cmd = cmd
-		q.app = main.app
-		if ( q.coll == 'translate' ) q.db = main.app
-		else q.db = main.db
-		q.usercode = main.usercode
+		q.app = br.app
+		if ( q.coll == 'languages' ) q.db = br.app
+		else q.db = br.db
 		
 		if ( fields ) {
 			var sp = strSplit(q.fields, ',')
@@ -575,6 +589,10 @@ console.log( 'iconDel.click' )
 			// Dataset dimension
 			if ( self.recs == 0 ) {
 				var par = this.querySet()
+				if ( page.srcond ) {
+					if ( par.where )  $.extend( par.where, page.srcond )
+					else  par.where = page.srcond
+				}
 				par.cmd = 'GET'
 				par.func = 'count'
 				remote( par, function(res) {
@@ -776,8 +794,7 @@ function Autocomplete( input ) {
 		q.fields = {}
 		q.fields[fld] = 1
 		q.cmd = 'GET'
-		q.db = main.db
-		q.usercode = main.usercode
+		q.db = br.db
 		if ( !q.where )  q.where = {}
 		
 		input.autocomplete({

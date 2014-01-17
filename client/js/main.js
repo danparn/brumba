@@ -6,18 +6,16 @@
 */
 
 
-/* Main object
+/* Main brumba object
 */
-var main = {
-	app: localStorage.getItem( 'br.app' ),
-	db: localStorage.getItem( 'br.db' ),
-	lang: localStorage.getItem( 'br.lang' ),
-	usercode: localStorage.getItem( 'br.usercode' ),
-	userid: localStorage.getItem( 'br.userid' ),
-	username: localStorage.getItem( 'br.username' ),
-	useradm: localStorage.getItem( 'br.useradm' ),
-	menupg: null,
-	menuid: null
+var br = {
+	app: sessionStorage.getItem('br.app'),
+	db: sessionStorage.getItem('br.db'),
+	lang: sessionStorage.getItem('br.lang'),
+	usercode: sessionStorage.getItem('br.usercode'),
+	userid: sessionStorage.getItem('br.userid'),
+	username: sessionStorage.getItem('br.username'),
+	useradm: sessionStorage.getItem('br.useradm')
 }
 
 var loadingIndicator = null
@@ -30,13 +28,13 @@ $(function() {
 	page = new Page()
 	
 	//$(document).tooltip()
-	$.ajaxSetup( {cache: true} )
+	$.ajaxSetup({cache: true})
 
 	// Loading indicator
 	loadingIndicator = $('<span class="loading-indicator"><label>Loading...</label></span>').appendTo(document.body)
-		.css( 'position', 'absolute' )
-		.css( 'top', $(window).height() / 2 )
-		.css( 'left', $(window).width() / 2 )
+		.css('position', 'absolute')
+		.css('top', $(window).height() / 2)
+		.css('left', $(window).width() / 2)
 	loadingIndicator.fadeOut()
 	
 	$('div#leftbar').resizable({
@@ -45,36 +43,41 @@ $(function() {
 	})
 
 	// Menu
-	var menu = $(localStorage.getItem('br.menu'))
+	var menu = $(sessionStorage.getItem('br.menu'))
 	$('div#menubar').append(menu)
 	$('ul#menu').addClass('accordion')
 	accordionMenu( function(pg, prm) {
 		page.prm = prm
-		pageLoad( pg )
+		pageLoad(pg)
 	})
 
-	// Translate
-	if ( main.lang ) {
-		var par = {cmd: 'GET', db: main.app, coll: 'translate',
+	// Languages
+	if ( br.lang ) {
+		var par = {cmd: 'GET', db: br.app, coll: 'languages',
 							fields: {default: 1}, 
-							where: {}, usercode: main.usercode}
-		par.fields[main.lang] = 1
-		par.where[main.lang] = {$exists: true}
+							where: {}}
+		par.fields[br.lang] = 1
+		par.where[br.lang] = {$exists: true}
 		remote(par, function(res) {
-			if ( res.err || !res[0] ) main.hasLang = false
+			if ( res.err || !res[0] ) br.hasLang = false
 			else {
-				main.hasLang = true
-				main.langData = res
+				br.hasLang = true
+				br.langData = res
 				menu.find('a').each( function() {
-					$(this).text(translate($(this).text(), main.lang))
+					$(this).text(translate($(this).text(), br.lang))
 				})
 				$('button').each( function() {
-					$(this).text(translate($(this).text(), main.lang))
+					$(this).text(translate($(this).text(), br.lang))
 				})
 			} 
-			$('button').button()
+			about()
 		})
-	} else $('button').button()
+	} else about()
+	
+	function about() {
+		$('button').button()
+		pageLoad('forms.About')
+	}
 
 })
 
@@ -85,16 +88,16 @@ $(function() {
 function pageLoad( pgname ) {
 	if ( !pgname )  return
 	
-	var p = pgname.indexOf( ':' )
+	var p = pgname.indexOf(':')
 	if ( p > 0 ) {
-		main.menupg = pgname.substr( 0, p )
-		main.menuid = pgname.substr( p+1  )
+		br.menupg = pgname.substr(0, p)
+		br.menuid = pgname.substr(p+1 )
 	} else {
-		main.menupg = pgname
+		br.menupg = pgname
 	}
 	
-	var sp = main.menupg.split( '.' )
-	remote( {cmd: 'GET', db: main.app, coll: sp[0], where: {name: sp[1]}, usercode: main.usercode}, function(res) {
+	var sp = br.menupg.split('.')
+	remote({cmd:'GET', db:br.app, coll:sp[0], where:{name: sp[1]}}, function(res) {
 		if ( res.err || !res[0] )  return
 		
 		var $pg = $('div#page')
@@ -105,27 +108,7 @@ function pageLoad( pgname ) {
 		page.tag.find('span.ui-icon-close').remove()
 		page.tag.find('.watermark').remove()
 		
-		page.tag.find( 'input[type="filelink"]' ).each( function() {						// filelink
-			var $this = $(this)
-				, img = $( '<span class="ui-icon ui-icon-folder-open" style="position: absolute"></span>' )
-				, l = parseInt($this.css('left'), 10) + parseInt($this.css('width'), 10) - parseInt(img.css('width'), 10) + 2
-			img.css( 'top', $this.css('top') )
-			img.css( 'left', l )
-			img.click( function() {
-				fileUpload( main.db, function(res) {
-					$this.data( 'id', res.newid )
-					$this.val( res.filename )
-					$this.trigger( 'change' )
-				})
-			})
-			$this.click( function() {
-				fileShow( main.db, $this.data('id') )	
-			})
-			$this.prop( 'readonly', true )
-			page.tag.append( img )
-		})
-		
-		$pg.append( page.tag )
+		$pg.append(page.tag)
 		if ( pans.length == 0 ) {
 			pageInit()
 		} else {
@@ -134,11 +117,11 @@ function pageLoad( pgname ) {
 				var p = $(this)
 					, fname = p.attr('data-form')
 				if ( fname ) {
-					remote( {cmd: 'GET',	db: main.app, coll: 'forms', where: {name:fname}, usercode: main.usercode}, function(res) {
-						if ( res.err )  alert( res.err )
+					remote({cmd:'GET', db:br.app, coll:'forms', where:{name:fname}}, function(res) {
+						if ( res.err )  alert(res.err)
 						else {
 							var frm = $(res[0].html)
-							p.append( frm )
+							p.append(frm)
 							if ( res[0].events )  frm.data('events', res[0].events)
 						}							
 						if ( --n == 0 )  pageInit()
@@ -155,29 +138,24 @@ function pageLoad( pgname ) {
 /* Initialize page
 */
 function pageInit() {
-	// Translate
-	$('.br-label').each( function() {
-		$(this).text(translate($(this).text(), main.lang))
-	})
-
 	// Tabs
-	var tabs = $( '.br-tabs' )
+	var tabs = $('.br-tabs')
 	if ( tabs ) {
-		tabs.tabs().tabs({ active: 0 })
-		tabs.removeClass( 'ui-widget' )			// hack for font override
-		tabs.data('height', parseInt(tabs.css('height'), 10) / 5 * 4 )
+		tabs.tabs().tabs({active: 0})
+		tabs.removeClass('ui-widget')			// hack for font override
+		tabs.data('height', parseInt(tabs.css('height'), 10) / 5 * 4)
 	}
 	
 	// Add Forms	page.recid = null
 	page.forms = []
 	$('.br-form').each( function(i) {
-		var f,  $this = $(this),  name = $this.attr( 'id' )
-		if ( $this.hasClass('br-tabular') )  f = new Tabular( name, $this )
-		else  f = new Form( name, $this )
-		page.forms.push( f )
+		var f,  $this = $(this),  name = $this.attr('id')
+		if ( $this.hasClass('br-tabular') )  f = new Tabular(name, $this)
+		else  f = new Form(name, $this)
+		page.forms.push(f)
 	})
 	if ( page.forms.length == 0 ) {
-		alert( 'No forms found' )
+		alert('No forms found')
 		return
 	}
 	
@@ -188,10 +166,10 @@ function pageInit() {
 			var mas
 				, field =  form.query.field || form.query.concat
 			if ( field && !form.query.coll ) {
-				var p = field.lastIndexOf( '.' )
+				var p = field.lastIndexOf('.')
 				if ( p > 0 )  {
-					mas = field.substr( 0, p )
-					form.field = field.substr( p+1 )
+					mas = field.substr(0, p)
+					form.field = field.substr(p+1)
 				} else {
 					form.field = field
 				}
@@ -208,7 +186,7 @@ function pageInit() {
 					break
 				}
 			}
-			if ( !form.master )  alert( 'No master found for query.field:  ' + form.query.field )
+			if ( !form.master )  alert('No master found for query.field:  ' + form.query.field)
 		} else {
 			form.master = form
 		}
@@ -216,37 +194,36 @@ function pageInit() {
 //for ( var i=0; i < page.forms.length; i++ )  console.log( 'form %s   mas %s', page.forms[i].name, page.forms[i].master.name )
 
 	// Select
-	var select = $( 'select' )
-	sel( 0 )
+	var select = $('select')
+	sel(0)
 	
 	function sel( n ) {
 		if ( n < select.length ) {
-			var $select = $( select[n] )
+			var $select = $(select[n])
 				, query = $select.attr('data-query')
 				, fields = $select.attr('data-fields')
 			if ( query ) {
-				var q = readJson( query )
+				var q = readJson(query)
 				if ( Array.isArray(q) ) {			// array of data
 					for ( var i=0, len=q.length; i < len; i++ ) {
 						var s = q[i].lab || q[i].val
-						$select.append( '<option value="' + q[i].val + '">'+ s + '</option>' )
+						$select.append('<option value="' + q[i].val + '">'+ s + '</option>')
 					}
-					sel( n+1 )
-				} else if (  fields ) {
+					sel(n+1)
+				} else if ( fields ) {
 					if ( !q.cmd )  q.cmd = 'GET'
-					q.db = main.db
-					q.app = main.app
-					q.usercode = main.usercode
+					q.db = br.db
+					q.app = br.app
 					if ( q.fields ) {
 						var sp = strSplit(q.fields, ',')
 						q.fields = {}
 						for ( var i=0; i < sp.length; i++ )  q.fields[sp[i]] = 1
 					}
-					remote( q, function(res) {
-						if ( res.err )  return
-						var fld = strSplit(fields, ',' )
+					remote(q, function(res) {
+						if ( res.err )  return sel(n+1)
+						var fld = strSplit(fields, ',')
 							, txt = ''
-						$select.append( '<option></option>' )
+						$select.append('<option></option>')
 						for ( var i=0, len=res.length; i < len; i++ ) {
 							var r = res[i]
 							txt = ''
@@ -260,40 +237,37 @@ function pageInit() {
 										txt += ' - '
 									}
 								}
-								if ( fl.charAt(0) == '\'' )  txt += fl.substring( 1, fl.length-2 )
+								if ( fl.charAt(0) == '\'' )  txt += fl.substring(1, fl.length-2)
 								else  txt += r[fl]
 							}
-							$select.append( '<option value="' + r[fld[0]] + '">'+ txt + '</option>' )
+							$select.append('<option value="' + r[fld[0]] + '">'+ txt + '</option>')
 						}
-						sel( n+1 )
+						sel(n+1)
 					})
 				} else if (  q.cmd == 'SRV' ) {		// olready formated from server script 
-					q.db = main.db
-					q.app = main.app
-					q.usercode = main.usercode
-					remote( q, function(res) {
+					q.db = br.db
+					q.app = br.app
+					remote(q, function(res) {
 						if ( res.err )  return
-						$select.append( res.html )
-						sel( n+1 )
+						$select.append(res.html)
+						sel(n+1)
 					})
-				} else {
-					sel( n+1 )
-				}
-			}
+				} else sel(n+1)
+			} else sel(n+1)
 		} else {
-			onOpen( 0 )
+			onOpen(0)
 		}
 	}
 
 	// Form open event
 	function onOpen( n ) {
 		if ( n < page.forms.length ) {
-//console.log( 'onOpen ' + page.forms[i].name )
+//console.log( 'onOpen ' + page.forms[n].name )
 			var form = page.forms[n]
 				, err = $(form).triggerHandler('open')
 			if ( form instanceof Tabular )  form.addRows()
 			form.setChangeField()
-			if ( !err )  onOpen( n+1 )
+			if ( !err )  onOpen(n+1)
 		} else {
 			fieldsFunc()
 			list()
@@ -302,7 +276,7 @@ function pageInit() {
 
 	function fieldsFunc() {
 		
-		// Date		$( 'input[type*="date"]' ).each( function() {
+		// Date		$('input[type*="date"]').each( function() {
 			var fld = $(this)
 			fld.data('fld', fld)
 			fld.datepicker({
@@ -310,21 +284,52 @@ function pageInit() {
 				dateFormat: dateFormat,
 				constrainInput: false,
 				onSelect: function(date, inst) { 
-					fld.data('fld').val( date )
+					fld.data('fld').val(date)
 				}
 			})
 
-			fld.attr( 'title', 'format: dd/mm/yyyy shortcuts: + (today) d (day of current month) d.m  (day and month)' )
+			fld.attr('title', 'format: dd/mm/yyyy shortcuts: + (today) d (day of current month) d.m  (day and month)')
 		})
 	
 		// Autocomplete
-		$( 'input[type="autocomplete"]' ).each( function() {
-			Autocomplete( $(this) )
+		$('input[type="autocomplete"]').each( function() {
+			Autocomplete($(this))
 		})
 		
 		//Buttons
 		$('.br-button').button()
 		
+		// Images
+		page.tag.find('img').each( function() {
+			imgLoad(br.app, $(this))
+		})
+		
+		// File link
+		page.tag.find('input[type="filelink"]').each( function() {
+			var $this = $(this)
+				, ico = $('<span class="ui-icon ui-icon-folder-open" style="position: absolute"></span>')
+				, l = parseInt($this.css('left'), 10) + parseInt($this.css('width'), 10) - parseInt(ico.css('width'), 10) + 2
+			ico.css('top', $this.css('top'))
+			ico.css('left', l)
+			ico.css('z-index', 2)
+			ico.click( function() {
+				fileUpload(br.db, function(res) {
+					$this.data('id', res.newid)
+					$this.val(res.filename)
+					$this.trigger('change')
+				})
+			})
+			$this.click( function() {
+				fileShow($this.data('id'))	
+			})
+			$this.prop('readonly', true)
+			$this.parent().append(ico)
+		})
+			
+		// Translate
+		$('.br-label').each( function() {
+			$(this).text(translate($(this).text(), br.lang))
+		})
 	}
 
 	// List
@@ -332,10 +337,10 @@ function pageInit() {
 		var mas = page.forms[0]
 		$('#listbar').empty()
 		if ( mas.tag.hasClass('br-tabular') ) {
-			page.command( 'R', 0 )
+			page.command('R', 0)
 		} else {
 			
-			var fields = mas.tag.attr( 'data-fields' )
+			var fields = mas.tag.attr('data-fields')
 				, query = mas.query
 				
 			// Columns	
@@ -343,29 +348,29 @@ function pageInit() {
 				var fld = strSplit(fields, ',')
 				page.listCols = []
 				for ( var i=0; i < fld.length; i++ ) {
-					var sp = fld[i].split( /\s*:\s*/ )
+					var sp = fld[i].split(/\s*:\s*/)
 						, c = { name: sp[0] }
 					
-					if ( sp[1] )  c.width = parseInt( sp[1], 10 )
+					if ( sp[1] )  c.width = parseInt(sp[1], 10)
 					else  c.width = 50
 					if ( sp[2] )  c.display = sp[2]
 					else {
-						var s = strRep( strRep(c.name, '_', ' '), '-', ' ' )
-						c.display = strCapitalize( s )
+						var s = strRep(strRep(c.name, '_', ' '), '-', ' ')
+						c.display = strCapitalize(s)
 					}
 					c.process = function( cell, id ) {
 						$(cell).click( function(ev) {
-							page.recid = ( typeof page.recid == 'number' ) ? parseInt(id, 10) : id
-							page.command( 'N', 0 )
-							page.command( 'R', 0 )
+							page.recid = (typeof page.recid == 'number') ? parseInt(id, 10) : id
+							page.command('N', 0)
+							page.command('R', 0)
 						})
 					}
-					page.listCols.push( c )
+					page.listCols.push(c)
 				}
 	
 				//  Flexigrid
 				page.list = $('<table id="list"></table>')
-				$('#listbar').append( page.list )
+				$('#listbar').append(page.list)
 					
 				var options = {
 					url: '/brumba',
@@ -380,13 +385,14 @@ function pageInit() {
 					onSubmit: function() {
 						var q = mas.querySet('SRV', true, true)
 						if ( page.srcond ) {
-							if ( q.where )  $.extend( q.where, page.srcond )
+							if ( q.where )  $.extend(q.where, page.srcond)
 							else  q.where = page.srcond
 						}
 						q.script = 'flexigridData'
+						q.usercode = br.usercode
 						q.limit = this.rp
 						q.page = this.newp || 1
-						this.url = '/brumba?' + JSON.stringify( q )
+						this.url = '/brumba?' + JSON.stringify(q)
 						return true
 					},
 					
@@ -412,7 +418,7 @@ function pageInit() {
 										}
 									}
 								}
-								row.cell.push( val )
+								row.cell.push(val)
 							}
 							data.rows[i] = row
 						}
@@ -420,7 +426,7 @@ function pageInit() {
 					}
 				}
 					
-				page.list.flexigrid( options )
+				page.list.flexigrid(options)
 			}
 		}
 	}
@@ -439,7 +445,7 @@ function butSave() {
 	if ( page.prm.indexOf('w') >= 0 ) {
 		if ( !page.insave ) {
 			page.insave = true
-			page.command( 'S', 0 )
+			page.command('S', 0)
 		}
 	} else {
 		alert('Permission denied')

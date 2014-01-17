@@ -19,16 +19,16 @@ var propElem = null			// element you see properties of
 
 
 
-/* Main object
+/* Main brumba object
 */
-var main = {
-	app: localStorage.getItem( 'br.app' ),
-	db: localStorage.getItem( 'br.app' ),
-	lang: localStorage.getItem( 'br.lang' ),
-	usercode: localStorage.getItem( 'br.usercode' ) || 'ide',
-	userid: localStorage.getItem( 'br.userid' ),
-	username: localStorage.getItem( 'br.username' ),
-	useradm: localStorage.getItem( 'br.useradm' )
+var br = {
+	app: sessionStorage.getItem( 'br.app' ),
+	db: sessionStorage.getItem( 'br.app' ),
+	lang: sessionStorage.getItem( 'br.lang' ),
+	usercode: sessionStorage.getItem( 'br.usercode' ) || 'ide',
+	userid: sessionStorage.getItem( 'br.userid' ),
+	username: sessionStorage.getItem( 'br.username' ),
+	useradm: sessionStorage.getItem( 'br.useradm' )
 }
 	
 
@@ -496,10 +496,9 @@ function openScript() {
 */function loadScript( id ) {
 	var par = {
 			cmd: 'GET',
-			db: appName(),
+			db: br.app,
 			coll: 'scripts',
-			where: { _id: id },
-			usercode: 'ide'
+			where: { _id: id }
 		}
 	remote( par, function(res) {
 		if ( !res.dbret ) {
@@ -535,7 +534,7 @@ function openReferences() {
 	ws.removeAttr('style')
 	ws.append(page.tag)
 	
-	remote( {cmd: 'GET', db: appName(), coll: 'forms', where: {name: '_references'}, usercode: 'ide'}, function(res) {
+	remote({cmd:'GET', db:br.app, coll:'forms', where:{name:'_references'}}, function(res) {
 		if ( res.err || !res[0] )  return
 		
 		var htm = $( res[0].html )
@@ -577,7 +576,7 @@ function openMenu() {
 		})
 	menu.data( 'editor', editor )
 	//menu.find('.CodeMirror-scroll').css( 'height', ed.css('height') )
-	remote( {cmd: 'GET', db: appName(), coll: 'application', where: {section: 'menu'}, usercode: 'ide'}, function(res) {
+	remote({cmd:'GET', db:br.app, coll:'application', where:{section:'menu'}}, function(res) {
 		if ( ! res.dbret && res[0] ) {
 			editor.setValue( res[0].menu )
 			menu.data( '_id', res[0]._id )
@@ -595,8 +594,9 @@ function openMenu() {
 /* Load button handler
 */
 function onLoad() {
-	var app = appName()
+	var app = $('#app-name').val()
 	if ( app ) {
+		br.app = app
 		var selmenu = function() {
 			$('.accordion li.selected-menu').removeClass('selected-menu')
 			$(this).addClass('selected-menu')
@@ -608,8 +608,7 @@ function onLoad() {
 				db: app,
 				coll: 'forms',
 				fields: { name: 1 },
-				sort: { name: 1 },
-				usercode: 'ide'
+				sort: { name: 1 }
 			}
 		remote( par, function(res) {
 			var menu = $('li#forms ul').empty()
@@ -674,7 +673,7 @@ function onLoad() {
 /* Save button handler
 */
 function onSave() {
-	var app = appName()
+	var app = br.app
 	if ( app ) {
 		var el = ws.children()[0]
 		if ( el ) {
@@ -687,6 +686,7 @@ function onSave() {
 				$('.ui-selectee').removeClass("ui-selectee")
 				$('.ui-resizable').removeClass('ui-resizable')
 				$('.ui-resizable-handle').remove()
+				$('img').removeAttr('src')
 				//$('.watermark').remove()
 				$('.br-nested').empty()
 				$('img').css('width', 'auto')
@@ -694,8 +694,7 @@ function onSave() {
 					, par = {
 						cmd: 'POST',
 						db: app,
-						coll: 'forms',
-						usercode: 'ide'
+						coll: 'forms'
 					}
 					, dat = {
 						name: frm.attr('id'),
@@ -737,8 +736,7 @@ function onSave() {
 				var	par = {
 						cmd: 'POST',
 						db: app,
-						coll: 'pages',
-						usercode: 'ide'
+						coll: 'pages'
 					}
 					, dat = {
 						name: pg.attr('id'),
@@ -757,8 +755,7 @@ function onSave() {
 				var	par = {
 							cmd: 'POST',
 							db: app,
-							coll: 'scripts',
-							usercode: 'ide'
+							coll: 'scripts'
 						}
 					, dat = {
 							name: $el.find('input#name').val(),
@@ -780,8 +777,7 @@ function onSave() {
 				var	par = {
 						cmd: 'POST',
 						db: app,
-						coll: 'application',
-						usercode: 'ide'
+						coll: 'application'
 					},
 					dat = {
 						section: 'menu',
@@ -813,7 +809,7 @@ function onSave() {
 /* Delete component
 */
 function onDelete() {
-	var app = appName()
+	var app = br.app
 	if ( app ) {
 		var el = ws.children()[0]
 		if ( el ) {
@@ -827,7 +823,7 @@ function onDelete() {
 			else  return alert('Unknown component')
 				
 			var _delete = function() {
-				remote( {cmd: 'DEL', db: appName(), app: appName(), coll: coll, where:{_id: id}, usercode: 'ide'}, function(res) {
+				remote({cmd:'DEL', db:br.app, app:br.app, coll:coll, where:{_id: id}}, function(res) {
 					if ( res.dbret )  alert( res.dbret )
 					else {
 						ws.empty()
@@ -885,16 +881,6 @@ function toInput( html ) {
 /*********************************************
  * 				
  *********************************************/
-/* Return application name
-*/
-function appName() {
-	var app = $('#app-name').val()
-	if ( app )  return app
-	else  alert( translate('Please write application name') )
-	return null
-}
-
-
 /* Convert rgb color to hex
 */
 function rgb2hex( rgb ) {

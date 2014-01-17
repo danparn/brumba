@@ -15,22 +15,39 @@
 
 <script>
 var files = null
+	, lang = null
 	, db = 'iocoma'
+	, br = {usercode: 'ide'}
 
-$(function() {
+
+function importApp() {
 	remote( {cmd:'GET', db:db, coll:'fs.files'}, function(res) {
-		if ( res.dbret )  alert( res.dbret )
-		else  files = res
+		if ( res.err )  alert( 'fs.files' )
+		else {
+			files = res
+			remote( {cmd:'GET', db:db, coll:'languages', fields:{default:1, ro:1}}, function(res) {
+				if ( res.err )  alert( 'languages' )
+				else {
+					lang = res
+					convert()
+				}
+			})
+		}
 	})
 
+}
+
+
+function convert() {
 	$.get("tmp/FORMS.xml", function(data) {
-var n = 0
 		$(data).find('Form').each( function() {
 			var form = $( this )
 				, isTabular = false
 				, name = form.find('> Properties UID').text()
-//if ( n++ == 3 ) {			
-//if ( name == 'About' ) {			
+console.log( name )
+
+//if ( name == 'Tracking' )	{
+
 			var htm = $( '<form class="br-form" />' )
 			if ( form.attr('type') == 'T' ) {
 				htm.addClass('br-tabular')
@@ -66,11 +83,12 @@ var n = 0
 			remote( { db: db, cmd: 'POST', coll: 'forms' }, function(res) {
 				if ( res.dbret )  alert( res )
 			}, dat )
-//$('#form').append( htm )
-//}
+
+//$('#form').append( htm ) }
+
 		})
 	})
-});
+}
 
 
 function element( xml ) {
@@ -112,21 +130,29 @@ function field( xml ) {
 
 
 function label( xml ) {
-	var htm = $('<label class="br-label" >' + xml.find('Caption').text() + '</label>')
+	var htm = $('<label class="br-label" >' + eng(xml.find('Caption').text()) + '</label>')
 	properties( xml, htm )
 	return htm
 }
 
 
 function button( xml ) {
-	var htm = $('<button class="br-button">' + xml.find('Caption').text() + '</button>')
+	var htm = $('<button class="br-button">' + eng(xml.find('Caption').text()) + '</button>')
 	properties( xml, htm )
 	return htm
 }
 
 
+function eng( text ) {
+	for ( var i=lang.length-1; i >= 0; i-- ) {
+		if ( lang[i].ro == text ) return lang[i].default
+	}
+	return text
+}
+
+
 function rectangle( xml ) {
-	var htm = $('<div class="br-rectangle"></div>')
+	var htm = $('<label class="br-rectangle"></label>')
 	properties( xml, htm )
 	return htm
 }
@@ -138,7 +164,8 @@ function image( xml ) {
 	var oldid = xml.find('FileID').text()
 	for ( var i=0; i < files.length; i++ ) {
 		if ( files[i].metadata.oldid == oldid ) {
-			htm.attr( 'src', '/brumba?{"cmd":"FILE", "mode":"r", "db":"'+db+'", "_id":"'+files[i]._id+'"}')
+			htm.attr('src', '#')
+			htm.attr('data-id', files[i]._id)
 		}
 	}
 	return htm
@@ -151,16 +178,21 @@ function properties( xml, htm ) {
 	htm.css( 'width', xml.find('Width').text() + 'px' )
 	var val = xml.find('Height').text()
 	if ( parseInt(val, 10) > 17 )  htm.css( 'height', val + 'px' )
-	if ( xml[0].tagName != 'Button' && xml.find('Type').text() != 'DropDown' ) {
+	/*if ( xml[0].tagName != 'Button' && xml.find('Type').text() != 'DropDown' ) {
 		val = xml.find('FillColor').text()
 		if ( val != '00000000' && val != 'FFFFFFFF' )  htm.css( 'background', '#'+ val.substr(0,6) )
 		val = xml.find('TextColor').text()
 		if ( val != '00000000' && val != 'FFFFFFFF' )  htm.css( 'color', '#'+ '#'+ val.substr(0,6) )
-	}
+	}*/
 	val = xml.find('AlignH').text()
-	if ( val == '1' )  htm.css( 'text-align', 'center' )
-	else if ( val == '2' )  htm.css( 'text-align', 'right' )
-	if ( xml.find('AlignH').text() == 'false' )  htm.prop( 'hidden', true )
+	if ( val == '1' )  htm.css('text-align', 'center')
+	else if ( val == '2' )  htm.css('text-align', 'right')
+	if ( xml.find('AlignH').text() == 'false' )  htm.prop('hidden', true)
+	val = xml.find('Font').text()
+	if ( val ) {
+		var sp = val.split('.')
+		if ( sp[1] == 'b' ) htm.css('font', 'bold '+sp[2]+'px Arial')
+	}
 }
 
 </script>
@@ -169,6 +201,7 @@ function properties( xml, htm ) {
 </head>
 
 <body>
+	<button onclick="importApp()">Import App</button>
 	<div id="form">
 	</div>
 </body>

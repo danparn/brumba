@@ -487,12 +487,10 @@ console.log( err )
 					}
 				} else if ( el[0].name == 'img' ) {
 					imgs++
-					var src = el.attr('src')
-						, par = json.readJson(src.substr(src.indexOf('{')))
-					par.mode = 'rf'
-					M.file(par, null, function(file) {
+					var id = el.attr('data-id')
+					M.file({db: self.par.app, _id: id, mode: 'rf'}, null, function(file) {
 						if ( !file.err ) {
-							var path = 'tmp/' + par._id
+							var path = 'tmp/' + id
 							fs.writeFileSync(path, file)
 							self.pdf.image(path, css.left + self.left, css.top + self.top, 
 														{width: css.width, height: css.height})

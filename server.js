@@ -27,18 +27,12 @@ if ( process.argv[3] )   M.setURL( process.argv[3] )
 function brumba( req, res ) {
 	var par = JSON.parse( decodeURIComponent(req.url.substr(2)) )
 		, data = []
-//console.log( req.connection.remoteAddress + '   ' + new Date() )
+///console.log( req.connection.remoteAddress + '   ' + new Date() )
 console.log( JSON.stringify(par) )
 
 	// check user
-if ( par.usercode != 'ide' ) {
-	for ( var i=logged.length-1; i >= 0; i-- ) {
-		if ( logged[i].usercode == par.usercode ) {
-			logged[i].lastAccess = (new Date()).getTime()
-			break
-		} else if ( i == 0 )  return callback( {err: U.err.user} )
-	}
-}
+	if ( !usercheck() ) return callback({err: U.err.user})
+
 	// data
 	req.on('data', function(chunk) {
 		data[data.length] = chunk
@@ -81,6 +75,19 @@ if ( par.usercode != 'ide' ) {
 		res.writeHead(200, {'Content-Type': 'application/json'})
 		res.end( JSON.stringify(dat) )
 	}
+
+	function usercheck() {
+		if ( par.usercode ) {
+if ( par.usercode == 'ide' ) return true
+			for ( var i=logged.length-1; i >= 0; i-- ) {
+				if ( logged[i].usercode == par.usercode ) {
+					logged[i].lastAccess = (new Date()).getTime()
+					return true
+				}  
+			}
+		}
+		return false
+	}
 }
 
 function login( req, res ) {
@@ -92,19 +99,11 @@ function login( req, res ) {
 }
 
 
-/*connect()
-//.use( connect.logger('short') )
-.use( connect.static(__dirname + '/client') )
-.use( '/brumba', brumba )
-.use('/login', login )
-.listen( port )*/
-
-
 var app = connect()
-//.use( connect.logger('short') )
-.use( connect.static(__dirname + '/client') )
-.use( '/brumba', brumba )
-.use('/login', login )
+///	.use( connect.logger('short') )
+		.use( connect.static(__dirname + '/client') )
+		.use( '/brumba', brumba )
+		.use('/login', login )
 
 var options = {
     key:    fs.readFileSync('key.pem'),
@@ -133,20 +132,21 @@ function userMenu( par, callback ) {
 	var user, perm
 
 	// User
-	M.get( {db: par.db, coll: 'users', where: {username: par.username}}, function(res) {
+	M.get({db: par.db, coll: 'users', where: {username: par.username}}, function(res) {
 		if ( res.err )  return callback(res)
-		user = res[0]
-		if ( res.length == 0 ) {
+		if ( !res[0] ) {
 			if ( par.username == 'admin' && par.password == 'brumba'  ) {
-				var dat = { username: 'admin', password: 'brumba', admin: true }
-				M.post( {db: par.db, coll: 'users'}, dat, function(res) {})
-				permissions()
-			} else{
-				callback( {err: U.err.user} )
-			}
+				user = { username: 'admin', password: 'brumba', admin: true }
+				M.post( {db: par.db, coll: 'users'}, user, function(res) {
+					if ( res.err ) callback(res)
+					user._id = res.newid
+					permissions()
+				})
+			} else callback({err: U.err.user})
 		} else if ( res[0].password == par.password ) {
+			user = res[0]
 			permissions()
-		}
+		} else callback({err: U.err.user})
 	})
 
 	// Permissions
@@ -157,7 +157,7 @@ function userMenu( par, callback ) {
 		} else {
 			perm = user.permissions || []
 			if ( user.usergroups ) {
-				M.get( {db: par.db, coll: 'users', where: {username: {$in: user.usergroups.split(/\s*,\s*/)}}, concat: 'permissions'}, function(res) {
+				M.get({db: par.db, coll: 'users', where: {username: {$in: user.usergroups.split(/\s*,\s*/)}}, concat: 'permissions'}, function(res) {
 					if ( res.err )  callback( res )
 					else {
 						perm = perm.concat( res )
@@ -171,11 +171,13 @@ function userMenu( par, callback ) {
 	// Create menu
 	function menu() {
 		M.get( {db: par.app, coll: 'application', where: { section: 'menu' }}, function(res) {
-			if ( res.err || !res[0] )  callback(res)
+			var ret = {usercode: newCode(), userid: user._id, useradm: user.admin}
+			if ( res.err )  return callback(res)
+			else if ( !res[0] ) return ret
 			else {
-				var m = '',
-					sp = res[0].menu.split('\n'),
-					lastabs = 0
+				var m = ''
+					, sp = res[0].menu.split('\n')
+					, lastabs = 0
 				for ( var i=0; i <= sp.length; i++ ) {
 					var ln = sp[i]
 						, pg = null
@@ -204,7 +206,8 @@ function userMenu( par, callback ) {
 					lastabs = tabs
 				}
 				m = '<ul id="menu">' + m + '</ul>'
-				callback( {usercode: newCode(), userid: user._id, useradm: user.admin, menu: m} )
+				ret.menu = m
+				callback(ret)
 			}
 		})
 	}

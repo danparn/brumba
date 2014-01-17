@@ -140,7 +140,7 @@ function setPanel( pane ) {
 
 function loadPage( id ) {
 	closeEvents()
-	remote( {cmd: 'GET', db: appName(), coll: 'pages', where: {_id: id}, usercode: 'ide'}, function(res) {
+	remote( {cmd: 'GET', db: br.app, coll: 'pages', where: {_id: id}}, function(res) {
 		if ( ! res.dbret ) {
 			ws.empty()
 			ws.removeAttr('style')
@@ -154,11 +154,14 @@ $('.br-pane').removeClass('br-pane').addClass('br-panel')
 					fname = p.attr('data-form')
 				setPanel( p )
 				if ( fname ) {
-					remote( {cmd:'GET',	db:appName(), coll:'forms', where:{name:fname}, usercode: 'ide'}, function(res) {
+					remote( {cmd: 'GET',	db: br.app, coll: 'forms', where: {name: fname}}, function(res) {
 						if ( res.dbret )
 							alert( res.dbret )
 						else {
 							var frm = $( res[0].html )
+							frm.find('img').each( function() {
+								imgLoad(br.app, $(this))
+							})
 							p.append( frm )
 							frm.click( function() {
 								showProperties( this )
@@ -206,7 +209,7 @@ console.log( el.get(0) )
 			Save: function() {
 				var url = dlg.find('input').val()
 				if ( !url || url == '' )  return alert('Valid url needed!')
-				remote( {cmd: 'SRV', script: 'ideSaveTo', url: url, db: appName(), coll: coll, where: {_id: _id}, usercode: 'ide'}, function(res) {
+				remote( {cmd: 'SRV', script: 'ideSaveTo', url: url, db: br.app, coll: coll, where: {_id: _id}}, function(res) {
 					if ( res.err )  dlg.append('<p style="color:red;">Save ERROR!</p>')
 					else  dlg.append('<p>Saved</p>')
 				})
@@ -225,7 +228,7 @@ function getForm( callback, isReport ) {
 			, len = (isReport) ? reports.length : forms.length
 		for ( var i=0; i < len; i++ )  dat.push( {text: (isReport)?reports[i].name:forms[i].name} )
 		listBox( (isReport)?'Reports':'Forms', dat, function(ui) {
-			remote( {cmd:'GET',	db:appName(), coll:(isReport)?'reports':'forms', where:{name:ui.item.text()}, usercode: 'ide'}, function(res) {
+			remote( {cmd:'GET',	db:br.app, coll:(isReport)?'reports':'forms', where:{name:ui.item.text()}}, function(res) {
 				if ( res.dbret )  alert( res.dbret )
 				else  callback(res)
 			})

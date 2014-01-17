@@ -193,17 +193,17 @@ function setForm( elem ) {
 	contextMenuImg = {
 		bindings: {
 			'file': function(el) {
-				var db = appName()
-				fileUpload( db, function(res) {
-					if ( res.dbret )  alert( translate( 'Cannot upload file' ) )
-					else  $(el).attr( 'src', '/brumba?{"cmd":"FILE","mode":"r","db":"' +
-								db + '","_id":"' + res.newid + '" "img-w":' + $(el).css( 'width' ) +
-								' "img-h":' + $(el).css( 'height' ) +'}' )
+				fileUpload(br.app, function(res) {
+					if ( res.dbret ) alert(translate('Cannot upload file'))
+					else {
+						$(el).attr('data-id', res.newid)
+						imgLoad(br.app, $(el))
+					}
 				})
 			},
 			'database': function(el) {
 				var where = 
-				remote( {cmd:'GET',	db:appName(), coll:'fs.files', where:{contentType: {$regex:'^image/'}}}, function(res) {
+				remote( {cmd: 'GET', db: br.app, coll: 'fs.files', where: {contentType: {$regex:'^image/'}}}, function(res) {
 					if ( res.dbret )
 						alert( res.dbret )
 					else {
@@ -211,8 +211,8 @@ function setForm( elem ) {
 							len = res.length
 						for ( var i=0; i < len; i++ )  dat.push( {id:res[i]._id, text:res[i].filename} )
 						listBox( 'Files', dat, function(ui) {
-							$(el).attr( 'src', '/brumba?{"cmd":"FILE","mode":"r","db":"' +	appName() + 
-									'","_id":"' + ui.item[0].id + '"}' )
+							$(el).attr('data-id', ui.item[0].id)
+							imgLoad(br.app, $(el))
 						})
 					}
 				})
@@ -368,7 +368,7 @@ function setElement( el ) {
 /* Load form
 */
 function loadForm( id, isReport ) {
-	remote( {cmd: 'GET', db: appName(), coll: (isReport)?'reports':'forms', where: {_id: id}, usercode: 'ide'}, function(res) {
+	remote( {cmd: 'GET', db: br.app, coll: (isReport)?'reports':'forms', where: {_id: id}}, function(res) {
 		if ( !res.dbret ) {
 			ws.empty()
 			ws.removeAttr( 'style' )
@@ -392,16 +392,18 @@ function loadForm( id, isReport ) {
 					//if ( isReport ) watermark(b, b.attr('name'))
 				})
 			} else {
-				setElem( form.children() )
+				setElem(form.children())
 			}
-			setForm( form )
+			form.find('img').each( function() {						// image
+				imgLoad(br.app, $(this))
+			})
+			setForm(form)
 			form.find('.br-nested').each( function() {
 				var par = {
 						cmd: 'GET',
-						db: appName(),
+						db: br.app,
 						coll: (isReport) ? 'reports' : 'forms',
-						where: {name: $(this).attr('data-nested')},
-						usercode: 'ide'
+						where: {name: $(this).attr('data-nested')}
 					}
 					, self = this
 				remote( par, function(res) {
@@ -452,9 +454,9 @@ function toLabel( html ) {
 /* Delete form
 */
 function deleteForm() {
-	var id = $( '.br-form' ).data( '_id' )
+	var id = $('.br-form').data('_id')
 	if ( id ) {
-		remote( {cmd:'DEL',	db:appName(), coll:'forms', where:{_id:id}}, function(res) {
+		remote( {cmd: 'DEL',	db: br.app, coll: 'forms', where: {_id: id}}, function(res) {
 			if ( res.dbret ) {
 				alert( res.dbret )
 			} else {

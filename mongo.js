@@ -51,6 +51,7 @@ function dbOpen( dbname, callback ) {
 
 
 /* Open collection
+	ret = coll, db
 */
 function coll( dbname, collname, callback ) {
 	if ( dbname && collname ) {
@@ -80,7 +81,7 @@ function coll( dbname, collname, callback ) {
 
  par = { db, coll, where, fields/concat, sort, skip, limit, func }
  func = 'count' /
- ret = 'cursor' /
+ ret = 'cursor' / []
 */
 function get( par, callback, ret ) {
 	if ( par && par.db && par.coll ) {
@@ -168,7 +169,6 @@ function post( par, data, callback ) {
 	
 	var dat = ( Buffer.isBuffer(data[0]) ) ? JSON.parse(Buffer.concat(data)) : data
 	if ( dat.length == 0 )  return callback({err: U.err.data})
-console.log( dat )
 	
 	coll( par.db, par.coll, function(coll) {
 		if ( coll.err )  callback( coll )
@@ -191,7 +191,7 @@ console.log( dat )
 					if ( !U.isEmpty(rec) ) {
 console.log( 'update' )
 //console.log( rec )
-						coll.update( cond, {$set:rec}, { safe:true}, function(err, res) {
+						coll.update( cond, {$set:rec}, function(err, res) {
 							if ( err || res != 1  ) {
 								console.log('Database ' + par.db + ':  Collection ' + par.coll + ':  update error: ' + err )
 								callback( {err: U.err.upd} )
@@ -202,7 +202,7 @@ console.log( 'update' )
 				// Insert
 				} else {
 console.log( 'insert' )
-					coll.insert( rec, { safe:true}, function(err, res) {
+					coll.insert( rec, function(err, res) {
 //console.log( res )
 						if ( err ) {
 							console.log('Database ' + par.db + ':  Collection ' + par.coll + ':  insert error: ' + err )
@@ -235,7 +235,7 @@ console.log( 'arrayFields' )
 console.log( 'arrayFields: update' )
 console.log( cnd )
 console.log( set )
-									coll.update( cnd, {$set:set}, { safe:true}, function(err, res) {
+									coll.update( cnd, {$set:set}, function(err, res) {
 console.log( err )
 console.log( res )
 									})
@@ -251,7 +251,7 @@ console.log( res )
 console.log( 'arrayFields: insert' )
 //console.log( cond )
 //console.log( set )
-								coll.update( cond, {$push:set}, { safe:true}, function(err, res) {
+								coll.update( cond, {$push:set}, function(err, res) {
 								})
 							}
 						}
@@ -312,7 +312,7 @@ function del( par, callback ) {
 						s += sp[i]
 					}
 					pull[s] = { _id : where._id }
-					coll.update( cnd, {$pull:pull}, { safe:true}, function(err, res) {
+					coll.update( cnd, {$pull:pull}, function(err, res) {
 						if ( err )  callback( {err: U.err.del} )
 						else  callback( {err:0} )
 					})
@@ -393,7 +393,7 @@ function file( par, data, callback ) {
 			
 			// Read stream
 			} else if ( par.mode == 'r' ) {
-				if ( !data ) { callback( {err: U.err.param} );  return }
+				if ( !data ) return callback({err: U.err.param})
 				var res = data
 				res.writeHead(200, {'Content-Type': gs.contentType})
 				var stream = gs.stream( true )

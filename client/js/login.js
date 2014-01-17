@@ -59,11 +59,15 @@ $(function() {
 						localStorage.setItem( 'br.db', db.val() )
 						localStorage.setItem( 'br.username', user.val() )
 						localStorage.setItem( 'br.lang', lang.val() )
+						sessionStorage.setItem( 'br.app', app.val() )
+						sessionStorage.setItem( 'br.db', db.val() )
+						sessionStorage.setItem( 'br.username', user.val() )
+						sessionStorage.setItem( 'br.lang', lang.val() )
 					}
 					$(this).dialog( "close" );
 					
 					var host = ""
-					if ( window.location.host == "localhost:8080" ) { host = "http://localhost" }
+					if ( window.location.host == "localhost:8080" ) host = "http://localhost"
 					var par = {
 							app: app.val(),
 							db: db.val(),
@@ -76,8 +80,8 @@ $(function() {
 						data: par,
 						success: function(data) {
 							if ( data.usercode ) {
-								localStorage.setItem( 'br.usercode', data.usercode )
-								localStorage.setItem( 'br.menu', filterMenu(data.menu) )
+								sessionStorage.setItem( 'br.usercode', data.usercode )
+								sessionStorage.setItem( 'br.menu', filterMenu(data.menu) )
 								window.location = '/default.html'
 							} else {
 								$( "body" ).html( "<H1>Login error</H1>" )

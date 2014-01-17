@@ -24,6 +24,8 @@ function remote ( param, callback, dat ) {
 		if ( window.loadingIndicator )  loadingIndicator.show()
 	}, 500 )
 	
+	if ( !param.usercode ) param.usercode = br.usercode
+	
 	var ajax = {
 		url: '/brumba?' + JSON.stringify( param ),
 		timeout: 10000,
@@ -40,7 +42,7 @@ function remote ( param, callback, dat ) {
 			var msg = 'Remote error:  '
 			if ( jqXHR.status )  msg += httpErr[jqXHR.status]
 			alert(msg)
-			callback( {} )
+			callback( {err: msg} )
 		}
 	}
 	if ( dat ) {
@@ -100,10 +102,10 @@ function accordionMenu( callback ) {
 */
 function mainArgs ( str ) {
 	if ( str ) {
-		var qs = strRep( str, '$username', main.username )
-		qs = strRep( qs, '$user', main.userid )
-		if ( main.menuid )  qs = strRep( qs, '$menuid', main.menuid )
-		qs = strRep( qs, '$menulink', main.menulink )
+		var qs = strRep( str, '$username', br.username )
+		qs = strRep( qs, '$user', br.userid )
+		if ( br.menuid )  qs = strRep( qs, '$menuid', br.menuid )
+		qs = strRep( qs, '$menulink', br.menulink )
 		return qs
 	}
 }
@@ -135,32 +137,6 @@ console.log( form.modif )
 }
 
 
-/* Report call throw dpsReport (simple reports)
-*/
-function report ( form, repname ) {
-	reportSrv( form, repname, 'dpsReport')
-}
-
-
-/* Report call throw srv module (complex reports)
-*/
-function reportSrv ( form, report, srv ) {
-	var dat = {}
-	if ( Form.prototype.isPrototypeOf(form) )
-		dat = form.collect('V')
-	else
-		dat = form
-	var qs = 'Report ' + srv + ' S ' + main.usercode + ' "' + srvPar() + ' ' + report
-	if ( main.lang )
-		qs += ' lang=' + main.lang
-	qs += '"'
-	brRemote( qs, function(res) {
-		window.open( res.dbFile )
-	}, dat )
-}
-
-
-
 /* Set field
 */
 function setField( form, fldname, val ) {
@@ -174,10 +150,10 @@ function setField( form, fldname, val ) {
 /* Translate string
 */
 function translate(str, lang) {
-	if ( main.langData ) {
-		for ( var i=main.langData.length-1; i >= 0; i-- ) {
-			if ( main.langData[i].default == str ) {
-				var r = main.langData[i]
+	if ( br.langData ) {
+		for ( var i=br.langData.length-1; i >= 0; i-- ) {
+			if ( br.langData[i].default == str ) {
+				var r = br.langData[i]
 				return r[lang]
 			} 
 		}
@@ -223,18 +199,13 @@ function fileUpload( db, callback ) {
 	f.change( function() {
 		var file = f[0].files[0]
 		f.remove()
-		var par = {
-				cmd: 'FILE',
-				mode: 'w',
-				db: db,
-				filename: file.name,
+		var par = {cmd: 'FILE', mode: 'w', db: db, filename: file.name,
 				options: {
 					content_type: file.type,
 					metadata: {
 						lastModified: file.lastModifiedDate
 					}
-				},
-				usercode: main.usercode
+				}
 			}
 		remote( par, function(res) {
 			if ( res.newid )  res.filename = file.name
@@ -249,24 +220,12 @@ function fileUpload( db, callback ) {
 */
 function fileDownload( db, id, callback ) {
 	if ( !db || !id )  { callback( {dbret: dbErr.param} );  return }
-	var par = {
-				cmd: 'GET',
-				db: db,
-				coll: 'fs.files',
-				where: {_id: id},
-				usercode: main.usercode
-			}
+	var par = {cmd: 'GET', db: db, coll: 'fs.files', where: {_id: id}}
 	remote( par, function(res) {
 		if ( res.dbret )  callback( res )	// returns error
 		else {
 			var desc = res
-			, par = {
-					cmd: 'FILE',
-					mode: 'r',
-					db: db,
-					_id: id,
-					usercode: main.usercode
-				}
+			, par = {cmd: 'FILE', mode: 'r', db: db, _id: id}
 			remote( par, function(res) {
 				if ( res.dbret )  callback( res )	// returns error
 				else  callback( desc, res )
@@ -278,16 +237,24 @@ function fileDownload( db, id, callback ) {
 
 /* File show
 */
-function fileShow( db, id ) {
-	if ( db && id ) {
-		var par = {
-				cmd: 'FILE',
-				mode: 'r',
-				db: db,
-				_id: id,
-				usercode: main.usercode
-			}
+function fileShow( id ) {
+	if ( id ) {
+		var par = {cmd: 'FILE', mode: 'r', db: br.db, _id: id, usercode: br.usercode}
 		window.open( '/brumba?' + JSON.stringify(par) )
+	}
+}
+
+
+
+/* Image load
+*/
+function imgLoad( db, img ) {
+	if ( db && img ) {
+		var id = img.attr('data-id')
+		if ( id ) {
+			var par = {cmd: 'FILE',	mode: 'r', db: db, _id: id, usercode: br.usercode}
+			img.attr('src', '/brumba?' + JSON.stringify(par))
+		}
 	}
 }
 /*************** END File *************/
@@ -320,10 +287,10 @@ function listBox( title, dat, handler ) {
 		})
 		ul.menu({
 			select: function(ev, ui) {
-						handler( ui )
-						dlg.dialog('close')
-						dlg.remove()
-					}
+				handler( ui )
+				dlg.dialog('close')
+				dlg.remove()
+			}
 		})
 	}
 }
