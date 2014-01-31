@@ -44,9 +44,9 @@ function convert() {
 			var form = $( this )
 				, isTabular = false
 				, name = form.find('> Properties UID').text()
-console.log( name )
+//console.log( name )
 
-//if ( name == 'Tracking' )	{
+//if ( name == 'VehicleSetup' )	{
 
 			var htm = $( '<form class="br-form" />' )
 			if ( form.attr('type') == 'T' ) {
@@ -54,8 +54,8 @@ console.log( name )
 				isTabular = true
 			}
 			htm.attr('id', name )
-			htm.css( 'width', 1200 )
-			htm.css( 'height', 720 )
+			var qs = $(form.children()[0]).find('Query').text()
+			if ( qs ) htm.attr('data-query', query(qs, htm))
 			if ( isTabular ) {
 				var pan = form.find('> Panel')
 				for ( var i=0; i < pan.length; i++ ) {
@@ -124,7 +124,7 @@ function field( xml ) {
 	properties( xml, htm )
 	htm.attr( 'id', xml.find('UID').text() )
 	var val = xml.find('MaxChars').text()
-	if ( val != '0' )  htm.attr( 'maxlength', val )
+	if ( val && val != '0' )  htm.attr( 'maxlength', val )
 	return htm
 }
 
@@ -192,6 +192,57 @@ function properties( xml, htm ) {
 	if ( val ) {
 		var sp = val.split('.')
 		if ( sp[1] == 'b' ) htm.css('font', 'bold '+sp[2]+'px Arial')
+	}
+	val = xml.find('Query').text()
+	if ( val ) htm.attr('data-query', query(val))
+	val = xml.find('Display').text()
+	if ( val ) htm.attr('data-fields', '_id, '+val)
+}
+
+
+function query( qs, form ) {
+	if ( qs.substr(0,4) == 'TXT:' ) {
+		var spv = strSplit(qs.substr(4), ';')
+			, s = '['
+		for ( var i=0; i < spv.length; i++ ) {
+			var sp = strSplit(spv[i], ',')
+			if ( i > 0 ) s += ', '
+			s += '{val:'
+			if ( isNumber(sp[0]) ) s += sp[0]
+			else s += "'" + sp[0] + "'"
+			if ( sp[1] ) s += ", txt:'" + sp[1] + "'"
+			s += '}'
+		}
+		s += ']'
+		return s
+	} else if ( qs.substr(0,4) == 'SRV:' ) {
+		var sp = strSplit(qs.substr(4), '(')
+			, s = "{ cmd: 'SRV', script: '" + sp[0] + "' }" 
+		return s
+	} else {
+		var sp = strSplit(qs, '@')
+			, ord = sp[1]
+		sp = strSplit(sp[0], ':')
+		var s = "{ coll: '" + sp[0] + "'"
+		if ( sp[1] ) {
+			s += ", fields: '" + strDelBet(sp[1], '(', ')') + "'"
+			if ( form ) {
+				var sf = strRep(sp[1], '(', ':')
+				form.attr('data-fields', strRep(sf, ')', ''))
+			}
+		}
+		if ( sp[2] ) s += ', where: {' + sp[2] + '}'
+		if ( ord ) {
+			sp = strSplit(ord, ',')
+			s += ', sort: {'
+			for ( var i=0; i < sp.length; i++ ) {
+				if ( i > 0 ) s += ', '
+				s += sp[i] + ':1'
+			}
+			s += '}'
+		}
+		s += ' }'
+		return s
 	}
 }
 

@@ -81,6 +81,8 @@ $(function() {
 						success: function(data) {
 							if ( data.usercode ) {
 								sessionStorage.setItem( 'br.usercode', data.usercode )
+								sessionStorage.setItem( 'br.userid', data.userid )
+								sessionStorage.setItem( 'br.useradm', data.useradm )
 								sessionStorage.setItem( 'br.menu', filterMenu(data.menu) )
 								window.location = '/default.html'
 							} else {

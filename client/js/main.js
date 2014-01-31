@@ -48,7 +48,9 @@ $(function() {
 	$('ul#menu').addClass('accordion')
 	accordionMenu( function(pg, prm) {
 		page.prm = prm
-		pageLoad(pg)
+		var sp = strSplit(pg, ' ')
+		br.menuid = sp[1]
+		pageLoad(sp[0])
 	})
 
 	// Languages
@@ -138,6 +140,8 @@ function pageLoad( pgname ) {
 /* Initialize page
 */
 function pageInit() {
+	setSplitter($('div.split-s,div.split-e'))
+
 	// Tabs
 	var tabs = $('.br-tabs')
 	if ( tabs ) {
@@ -203,10 +207,12 @@ function pageInit() {
 				, query = $select.attr('data-query')
 				, fields = $select.attr('data-fields')
 			if ( query ) {
-				var q = readJson(query)
+				var q = toJSON(query)
+				if ( !q ) sel(n+1)
 				if ( Array.isArray(q) ) {			// array of data
+					$select.append('<option value=""></option>')
 					for ( var i=0, len=q.length; i < len; i++ ) {
-						var s = q[i].lab || q[i].val
+						var s = q[i].txt || q[i].val
 						$select.append('<option value="' + q[i].val + '">'+ s + '</option>')
 					}
 					sel(n+1)
@@ -406,7 +412,7 @@ function pageInit() {
 									, val = rec[name]
 								if ( !val )  val = ''
 								else {
-									if ( val.lab )  val = val.lab
+									if ( val.txt )  val = val.txt
 									else {
 										var fld = mas.tag.find('#'+name)
 										if ( fld.is('select') )  val = fld.find('option[value="'+val+'"]').text()

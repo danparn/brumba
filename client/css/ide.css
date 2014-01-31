@@ -113,15 +113,14 @@ span.color.icon {
 	position: absolute;
 	width: 100px;
 	height: 16px;
-/*	font-size: 11px;*/
 	z-index: 2;
 }
 .br-field {
 	position: absolute;
 	border-style: inset;
 	border-width: 1px;
-/*	font-size: 11px;*/
 	background: white;
+	overflow: hidden;
 	width: 100px;
 	height: 16px;
 	z-index: 2;
@@ -204,6 +203,7 @@ img {
 }
 .br-panel {
 	padding: 0;
+	overflow: hidden;
 }
 .split-s.ui-resizable {
 	border-bottom: thin solid grey;
@@ -285,6 +285,16 @@ img {
 	top: 12px;
 	left: 100px;
 	width: 300px;
+}
+.br-script label#forexternal {
+	position: absolute;
+	top: 16px;
+	left: 520px;
+}
+.br-script input#external {
+	position: absolute;
+	top: 14px;
+	left: 600px;
 }
 .br-script .br-editor {
 	width: 800px;

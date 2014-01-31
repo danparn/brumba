@@ -36,6 +36,7 @@ var contextMenuPage = {
 		  
 		// Set Form
 		'set-form': function(el) {
+console.log( el )
 			getForm( function(res) {
 				if ( res ) {
 					var frm = $( res[0].html )
@@ -170,10 +171,10 @@ $('.br-pane').removeClass('br-pane').addClass('br-panel')
 					})
 				}
 			})
-			setSplitter( $('div.split-s,div.split-e') )
-			$('div.br-tabs').tabs().tabs( {active: 0} )
-			setPage( pg )
-			showProperties( pg.get(0) )
+			setSplitter($('div.split-s,div.split-e'))
+			$('div.br-tabs').tabs().tabs({active: 0})
+			setPage(pg)
+			showProperties(pg.get(0))
 		}
 	})
 }

@@ -132,12 +132,12 @@ function userMenu( par, callback ) {
 	var user, perm
 
 	// User
-	M.get({db: par.db, coll: 'users', where: {username: par.username}}, function(res) {
+	M.get({db: par.db, coll: '_users', where: {username: par.username}}, function(res) {
 		if ( res.err )  return callback(res)
 		if ( !res[0] ) {
 			if ( par.username == 'admin' && par.password == 'brumba'  ) {
 				user = { username: 'admin', password: 'brumba', admin: true }
-				M.post( {db: par.db, coll: 'users'}, user, function(res) {
+				M.post( {db: par.db, coll: '_users'}, user, function(res) {
 					if ( res.err ) callback(res)
 					user._id = res.newid
 					permissions()
@@ -157,7 +157,7 @@ function userMenu( par, callback ) {
 		} else {
 			perm = user.permissions || []
 			if ( user.usergroups ) {
-				M.get({db: par.db, coll: 'users', where: {username: {$in: user.usergroups.split(/\s*,\s*/)}}, concat: 'permissions'}, function(res) {
+				M.get({db: par.db, coll: '_users', where: {username: {$in: user.usergroups.split(/\s*,\s*/)}}, concat: 'permissions'}, function(res) {
 					if ( res.err )  callback( res )
 					else {
 						perm = perm.concat( res )
@@ -171,7 +171,8 @@ function userMenu( par, callback ) {
 	// Create menu
 	function menu() {
 		M.get( {db: par.app, coll: 'application', where: { section: 'menu' }}, function(res) {
-			var ret = {usercode: newCode(), userid: user._id, useradm: user.admin}
+			var ret = {usercode: newCode(), userid: user._id}
+			if ( user.admin ) ret.useradm = user.admin
 			if ( res.err )  return callback(res)
 			else if ( !res[0] ) return ret
 			else {

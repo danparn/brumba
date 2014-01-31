@@ -80,21 +80,19 @@ function strGetBet( str, from, to, include ) {
 /* Delete substring between delimiters
 */
 function strDelBet( str, from, to ) {
-	if ( s && from && to ) {
+	if ( str && from && to ) {
 		var s = str
 		  , fl = from.length
 		  , tl = to.length
-		  , done = 0
-		do {
-			var f = s.indexOf( from )
-			  , t = s.indexOf( to, f+fl )
-			if ( f >= 0 && t > 0 ) {
-				s = s.substr(0,f) + s.substr(t+tl)
+		while ( true ) {
+			var fi = s.indexOf( from )
+			  , ti = s.indexOf( to, fi+fl )
+			if ( fi >= 0 && ti > 0 ) {
+				s = s.substr(0,fi) + s.substr(ti+tl)
 			} else {
-				done = 1
+				return s
 			}
-		} while ( done <= 0 )
-		return s
+		}
 	}
 	return str
 }
@@ -103,7 +101,7 @@ function strDelBet( str, from, to ) {
 /* Replace all substrings from with to
 */
 function strRep( str, from, to ) {
-	if ( str && from && to ) {
+	if ( str && from ) {
 		var s = str,
 			done = 0
 		
@@ -229,6 +227,14 @@ function strNowDateTime() {
  *		Miscellaneous functions
  *****************************************************/
 
+
+/* Is numeric value
+*/
+function isNumber( str ) {
+  return !isNaN(parseFloat(str)) && isFinite(str)
+}
+
+
 /* Is empty object
 */
 function isEmpty( obj ) {
@@ -306,6 +312,32 @@ function cloneJSON( json ) {
 
 
 
+/* String to JSON
+*/
+function toJSON( str ) {
+	if ( str ) {
+		str = strRep(str, "'", '"')
+		var p = 0
+			, i, c
+		while ( true ) {
+			p = str.indexOf(':', p)
+			if ( p < 0 ) return JSON.parse(str)
+			i = p-1
+			do c = str.charAt(i--)
+			while ( ',{"'.indexOf(c) < 0 && i >= 0 )
+			if ( ',{'.indexOf(c) >= 0 ) {
+				str = str.substring(0,i+2) + '"' + str.substring(i+2,p).trim() + '"' + str.substr(p)
+			}
+			p++ 
+		}
+	}
+	return {}
+}
+
+
+
+
+
 
 if ( typeof module != 'undefined' && module.exports ) {
 	// export for node
@@ -320,5 +352,6 @@ if ( typeof module != 'undefined' && module.exports ) {
 	exports.objMerge = objMerge
 	exports.objFields = objFields
 	exports.cloneJSON = cloneJSON
+	exports.toJSON = toJSON
 	exports.isEmpty = isEmpty
 }

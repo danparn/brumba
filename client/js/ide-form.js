@@ -10,12 +10,12 @@
  *********************************************/
 // New form
 function newForm() {
-	var form = $( '<form id="' + strRep(strNowDateTime(),' ','_' ) + '" class="br-form" />' )
+	var form = $('<form id="' + strRep(strNowDateTime(),' ','_') + '" class="br-form" />')
 	closeEvents()
 	ws.empty()
-	addFlds( form, 5, 5 )
-	ws.append( form )
-	setForm( form )
+	addFlds(form, 5, 5)
+	ws.append(form)
+	setForm(form)
 }
 
 
@@ -37,7 +37,7 @@ function setForm( elem ) {
 	if ( !(elem.hasClass('br-band') && elem.parent().hasClass('br-tabular')) ) {
 		elem.click( function(ev) {
 			ev.stopImmediatePropagation()
-			showProperties( this )
+			showProperties(this)
 		})
 	}
 
@@ -46,40 +46,40 @@ function setForm( elem ) {
 		  
 			// Label
 			'label': function(el) {
-				var pos = $(el).data( 'relativePos' )
-				$(el).append( newLabel( 'label', pos.top, pos.left) )
+				var pos = $(el).data('relativePos')
+				$(el).append(newLabel('label', pos.top, pos.left))
 			},
 			
 			// Field
 			'field': function(el) {
-				var pos = $(el).data( 'relativePos' )
-				$(el).append( newField( 'field', pos.top, pos.left) )
+				var pos = $(el).data('relativePos')
+				$(el).append(newField('field', pos.top, pos.left))
 			},
 			
 			// Button
 			'button': function(el) {
-				var pos = $(el).data( 'relativePos' ),
-					but = $( '<label id="button" class="br-button" type="button" style="top:' + pos.top +
-						'px;left:' + pos.left + 'px;">button</label>' )
-				setElement( but )
-				$(el).append( but )
+				var pos = $(el).data('relativePos'),
+					but = $('<label id="button" class="br-button" type="button" style="top:' + pos.top +
+						'px;left:' + pos.left + 'px;">button</label>')
+				setElement(but)
+				$(el).append(but)
 			},
 			
 			// Image
 			'image': function(el) {
-				var pos = $(el).data( 'relativePos' ),
-					img = $( '<img src="#" style="top:' + pos.top + 'px;left:' + pos.left + 'px;"/>' )
-				setElement( img )
-				$(el).append( img )
-				img.contextMenu( 'contextMenuImg', contextMenuImg)
+				var pos = $(el).data('relativePos'),
+					img = $('<img src="#" style="top:' + pos.top + 'px;left:' + pos.left + 'px;"/>')
+				setElement(img)
+				$(el).append(img)
+				img.contextMenu('contextMenuImg', contextMenuImg)
 			},
 			
 			// Copy
 			'copy': function(el) {
 				var $el = $(el)
 				while ( !$el.hasClass('br-form') )  $el = $el.parent()
-				$el.attr( 'id', $el.attr('id') + '_COPY' )
-				$el.removeData( '_id' )
+				$el.attr('id', $el.attr('id') + '_COPY')
+				$el.removeData('_id')
 				onSave()
 			},
 			
@@ -88,15 +88,15 @@ function setForm( elem ) {
 			
 			// Move
 			'move': function(el) {
-				var pos = $(el).data( 'relativePos' ),
+				var pos = $(el).data('relativePos'),
 					last
-				$( '.selected' ).each( function() {
+				$('.selected').each( function() {
 					var cur = $(this).position()
 					if ( last ) {
 						pos.left += cur.left - last.left
 						pos.top += cur.top - last.top
 					}
-					$(el).append( this )
+					$(el).append(this)
 					$(this).css({
 						left: pos.left,
 						top: pos.top
@@ -108,7 +108,7 @@ function setForm( elem ) {
 			'import-form':  function(el) {
 				getForm( function(res) {
 					if ( res ) {
-						var frm = $( toLabel(res[0].html) )
+						var frm = $(toLabel(res[0].html))
 						if ( frm.hasClass('br-tabular') ) {
 							var prnt = $(el).parent()
 								, band = 'header,detail,total'.split(',')
@@ -121,21 +121,21 @@ function setForm( elem ) {
 									append(b , frm.find('.br-'+band[i]).html())
 								} else {
 									var b = frm.find('.br-'+band[i])
-									insertBand( top, b )
+									insertBand(top, b)
 									top += parseInt(b.css('height'), 10)
 								}
 							}
 						} else {
-							append( $(el), frm.html() )
+							append($(el), frm.html())
 						}
 					}
 				})
 
 				function append( band, html ) {
-					band.append( html )
+					band.append(html)
 					band.children().each( function() {
 						var $this = $(this)
-						if ( !$this.hasClass('watermark') && !$this.hasClass('ui-resizable-handle') )  setElement( $this )
+						if ( !$this.hasClass('watermark') && !$this.hasClass('ui-resizable-handle') )  setElement($this)
 					})
 				}
 
@@ -144,7 +144,7 @@ function setForm( elem ) {
 						var $this = $(this)
 						$this.css('top', parseInt($this.css('top'), 10) + top)
 						$(el).append(this)
-						if ( !$this.hasClass('watermark') && !$this.hasClass('ui-resizable-handle') )  setElement( $this )
+						if ( !$this.hasClass('watermark') && !$this.hasClass('ui-resizable-handle') )  setElement($this)
 					})
 				}
 			},
@@ -155,11 +155,11 @@ function setForm( elem ) {
 						var pos = $(el).data('relativePos')
 							, ns = $('<div class="br-nested" data-nested="' + res[0].name + '" style="top:' + pos.top + 'px; left:' +
 												pos.left + 'px;"/>')
-						ns.append( toLabel(res[0].html) )
-						setElement( ns )
-						$(el).append( ns )
+						ns.append(toLabel(res[0].html))
+						setElement(ns)
+						$(el).append(ns)
 					}
-				}, true )
+				}, true)
 			},
 			
 			'group':  function(el) {
@@ -171,7 +171,7 @@ function setForm( elem ) {
 			},
 
 			'rectangle':  function(el) {
-				var pos = $(el).data( 'relativePos' )
+				var pos = $(el).data('relativePos')
 					, rect = newLabel('', pos.top, pos.left)
 				rect.css('border', '1px solid')
 				rect.css('height', 20)
@@ -183,7 +183,7 @@ function setForm( elem ) {
 		onContextMenu: function(ev) {
 			var el = $(ev.target)
 			if ( el.is('.br-form, .br-band') ) {
-				setPos( el, ev )
+				setPos(el, ev)
 				return true
 			} else
 				return false
@@ -203,14 +203,14 @@ function setForm( elem ) {
 			},
 			'database': function(el) {
 				var where = 
-				remote( {cmd: 'GET', db: br.app, coll: 'fs.files', where: {contentType: {$regex:'^image/'}}}, function(res) {
+				remote({cmd: 'GET', db: br.app, coll: 'fs.files', where: {contentType: {$regex:'^image/'}}}, function(res) {
 					if ( res.dbret )
-						alert( res.dbret )
+						alert(res.dbret)
 					else {
 						var dat = [],
 							len = res.length
-						for ( var i=0; i < len; i++ )  dat.push( {id:res[i]._id, text:res[i].filename} )
-						listBox( 'Files', dat, function(ui) {
+						for ( var i=0; i < len; i++ )  dat.push({id:res[i]._id, text:res[i].filename})
+						listBox('Files', dat, function(ui) {
 							$(el).attr('data-id', ui.item[0].id)
 							imgLoad(br.app, $(el))
 						})
@@ -220,8 +220,8 @@ function setForm( elem ) {
 		}
 	}
 
-	elem.contextMenu( cm, contextMenuForm)
-	if ( elem.hasClass('br-form') )  elem.find( 'img' ).contextMenu( 'contextMenuImg', contextMenuImg)
+	elem.contextMenu(cm, contextMenuForm)
+	if ( elem.hasClass('br-form') )  elem.find('img').contextMenu('contextMenuImg', contextMenuImg)
 }
 
 
@@ -229,12 +229,12 @@ function setForm( elem ) {
 /* Clean all form fields
 */
 function resetForm( form ) {
-    form.find( 'input:text, input:password, input:file, select, textarea' )
-    	.val( '' )
+    form.find('input:text, input:password, input:file, select, textarea')
+    	.val('')
     	.removeProp('disabled')
-    form.find( 'input:radio, input:checkbox' )
-    	.removeAttr( 'checked' )
-    	.removeAttr( 'selected' )
+    form.find('input:radio, input:checkbox')
+    	.removeAttr('checked')
+    	.removeAttr('selected')
     	.removeProp('disabled')
 }
 
@@ -244,53 +244,53 @@ function resetForm( form ) {
 */
 function addFields() {
 	var form = ws.children()
-	if ( form.hasClass( 'br-form' ) ) {
+	if ( form.hasClass('br-form') ) {
 		
 		// Tabular
-		if ( form.hasClass( 'br-tabular' ) ) {
-			var detail = form.find( 'div.br-detail' ),
+		if ( form.hasClass('br-tabular') ) {
+			var detail = form.find('div.br-detail'),
 				left = 0,
-				fld = detail.find( '.br-field' )
+				fld = detail.find('.br-field')
 			for ( var i=fld.length-1; i>=0; i--) {
 				var el = $(fld[i]),
-					l = parseInt(el.css( 'left' ), 10),
-					w = parseInt(el.css( 'width' ), 10)
+					l = parseInt(el.css('left'), 10),
+					w = parseInt(el.css('width'), 10)
 				if ( left < l+w )  left = l + w
 			}
-			addFlds( form, 2, left+3, true )
+			addFlds(form, 2, left+3, true)
 
 		// Form
 		} else { 
-			var pos = form.data( 'relativePos' )
-			addFlds( form, pos.top, pos.left )
+			var pos = form.data('relativePos')
+			addFlds(form, pos.top, pos.left)
 		}
 	}
 }
 
 function addFlds( form, top, left, tabular ) {
-	var header = form.find( 'div.br-header' ),
-		detail = form.find( 'div.br-detail' ),
-		sp = strSplit( $( 'textarea#text' ).val(), /\s*,\s*/ )
+	var header = form.find('div.br-header'),
+		detail = form.find('div.br-detail'),
+		sp = strSplit($('textarea#text').val(), /\s*,\s*/)
 	for ( var i in sp ) {
 		var lb = sp[i],
-			pre = lb.substr( 0, 1 ).toUpperCase(),
+			pre = lb.substr(0, 1).toUpperCase(),
 			x = 0
-		lb = pre + lb.substr( 1 ).replace( '_',' ' )
+		lb = pre + lb.substr(1).replace('_',' ')
 		if ( !tabular )  lb += ':'
 		var el = newLabel(lb, top, left, sp[i])
 		if ( tabular ) {
-			header.append( el )
+			header.append(el)
 			x = left
 		} else {
-			form.append( el )
+			form.append(el)
 			x = left + 100
 		}
 		el = newField(sp[i], top, x)
 		if ( tabular ) {
-			detail.append( el )
+			detail.append(el)
 			left += 103
 		} else {
-			form.append( el )
+			form.append(el)
 			top += 20
 		}
 	}
@@ -299,20 +299,20 @@ function addFlds( form, top, left, tabular ) {
 
 /* Create new Label
 */
-function newLabel(text, top, left, input) {
-	var el = $( '<label class="br-label" for="' + input + '" style="top:' + top + 'px;left:' + left + 
-			'px;">' + text + '</label>' )
-	setElement( el )
+function newLabel( text, top, left, input ) {
+	var el = $('<label class="br-label" for="' + input + '" style="top:' + top + 'px;left:' + left + 
+			'px;">' + text + '</label>')
+	setElement(el)
 	return el
 }
 
 
 /* Create new Field
 */
-function newField(id, top, left) {
-	el = $( '<label class="br-field" id="' + id + '" type="text" style="top:' + top + 'px;left:' + 
-			left + 'px;">' + id + '</label>' )
-	setElement( el )
+function newField( id, top, left ) {
+	el = $('<label class="br-field" id="' + id + '" type="text" style="top:' + top + 'px;left:' + 
+			left + 'px;">' + id + '</label>')
+	setElement(el)
 	return el
 }
 
@@ -326,17 +326,17 @@ function setElement( el ) {
 	el.click( function(ev) {
 		ev.stopImmediatePropagation()
 		if ( ev.ctrlKey )
-			$(this).toggleClass( 'selected' )
-		else if ( !$(this).hasClass( 'selected' ) ) {
-			$( '.selected' ).removeClass( 'selected' )
-			$(this).addClass( 'selected' )
+			$(this).toggleClass('selected')
+		else if ( !$(this).hasClass('selected') ) {
+			$('.selected').removeClass('selected')
+			$(this).addClass('selected')
 		}
-		if ( $(this).is('td') )  showGridColumnProperties( this )
-		else  showProperties( this )
-	}).drag( 'init', function(ev) {
-		w = parseInt($(this).css( 'width' ), 10)
-		h = parseInt($(this).css( 'height' ), 10)
-		if ( $(this).is( '.selected' ) && !ev.shiftKey )  return $( '.selected' );
+		if ( $(this).is('td') )  showGridColumnProperties(this)
+		else  showProperties(this)
+	}).drag('init', function(ev) {
+		w = parseInt($(this).css('width'), 10)
+		h = parseInt($(this).css('height'), 10)
+		if ( $(this).is('.selected') && !ev.shiftKey )  return $('.selected')
 	}).drag( function(ev, dd) {
 		if ( ev.shiftKey ) {
 			$(this).css({
@@ -354,12 +354,12 @@ function setElement( el ) {
 		relative: true,
 		drop: false,
 		distance: 10 
-	}).drop( 'start', function() {
-		//$(this).addClass( 'active' )
-	}).drop(function( ev, dd ){
-		$(this).addClass( 'selected' )
+	}).drop('start', function() {
+		//$(this).addClass('active')
+	}).drop( function(ev, dd){
+		$(this).addClass('selected')
 	}).drop( 'end', function() {
-		//$(this).removeClass( 'active' )
+		//$(this).removeClass('active')
 	})
 }
 
@@ -368,22 +368,22 @@ function setElement( el ) {
 /* Load form
 */
 function loadForm( id, isReport ) {
-	remote( {cmd: 'GET', db: br.app, coll: (isReport)?'reports':'forms', where: {_id: id}}, function(res) {
+	remote({cmd: 'GET', db: br.app, coll: (isReport)?'reports':'forms', where: {_id: id}}, function(res) {
 		if ( !res.dbret ) {
 			ws.empty()
-			ws.removeAttr( 'style' )
-			var setElem = function( elems ) {
+			ws.removeAttr('style')
+			var setElem = function(elems) {
 					for ( var i=elems.length-1; i >= 0; i-- ) {
-						setElement( $(elems[i]) )
+						setElement($(elems[i]))
 					}
 				}
-			ws.append( toLabel(res[0].html) )
-			var form = $( ws.children() )
+			ws.append(toLabel(res[0].html))
+			var form = $(ws.children())
 				, events = res[0].events
 				, eventsDlg = $('.br-events')
 			if ( events )  form.data('events', res[0].events)
 			else  events = ''
-			if ( eventsDlg.length > 0 )  eventsDlg.data('editor').setValue( events )
+			if ( eventsDlg.length > 0 )  eventsDlg.data('editor').setValue(events)
 			if ( form.hasClass('br-tabular') || isReport ) {
 				form.children().each( function() {
 					var b = $(this)
@@ -406,18 +406,18 @@ function loadForm( id, isReport ) {
 						where: {name: $(this).attr('data-nested')}
 					}
 					, self = this
-				remote( par, function(res) {
+				remote(par, function(res) {
 					if ( !res.dbret ) {
-						$(self).append( toLabel(res[0].html) )
+						$(self).append(toLabel(res[0].html))
 					}
 				})
 			})
-/*form.removeAttr( '_id' )
+/*form.removeAttr('_id')
 $('.header').removeClass('header').addClass('br-header')
 $('.detail').removeClass('detail').addClass('br-detail')
 $('.total').removeClass('total').addClass('br-total')*/
-			form.data(  '_id', id )
-			showProperties( form.get(0) )
+			form.data( '_id', id)
+			showProperties(form.get(0))
 		}
 	})
 }
@@ -427,24 +427,24 @@ $('.total').removeClass('total').addClass('br-total')*/
 /* Convert br-fields to ide labels
 */
 function toLabel( html ) {
-	var frm = $( html )
-	frm.find( '.br-field' ).each( function() {
-		var l = $( '<label/>' ),
+	var frm = $(html)
+	frm.find('.br-field').each( function() {
+		var l = $('<label/>'),
 			$this = $(this),
-			type = $this.attr( 'type' )
-		copyAttr( this, l )
-		if ( $this.is( 'select' ) )  l.attr( 'type', 'select' )
-		else if ( $this.is( 'textarea' ) )  l.attr( 'type', 'textarea' )
-		else if ( type )  l.attr( 'type', type)
-		l.text( $this.attr( 'id' ) )
-		setTypeStyle( l )
-		$this.replaceWith( l )
+			type = $this.attr('type')
+		copyAttr(this, l)
+		if ( $this.is('select') )  l.attr('type', 'select')
+		else if ( $this.is('textarea') )  l.attr('type', 'textarea')
+		else if ( type )  l.attr('type', type)
+		l.text($this.attr('id') )
+		setTypeStyle(l)
+		$this.replaceWith(l)
 	})
-	frm.find( '.br-button' ).each( function() {
+	frm.find('.br-button').each( function() {
 		var $this = $(this),
-			l = $( '<label type="button">' + $this.text() + '</label>' )
-		copyAttr( this, l )
-		$this.replaceWith( l )
+			l = $('<label type="button">' + $this.text() + '</label>')
+		copyAttr(this, l)
+		$this.replaceWith(l)
 	})
 	return frm
 }
@@ -456,9 +456,9 @@ function toLabel( html ) {
 function deleteForm() {
 	var id = $('.br-form').data('_id')
 	if ( id ) {
-		remote( {cmd: 'DEL',	db: br.app, coll: 'forms', where: {_id: id}}, function(res) {
+		remote({cmd: 'DEL',	db: br.app, coll: 'forms', where: {_id: id}}, function(res) {
 			if ( res.dbret ) {
-				alert( res.dbret )
+				alert(res.dbret)
 			} else {
 				ws.empty()
 				onLoad()
@@ -484,13 +484,13 @@ function newTabular() {
 
 
 function multiband( cls, bands, report ) {
-	var form = $( '<form id="' + strRep(strNowDateTime(),' ','_' ) + '" class="' + cls + ' br-form" />' )
-		, band = $( '<div class="br-band split-s" style="width:100%; height:20px;" />' )
+	var form = $('<form id="' + strRep(strNowDateTime(),' ','_') + '" class="' + cls + ' br-form" />')
+		, band = $('<div class="br-band split-s" style="width:100%; height:20px;" />')
 		, sp = strSplit(bands, ',')
 	closeEvents()
 	ws.empty()
-	ws.append( form )
-	setForm( form )
+	ws.append(form)
+	setForm(form)
 	for ( var i=0; i < sp.length; i++ ) {
 		var b = band.clone().addClass(sp[i])
 			, name = sp[i].substr(3)
@@ -499,7 +499,7 @@ function multiband( cls, bands, report ) {
 		form.append(b)
 		setForm(b)
 	}
-	addFlds( form, 2, 5, 'T' )
+	addFlds(form, 2, 5, 'T')
 	form.click( function(ev) {
 		showProperties(this)
 	})
@@ -529,21 +529,21 @@ function newReport() {
 	$('.br-band').css('width', 595)		// 595 X 842 72dpi     2480 X 3508  300dpi
 	.click( function(ev) {
 		ev.stopImmediatePropagation()
-		showProperties( this )
+		showProperties(this)
 	})
 	var foo = $('.br-footer')
 	foo.css('height', 40)
-	foo.append( newLabel('Date:', 10, 5, '_date') )
-	foo.append( newField('_date', 10, 50) )
-	foo.append( newLabel('Page:', 10, 0, '_page') )
-	foo.append( newField('_page', 10, 0) )
+	foo.append(newLabel('Date:', 10, 5, '_date'))
+	foo.append(newField('_date', 10, 50))
+	foo.append(newLabel('Page:', 10, 0, '_page'))
+	foo.append(newField('_page', 10, 0))
 	pageNumPos()
 }
 
 
 function pageNumPos() {
 	var foo = $('.br-footer')
-		, w = parseInt( foo.css('width'), 10 )
+		, w = parseInt(foo.css('width'), 10)
 	foo.find('label[for="_page"]').css('left', w - 100)
 	foo.find('label#_page').css('left', w - 50).css('width', 30)
 }

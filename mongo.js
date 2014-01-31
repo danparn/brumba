@@ -92,6 +92,11 @@ function get( par, callback, ret ) {
 			else {
 				var where = par.where || {}
 					, fields = par.fields || {}
+				if ( typeof fields == 'string' ) {
+					var sp = U.strSplit(fields, ',')
+					fields = {}
+					for ( var i=0; i < sp.length; i++ ) fields[sp[i]] = 1
+				}
 				oid(where)
 				if ( par.func == 'count') {
 					coll.count(where, function(err, count) {
@@ -373,7 +378,7 @@ console.log( p )
 /* GridStore file read/write
 
  par = { db, _id, filename, mode, path, filetype, options }
- mode: w/ws/r/rs (write / write stream / read / read stream)
+ mode: w/wf/r/rf (write / write file / read / read file
  path: full file path
  options: GridStore options
 */
@@ -474,6 +479,39 @@ function oid( rec ) {
 
 
 
+/* Returns one field array
+*/
+function subQuery( par, callback ) {
+	if ( par.field ) {
+		get(par, function(res) {
+			if ( res.err ) return callback(res)
+			var ret = []
+				, p = par.field.lastIndexOf('.')
+				, f, ar
+			if ( p > 0 ) {
+				a = par.field.substr(p+1)
+				f = par.field.substr(0, p)
+			} else f = par.field
+			for( var i=0, len=res.length; i < len; i++ ) {
+				var r = res[i]
+				if ( r[f] ) {
+					if ( p > 0 ) {
+						var rf = r[f]
+						for ( var j=0, lenj=rf.length; j < len; j++ ) {
+							var rj = rf[j]
+							if ( rj[a] ) ret.push(rj[a])
+						}
+					} else ret.push(r[f])
+				}
+			}
+			callback(ret)
+		})
+	} else callback([])
+}
+
+
+
+
 exports.setURL = setURL
 exports.dbOpen = dbOpen
 exports.coll = coll
@@ -483,3 +521,4 @@ exports.post = post
 exports.del = del
 exports.file = file
 exports.ObjectID = ObjectID
+exports.subQuery = subQuery

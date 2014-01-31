@@ -11,7 +11,6 @@ var http = require('http')
 
 	, cheerio =  require('cheerio')
 	, PDFDocument = require('pdfkit')
-	, json = require('./client/js/lib/json')
 
 	, M = require('./mongo')
 	, U = require('./client/js/util')
@@ -31,18 +30,18 @@ function remote( par, callback, dat ) {
 	
 	http.request( opt, function(res) {
 		var data = []
-		res.on( 'data', function(chunk) {
+		res.on('data', function(chunk) {
 			data[data.length] = chunk
 		})
-		.on( 'end', function() {
-			if ( res.headers['content-type'] == 'application/json' )  callback( JSON.parse(data.concat()) )
-			else callback( data.concat() )
+		.on('end', function() {
+			if ( res.headers['content-type'] == 'application/json' )  callback(JSON.parse(data.concat()))
+			else callback(data.concat())
 		})
 	})
-	.on( 'error', function(err) {
-		callback( {err: U.err.data, mess: err} )
+	.on('error', function(err) {
+		callback({err: U.err.data, mess: err})
 	})
-	.end( JSON.stringify(dat) )
+	.end(JSON.stringify(dat))
 }
 
 
@@ -51,12 +50,12 @@ function remote( par, callback, dat ) {
 */ 
  function flexigridData( par, callback ) {
 	par.func = 'count'
-	M.get( par, function(res) {
+	M.get(par, function(res) {
 		var tot = res.count
 		delete par.func
 		par.skip = (par.page-1) * par.limit
-		M.get( par, function(res) {
-			callback( {"page":par.page, "total":tot, "rows":res} )
+		M.get(par, function(res) {
+			callback({"page":par.page, "total":tot, "rows":res})
 		})
 	})
 }
@@ -72,7 +71,7 @@ function menuItems( par, callback ) {
 			coll: 'application',
 			where: { section: 'menu' }
 		}
-	M.get( op, function(res) {
+	M.get(op, function(res) {
 		if ( res.err || !res[0] )  callback(res)
 		else {
 			var m = '<option></option>',
@@ -83,8 +82,8 @@ function menuItems( par, callback ) {
 					, pg = null, tit = null
 					, tabs = 0
 				if ( ln ) {
-					var tit = U.strGetBet( ln, '"', '"' ),
-						pg = ln.substr( ln.lastIndexOf('"') +1 ).trim( ' ' )
+					var tit = U.strGetBet(ln, '"', '"'),
+						pg = ln.substr(ln.lastIndexOf('"') +1).trim()
 					for ( var j=0; ln[j] == '\t'; j++ )  tabs++
 				}
 				if ( tabs < lastabs ) {
@@ -99,7 +98,7 @@ function menuItems( par, callback ) {
 				}
 				lastabs = tabs
 			}
-			callback( {html: m} )
+			callback({html: m})
 		}
 	})	
 }
@@ -109,7 +108,7 @@ function menuItems( par, callback ) {
 /* IDE save to other application
 */
 function ideSaveTo( par, callback ) {
-	M.get( par, function(res) {
+	M.get(par, function(res) {
 		if ( res.err )  return callback(res)
 		else {
 			var u = par.url.split('/')
@@ -128,21 +127,21 @@ function ideSaveTo( par, callback ) {
 			
 			// Remote
 			if ( h ) {
-				remote( opt, function(r) {
+				remote(opt, function(r) {
 					if ( r.err ) return callback(r)
 					opt.cmd = 'POST'
 					if ( r[0] )  res[0]._id = r[0]._id
-					remote( opt, function(r) {
+					remote(opt, function(r) {
 						callback(r)
 					}, res)
 				})
 			
 			// Local
 			} else {
-				M.get( opt, function(r) {
+				M.get(opt, function(r) {
 					if ( r.err ) return callback(r)
 					if ( r[0] )  res[0]._id = r[0]._id
-					M.post( opt, res, function(r) {
+					M.post(opt, res, function(r) {
 						callback(r)
 					})
 				})
@@ -175,7 +174,7 @@ function Report( par, callback, pdf ) {
 	this.font = {size: 11, fam: 'Helvetica'}
 	this.selects = []
 
-	this.init( callback )
+	this.init(callback)
 }
 
 Report.prototype = {
@@ -185,14 +184,14 @@ Report.prototype = {
 	init : function( callback ) {
 		if ( !(this.par.app && this.par.db && this.par.args && this.par.args.report) ) {
 			this.err = U.err.param
-			return callback( this.err )
+			return callback(this.err)
 		}
 
 		var self = this
-		M.get( {db: this.par.app, coll: 'reports', where: { name: this.par.args.report}}, function(res) {
+		M.get({db: this.par.app, coll: 'reports', where: { name: this.par.args.report}}, function(res) {
 			if ( res.err )  return callback(res)
 			if ( res.length == 0 )  return callback({err: U.err.param})
-			self.$ = cheerio.load( res[0].html )
+			self.$ = cheerio.load(res[0].html)
 			self.$('.br-band').each( function() {
 				var $this = self.$(this)
 					, name = $this.attr('name')
@@ -226,7 +225,7 @@ Report.prototype = {
 							, id = sel.attr('id')
 							
 						if ( qs ) {
-							var q = json.readJson(qs)
+							var q = json.toJSON(qs)
 							if ( exists(id, q) ) selData(i+1)
 							else {
 								if ( Array.isArray(q) ) {
@@ -275,7 +274,7 @@ Report.prototype = {
 	
 	
 	build : function( callback ) {
-		if ( this.err )  return callback( {err: this.err} )
+		if ( this.err )  return callback({err: this.err})
 		this.callback = callback
 		var self = this
 			, h = this.findBand('header')
@@ -379,7 +378,7 @@ console.log( 'query %s  %s', bandname, this.par.args.report  )
 			, qs =  band.html.attr('data-query')
 			, self = this
 		if ( qs ) {
-			var q = json.readJson( qs )
+			var q = json.toJSON(qs)
 			if ( q.coll ) {
 				if ( q.where && qs.indexOf('#') >= 0 ) {
 					for ( p in q.where ) {
@@ -393,13 +392,13 @@ console.log( 'query %s  %s', bandname, this.par.args.report  )
 					}
 				}
 				q.db = this.par.db
-				M.cursor( q, function(res) {
+				M.cursor(q, function(res) {
 					if ( res.err ) {
 						self.callback(res)
 						callback(true)
 					} else {
 						band.cursor = res
-						band.cursor.count( function(err, count) {
+						band.cursor.count(function(err, count) {
 							band.count = count
 							callback()
 						})
@@ -435,6 +434,7 @@ console.log( 'query %s  %s', bandname, this.par.args.report  )
 console.log( 'print %s  %s', bandname, this.par.args.report  )
 		var band = this.findBand(bandname)
 			, self = this
+			, ret = function(err) {callback(err)}
 		if ( band.cursor ) {
 			band.cursor.nextObject( function(err, doc) {
 				if ( err ) {
@@ -443,14 +443,14 @@ console.log( err )
 					callback(true)
 				} else {
 					band.rec = doc
-					prn( function(err) {callback(err)} )
+					prn(ret)
 				}
 			})
 		} else if ( band.data ) {
 			band.rec = band.data[idx]
-			prn( function(err) {callback(err)} )
+			prn(ret)
 		} else {
-			prn( function(err) {callback(err)} )
+			prn(ret)
 		}
 
 		function prn( callback ) {
@@ -459,7 +459,7 @@ console.log( err )
 				var el = self.$(this)
 					, s = el.attr('style')
 					, f = self.getFont(s)
-					, css = json.readJson('{' + U.strRep(s, ';', ',') + '}')
+					, css = json.toJSON('{' + U.strRep(s, ';', ',') + '}')
 //console.log( '%s %d %d', el.text(), css.left + self.left, css.top + self.top )
 				// font
 				if ( f ) {
@@ -523,7 +523,7 @@ console.log( err )
 				if ( nest.length > 0 ) {
 console.log( 'nest' )
 					var par = U.cloneJSON(self.par)
-						, css = json.readJson('{' + U.strRep(nest.attr('style'), ';', ',') + '}')
+						, css = json.toJSON('{' + U.strRep(nest.attr('style'), ';', ',') + '}')
 					par.args.report = nest.attr('data-nested')
 					par.args.parentData = band.rec
 					par.args.left = css.left
@@ -536,7 +536,7 @@ console.log( 'nest' )
 						})
 					}, self.pdf)
 				} else {
-					var css = json.readJson('{' + U.strRep(band.html.attr('style'), ';', ',') + '}')
+					var css = json.toJSON('{' + U.strRep(band.html.attr('style'), ';', ',') + '}')
 					self.top += css.height
 					callback()
 				}
@@ -628,7 +628,7 @@ console.log( 'nest' )
 function report( par, callback ) {
 	new Report(par, function(r) {
 		if ( r.err )  return callback(r)
-		r.build( callback )
+		r.build(callback)
 	})
 }
 
@@ -643,27 +643,25 @@ function script( par, callback ) {
 	if ( par.db && par.script ) {
 		var m = par.script.split('.')
 		if ( m[1] ) {
-			loadScripts( par, function(res) {
-				if ( res.err )  return callback( res )
+			loadScripts(par, function(res) {
+				if ( res.err )  return callback(res)
 				else {
 					try {
 						var mod = require('./' + m[0])
-						mod[m[1]]( par, function(res) {callback(res)} )
+						mod[m[1]](par, function(res) {callback(res)})
 					} catch (err) {
 						console.log(err)
-						callback( {err: U.err.srv} )
+						callback({err: U.err.srv})
 					}
-					//eval( res[0].code )
-					//eval( m[1] + '( par, function(res) {callback(res)} )' )
 				}
 			})
 		} else if ( module.exports[par.script] ) {
-			module.exports[par.script]( par, function(res) {callback(res)} )
+			module.exports[par.script](par, function(res) {callback(res)})
 		} else {
-			console.log('Script not found: ' + par.script )
-			callback( {err: U.err.script} )
+			console.log('Script not found: ' + par.script)
+			callback({err: U.err.script})
 		}
-	} else  callback( {err: U.err.param} )
+	} else  callback({err: U.err.param})
 }
 
 
@@ -672,29 +670,30 @@ var scripts = []
 /* Load application scripts on disk
 */
 function loadScripts( par, callback ) {
-	M.get( {db: par.app, coll: 'scripts', fields: {name:1, updated:1}}, function(res) {
-		if ( res.err || res.length == 0 )  return callback( res )
+	M.get({db: par.app, coll: 'scripts', fields: {name:1, updated:1, external:1}}, function(res) {
+		if ( res.err || res.length == 0 )  return callback(res)
 		else {
 			var cd = process.cwd()
-			loop( 0 )
+			loop(0)
 
 			function loop( i ) {
 				if ( i < res.length ) {
+					if ( res[i].external ) return loop(i+1) 					
 					var sc = res[i]
 						, path = cd + '/'+ sc.name + '.js'
-						, u = updated( sc )
+						, u = updated(sc)
 					if ( !u.found || u.updated ) {
-						M.get( {db: par.app, coll: 'scripts', where: {name: sc.name}}, function(res) {
+						M.get({db: par.app, coll: 'scripts', where: {name: sc.name}}, function(res) {
 							if ( res.err || res.length == 0 )  return callback(res)
 							else {
-								fs.writeFileSync( path, res[0].code )
+								fs.writeFileSync(path, res[0].code)
 								delete require.cache[path]
-								if ( !u.found )  scripts.push( {name: sc.name, updated: sc.updated} )
-								loop( i+1 )
+								if ( !u.found )  scripts.push({name: sc.name, updated: sc.updated})
+								loop(i+1)
 							}
 						})
-					} else  loop( i+1 )
-				} else  callback( {} )
+					} else loop(i+1)
+				} else callback({})
 			}
 
 			function updated( sc ) {
@@ -713,8 +712,6 @@ function loadScripts( par, callback ) {
 		}
 	})
 }
-
-
 
 
 

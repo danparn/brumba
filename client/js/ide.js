@@ -68,17 +68,24 @@ $(function() {
 		$('.selected').removeClass('selected')
 	})
 	
+	$( document ).keydown( function(ev) {
+		if ( ev.which == 83 && lastKey == 17 ) {
+			onSave()
+			ev.preventDefault()
+		} 
+		lastKey = ev.which
+	})
+
 	// Key mapping
 	$( document ).keypress( function(ev) {
 		if ( onProp )  return
-		var sel = $('.selected'),
-			k = ev.keyCode
+		var sel = $('.selected')
+			, k = ev.keyCode
 		if ( sel.length == 0 )  return
-		
+
 		// Arrow keys:  move selected elements, or change size if shiftKey is pressed
 		if ( k >= 37 && k <= 40 ) {
 			if ( sel.length > 0 ) {
-				//$('.br-select').removeClass("selected")
 				sel.each( function() {
 					var el = $(this),
 						v = 0,
@@ -475,6 +482,7 @@ function openEvents() {
 function openScript() {
 	var script = $('<div class="br-script">' +
 										'<h3>Script name:</h3><input id="name" />' +
+										'<label id="forexternal">external file:</label><input id="external" type="checkbox" />' +
 										'<div class="br-editor" />' +
 								'</div>')
 	closeEvents()
@@ -501,11 +509,14 @@ function openScript() {
 			where: { _id: id }
 		}
 	remote( par, function(res) {
-		if ( !res.dbret ) {
+		if ( !res.err ) {
 			var script = $('.br-script')
 			if ( script ) {
-				script.find('input#name').val( res[0].name )
+				script.find('#name').val( res[0].name )
 				script.data('editor').setValue( res[0].code )
+				var ext = script.find('#external')
+				if ( res[0].external ) ext.prop('checked', true)
+				else ext.removeProp('checked')
 				script.data( '_id', res[0]._id )
 			}
 		}
@@ -760,10 +771,13 @@ function onSave() {
 					, dat = {
 							name: $el.find('input#name').val(),
 							code: $el.data('editor').getValue(),
-							updated: new Date().getTime()
+							updated: new Date().getTime(),
+							external: null
 						}
 					, id = $el.data('_id')
+							
 				if ( id )  dat._id = id
+				if ( $el.find('#extern').is(':checked') ) dat.external = true
 				remote(par, function(res) {
 					if ( !id ) {
 						$el.data('_id', res._id)

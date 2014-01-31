@@ -22,27 +22,27 @@ function remote ( param, callback, dat ) {
 //console.time('remote')
 	var to = setTimeout( function () {	
 		if ( window.loadingIndicator )  loadingIndicator.show()
-	}, 500 )
+	}, 500)
 	
 	if ( !param.usercode ) param.usercode = br.usercode
 	
 	var ajax = {
-		url: '/brumba?' + JSON.stringify( param ),
+		url: '/brumba?' + JSON.stringify(param),
 		timeout: 10000,
 		success: function(res) {
-			clearTimeout( to )
+			clearTimeout(to)
 			if ( window.loadingIndicator )  loadingIndicator.fadeOut()
 //console.timeEnd('remote')
 			if ( res.err ) alert(JSON.stringify(res))
 			callback(res)
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
-			clearTimeout( to )
+			clearTimeout(to)
 			if ( window.loadingIndicator )  loadingIndicator.fadeOut()
 			var msg = 'Remote error:  '
 			if ( jqXHR.status )  msg += httpErr[jqXHR.status]
 			alert(msg)
-			callback( {err: msg} )
+			callback({err: msg})
 		}
 	}
 	if ( dat ) {
@@ -54,7 +54,7 @@ function remote ( param, callback, dat ) {
 		ajax.type = 'GET'
 	}
 	
-	$.ajax( ajax )
+	$.ajax(ajax)
 }
 
 
@@ -92,7 +92,7 @@ function accordionMenu( callback ) {
 	$('.accordion li[data-item]').click( function() {
 		$('.accordion li.selected-menu').removeClass('selected-menu')
 		$(this).addClass('selected-menu')
-		callback( $(this).attr('data-item'), $(this).attr('data-prm') )
+		callback($(this).attr('data-item'), $(this).attr('data-prm'))
 	})
 }
 
@@ -102,10 +102,10 @@ function accordionMenu( callback ) {
 */
 function mainArgs ( str ) {
 	if ( str ) {
-		var qs = strRep( str, '$username', br.username )
-		qs = strRep( qs, '$user', br.userid )
-		if ( br.menuid )  qs = strRep( qs, '$menuid', br.menuid )
-		qs = strRep( qs, '$menulink', br.menulink )
+		var qs = strRep(str, '$username', br.username)
+		qs = strRep(qs, '$userid', br.userid)
+		if ( br.menuid )  qs = strRep(qs, '$menuid', br.menuid)
+		qs = strRep(qs, '$menulink', br.menulink)
 		return qs
 	}
 }
@@ -124,14 +124,14 @@ console.log( form.modif )
 		var fld = strSplit(fields, ',')
 		for ( var i=0; i < fld.length; i++ ) {
 			if ( cmd.charAt(0) == 'E' && !val ) {
-				alert( 'Required field: ' + fld[i] )
+				alert('Required field: ' + fld[i])
 				return false
 			} else {
 				return true
 			} 
 		}
 	} else {
-		alert( 'checkFields: wrong parameters' )
+		alert('checkFields: wrong parameters')
 	}
 	return false
 }
@@ -140,16 +140,15 @@ console.log( form.modif )
 /* Set field
 */
 function setField( form, fldname, val ) {
-	var fld = form.htm.find('#' + fldname )
-	if ( fld )
-		fld.val( val )
+	var fld = form.htm.find('#' + fldname)
+	if ( fld ) fld.val(val)
 }
 
 
 
 /* Translate string
 */
-function translate(str, lang) {
+function translate( str, lang ) {
 	if ( br.langData ) {
 		for ( var i=br.langData.length-1; i >= 0; i-- ) {
 			if ( br.langData[i].default == str ) {
@@ -191,10 +190,10 @@ function textareaInsTab( elem ) {
 /* File upload
 */
 function fileUpload( db, callback ) {
-	if ( !db )  { callback( {dbret: dbErr.param} );  return }
+	if ( !db )  { callback({dbret: dbErr.param});  return }
 	var f = $('<input type="file" style="display: none" />')
 	
-	$('body').append( f )
+	$('body').append(f)
 	
 	f.change( function() {
 		var file = f[0].files[0]
@@ -207,9 +206,9 @@ function fileUpload( db, callback ) {
 					}
 				}
 			}
-		remote( par, function(res) {
+		remote(par, function(res) {
 			if ( res.newid )  res.filename = file.name
-			callback( res )
+			callback(res)
 		}, file)
 	})
 	.click()
@@ -219,16 +218,16 @@ function fileUpload( db, callback ) {
 /* File Download
 */
 function fileDownload( db, id, callback ) {
-	if ( !db || !id )  { callback( {dbret: dbErr.param} );  return }
+	if ( !db || !id )  return callback({dbret: dbErr.param})
 	var par = {cmd: 'GET', db: db, coll: 'fs.files', where: {_id: id}}
-	remote( par, function(res) {
-		if ( res.dbret )  callback( res )	// returns error
+	remote(par, function(res) {
+		if ( res.dbret )  callback(res)	// returns error
 		else {
 			var desc = res
 			, par = {cmd: 'FILE', mode: 'r', db: db, _id: id}
-			remote( par, function(res) {
-				if ( res.dbret )  callback( res )	// returns error
-				else  callback( desc, res )
+			remote(par, function(res) {
+				if ( res.dbret )  callback(res)	// returns error
+				else  callback(desc, res)
 			})
 		}
 	})
@@ -240,7 +239,7 @@ function fileDownload( db, id, callback ) {
 function fileShow( id ) {
 	if ( id ) {
 		var par = {cmd: 'FILE', mode: 'r', db: br.db, _id: id, usercode: br.usercode}
-		window.open( '/brumba?' + JSON.stringify(par) )
+		window.open('/brumba?' + JSON.stringify(par))
 	}
 }
 
@@ -278,7 +277,7 @@ function listBox( title, dat, handler ) {
 		for ( var i=0; i < len; i++ ) {
 			ul.append('<li id="' + dat[i].id + '"><a href="#">' + dat[i].text + '</a></li>')
 		}
-		dlg.append( ul )
+		dlg.append(ul)
 		dlg.attr('title', title)
 		dlg.dialog({
 			close: function() {
@@ -287,7 +286,7 @@ function listBox( title, dat, handler ) {
 		})
 		ul.menu({
 			select: function(ev, ui) {
-				handler( ui )
+				handler(ui)
 				dlg.dialog('close')
 				dlg.remove()
 			}
@@ -302,13 +301,13 @@ function listBox( title, dat, handler ) {
 
 
 function outerHtml( elem ) {
-	return $('<div>').append( elem.clone() ).html()
+	return $('<div>').append(elem.clone()).html()
 }
 
 
 function delClassMatch( elem, pat ) {
-	var cls = elem.attr( 'class' ),
-		spc = cls.split( /\s*/ ),
+	var cls = elem.attr('class'),
+		spc = cls.split(/\s*/),
 		sp = strSplit(pat, ','),
 		cls = ''
 	for ( var i=0; i < spc.length; i++ ) {
@@ -320,7 +319,7 @@ function delClassMatch( elem, pat ) {
 			cls += spc[i]
 		}
 	}
-	elem.attr( 'class', cls )
+	elem.attr('class', cls)
 }
 
 
@@ -335,16 +334,16 @@ function delClassMatch( elem, pat ) {
 	if ( str ) {
 		if ( str.charAt(0) == '+' )  return new Date()
 		
-		var pars = function( s, pat ) {
+		var pars = function(s, pat) {
 				var i = -1,  j = 0,  sp = []
 				while ( i < s.length ) {
-					i = strFindAny( s, pat, i+1 )
+					i = strFindAny(s, pat, i+1)
 					if ( i > 0 ) {
-						sp.push( s.substring(j, i) )
+						sp.push(s.substring(j, i))
 						j = i+1
 					} else {
 						i = s.length
-						sp.push( s.substring(j, i) )
+						sp.push(s.substring(j, i))
 					}
 				}
 				return sp
@@ -352,42 +351,42 @@ function delClassMatch( elem, pat ) {
 		
 		var d,  t,  p = str.indexOf(' ')
 		if ( p > 0 ) {
-			d = str.substr( 0, p )
-			t = str.substr( p+1 )
+			d = str.substr(0, p)
+			t = str.substr(p+1)
 		} else {
 			d = str
 		}
 		
-		var dt = new Date(),  sp = pars( d, '.-/' ),  dd,  dm
+		var dt = new Date(),  sp = pars(d, '.-/'),  dd,  dm
 		if ( sp[1] ) {
 			if ( dateFormat.charAt(0) == 'd' ) {
-				dd = parseInt( sp[0], 10 )
-				dm = parseInt( sp[1], 10 ) - 1
+				dd = parseInt(sp[0], 10)
+				dm = parseInt(sp[1], 10) - 1
 			} else {
-				dd = parseInt( sp[1], 10 )
-				dm = parseInt( sp[0], 10 ) - 1
+				dd = parseInt(sp[1], 10)
+				dm = parseInt(sp[0], 10) - 1
 			}
 		} else {
-				dd = parseInt( sp[0], 10 )
+				dd = parseInt(sp[0], 10)
 		}
 		if ( sp[2] ) {
-			var dy = parseInt( sp[2], 10 )
+			var dy = parseInt(sp[2], 10)
 			if ( dy < 100 )  dy += 2000
-			dt.setFullYear( dy, dm, dd )
-		} else if ( sp[1] )  dt.setMonth( dm, dd )
-		else  dt.setDate( dd )
+			dt.setFullYear(dy, dm, dd)
+		} else if ( sp[1] )  dt.setMonth(dm, dd)
+		else  dt.setDate(dd)
 		
 		if ( t ) {
 			var th, tm, ts
-			sp = pars( t, '.:' )
+			sp = pars(t, '.:')
 			th = parseInt(sp[0], 10)
-			if ( sp[1] )  tm = parseInt( sp[1], 10 )
-			if ( sp[2] )  ts = parseInt( sp[2], 10 ) 
-			if ( ts )  dt.setHours( th, tm, ts )
-			else if ( tm )  dt.setHours( th, tm, 0 )
-			else  dt.setHours( th, 0, 0 )
+			if ( sp[1] )  tm = parseInt(sp[1], 10)
+			if ( sp[2] )  ts = parseInt(sp[2], 10) 
+			if ( ts )  dt.setHours(th, tm, ts)
+			else if ( tm )  dt.setHours(th, tm, 0)
+			else  dt.setHours(th, 0, 0)
 		} else {
-			dt.setHours( 0, 0, 0 )
+			dt.setHours(0, 0, 0)
 		}
 		return dt
 	}
@@ -405,7 +404,7 @@ function delClassMatch( elem, pat ) {
 */
 function addPanel( el ) {
 	var pane = $('<div class="br-panel"></div>')
-	el.append( pane )
+	el.append(pane)
 	return pane
 }
 
@@ -413,14 +412,14 @@ function addPanel( el ) {
 /* Create splitter
 */
 function createSplitter( el, type ) {
-	var p1 = addPanel( el ),
-		p2 = addPanel( el ),
+	var p1 = addPanel(el),
+		p2 = addPanel(el),
 		cl = '', h = ''
 	if ( type == 'H' ) {
 		cl = 'split-s'
 		h = 's'
-		p1.height( el.height() / 2 )
-		p2.height( el.height() - p1.height() - 5 )
+		p1.height(el.height() / 2)
+		p2.height(el.height() - p1.height() - 5)
 	} else if ( type == 'V' ) {
 		var style = {
 				float: 'left',
@@ -428,19 +427,19 @@ function createSplitter( el, type ) {
 			}
 		cl = 'split-e'
 		h = 'e'
-		p1.css( style )
-		p1.width( el.width() / 2 )
-		p2.css( style )
-		p2.width( el.width() - p1.width() - 5 )
+		p1.css(style)
+		p1.width(el.width() / 2)
+		p2.css(style)
+		p2.width(el.width() - p1.width() - 5)
 	}
-	p1.addClass( cl ).resizable({
+	p1.addClass(cl).resizable({
 		handles: h,
 		reverseResize: p2
 	})
 	var prev = el.prev()
 	if ( prev && prev.hasClass(cl) ) {
 		prev.resizable({
-			reverseResize: prev.data("ui-resizable").options.reverseResize.add( p2 )
+			reverseResize: prev.data("ui-resizable").options.reverseResize.add(p2 )
 		})
 	}
 	return [p1, p2]
@@ -450,7 +449,7 @@ function createSplitter( el, type ) {
 /* Set splitter functionality 
 */
 function setSplitter( panes ) {
-	var _split = function( pane ) {
+	var _split = function(pane) {
 			var cl = '', h = '',
 				next = pane.next(),
 				prev = pane.parent().prev()
@@ -467,17 +466,17 @@ function setSplitter( panes ) {
 			})
 			if ( prev && prev.hasClass(cl) ) {
 				prev.resizable({
-					reverseResize: prev.data("ui-resizable").options.reverseResize.add( next )
+					reverseResize: prev.data("ui-resizable").options.reverseResize.add(next)
 				})
 			}
 		}
 		
 	if ( panes.length ) {
 		panes.each( function() {
-			_split( $(this) )
+			_split($(this))
 		})
 	} else {
-		_split( panes )
+		_split(panes)
 	}
 }
  
@@ -488,7 +487,7 @@ function clearField( fld ) {
 	if ( fld.prop('checked') )  fld.removeProp('checked')
 	else if ( fld.val() ) {
 		fld.val('')
-		fld.removeData( 'id' )
+		fld.removeData('id')
 	}
 }
 
@@ -496,10 +495,10 @@ function clearField( fld ) {
 /* Clear form fields
 */
 function clearFields( form ) { 
-	form.find( 'input,select,textarea' ).val( "" )
-	form.find( 'input:checkbox' ).removeProp( 'checked' )
-	form.find('input[type="autocomplete"]').removeData( 'id' )
-	form.find('input[type="filelink"]').removeData( 'id' )
+	form.find('input,select,textarea').val("")
+	form.find('input:checkbox').removeProp('checked')
+	form.find('input[type="autocomplete"]').removeData('id')
+	form.find('input[type="filelink"]').removeData('id')
 }
 
 
