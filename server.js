@@ -44,7 +44,7 @@ console.log( JSON.stringify(par) )
 		  	if ( (par.coll == 'forms' || par.coll == 'pages') && par.where && par.where.name  && par.where.name.charAt(0) == '_' )
 		  		sysform( par, callback )
 		  	else
-		  		M.get( par, callback )
+		  		M.get( par, callback, res )
 		  	break
 		  case 'POST':  M.post( par, data, callback );  break
 		  case 'DEL':  M.del( par, callback );  break
@@ -72,8 +72,14 @@ console.log( JSON.stringify(par) )
 
 	// callback
 	function callback( dat ) {
-		res.writeHead(200, {'Content-Type': 'application/json'})
-		res.end( JSON.stringify(dat) )
+		var head = {'Content-Type': 'application/json'}
+			, body
+		if ( dat.head ) {
+			head = dat.head 			
+			body = dat.body
+		} else body = JSON.stringify(dat)
+		res.writeHead(200, head)
+		res.end(body)
 	}
 
 	function usercheck() {

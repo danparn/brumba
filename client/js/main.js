@@ -78,6 +78,7 @@ $(function() {
 	
 	function about() {
 		$('button').button()
+		appScript(br.app + 'Cli')
 		pageLoad('forms.About')
 	}
 
@@ -205,64 +206,17 @@ function pageInit() {
 		if ( n < select.length ) {
 			var $select = $(select[n])
 				, query = $select.attr('data-query')
-				, fields = $select.attr('data-fields')
 			if ( query ) {
-				var q = toJSON(query)
-				if ( !q ) sel(n+1)
-				if ( Array.isArray(q) ) {			// array of data
-					$select.append('<option value=""></option>')
-					for ( var i=0, len=q.length; i < len; i++ ) {
-						var s = q[i].txt || q[i].val
-						$select.append('<option value="' + q[i].val + '">'+ s + '</option>')
-					}
+				if ( query.indexOf('#') > 0 ) {
+					$select.addClass('br-query-args')
 					sel(n+1)
-				} else if ( fields ) {
-					if ( !q.cmd )  q.cmd = 'GET'
-					q.db = br.db
-					q.app = br.app
-					if ( q.fields ) {
-						var sp = strSplit(q.fields, ',')
-						q.fields = {}
-						for ( var i=0; i < sp.length; i++ )  q.fields[sp[i]] = 1
-					}
-					remote(q, function(res) {
-						if ( res.err )  return sel(n+1)
-						var fld = strSplit(fields, ',')
-							, txt = ''
-						$select.append('<option></option>')
-						for ( var i=0, len=res.length; i < len; i++ ) {
-							var r = res[i]
-							txt = ''
-							for ( var j=1; j < fld.length; j++ ) {
-								var fl = fld[j]
-								if ( j > 1 ) { 
-									if ( fld[j].charAt(0) == '+' ) {
-										fl = fld[j].substr(1)
-										txt += ' '
-									} else {
-										txt += ' - '
-									}
-								}
-								if ( fl.charAt(0) == '\'' )  txt += fl.substring(1, fl.length-2)
-								else  txt += r[fl]
-							}
-							$select.append('<option value="' + r[fld[0]] + '">'+ txt + '</option>')
-						}
+				} else {
+					Select(select[n], function(res) {
 						sel(n+1)
 					})
-				} else if (  q.cmd == 'SRV' ) {		// olready formated from server script 
-					q.db = br.db
-					q.app = br.app
-					remote(q, function(res) {
-						if ( res.err )  return
-						$select.append(res.html)
-						sel(n+1)
-					})
-				} else sel(n+1)
+				}
 			} else sel(n+1)
-		} else {
-			onOpen(0)
-		}
+		} else onOpen(0)
 	}
 
 	// Form open event

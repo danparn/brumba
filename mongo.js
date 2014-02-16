@@ -31,19 +31,19 @@ function dbOpen( dbname, callback ) {
 	// Look dbs list (opened databases) for this dbname
 	for ( var i=0; i < dbs.length; i++ ) {
 		if ( dbs[i].databaseName == dbname ) {	// if found return it
-			callback( dbs[i] )
+			callback(dbs[i])
 			return
 		}
 	}
 	
-	MongoClient.connect( 'mongodb://' + mongoURL + '/' + dbname + '?w=1', {native_parser:true}, function(err, db) {
+	MongoClient.connect('mongodb://' + mongoURL + '/' + dbname + '?w=1', {native_parser:true}, function(err, db) {
 		if ( err ) {
-			console.log('err = ' + err )
-			console.log('dbOpen: cannot open ' + dbname + ' database' )
-			callback( {err: U.err.db} )
+			console.log('err = ' + err)
+			console.log('dbOpen: cannot open ' + dbname + ' database')
+			callback({err: U.err.db})
 		} else {
-			dbs.push( db )		// add to dbs list
-			callback( db )
+			dbs.push(db)		// add to dbs list
+			callback(db)
 		}
 	})
 }
@@ -55,23 +55,23 @@ function dbOpen( dbname, callback ) {
 */
 function coll( dbname, collname, callback ) {
 	if ( dbname && collname ) {
-		dbOpen( dbname, function(db) {
+		dbOpen(dbname, function(db) {
 			if ( db.err )  callback( db )
 			else {
-				db.collection( collname, function(err, coll) {
+				db.collection(collname, function(err, coll) {
 					if ( err ) {
-						console.log('err = ' + err )
-						console.log('Database ' + dbname + ':  Collection not found: ' + collname )
-						callback( {err: U.err.coll} )
+						console.log('err = ' + err)
+						console.log('Database ' + dbname + ':  Collection not found: ' + collname)
+						callback({err: U.err.coll})
 					} else {
-						callback( coll, db )
+						callback(coll, db)
 					}
 				})
 			}
 		})
 	} else {
 		console.log('coll:  parameters error:  dbname = ' + dbname + '  collname = ' + collname )
-		callback( {err: U.err.param} )
+		callback({err: U.err.param})
 	}
 }
 
@@ -79,32 +79,31 @@ function coll( dbname, collname, callback ) {
 
 /* Get
 
- par = { db, coll, where, fields/concat, sort, skip, limit, func }
- func = 'count' /
- ret = 'cursor' / []
+ par = { db, coll, where, fields/concat, sort, skip, limit, result }
+ result = 'cursor'/'count'/'code'
 */
-function get( par, callback, ret ) {
+function get( par, callback, res ) {
 	if ( par && par.db && par.coll ) {
 //console.log( par )
 //var time = process.hrtime()
-		coll( par.db, par.coll, function(coll, db) {
+		coll(par.db, par.coll, function(coll, db) {
 			if ( coll.err )  callback( coll )
 			else {
 				var where = par.where || {}
-					, fields = par.fields || {}
-				if ( typeof fields == 'string' ) {
-					var sp = U.strSplit(fields, ',')
-					fields = {}
+					, fields = {}
+				if ( par.concat ) fields[par.concat] = 1
+				else if ( typeof par.fields == 'string' ) {
+					var sp = U.strSplit(par.fields, ',')
 					for ( var i=0; i < sp.length; i++ ) fields[sp[i]] = 1
 				}
 				oid(where)
-				if ( par.func == 'count') {
+				if ( par.result == 'count' ) {
 					coll.count(where, function(err, count) {
 						if ( err ) {
-							console.log('Database ' + par.db + ':  Count error on collection: ' + par.coll )
-							callback( {err: U.err.count} )
+							console.log('Database ' + par.db + ':  Count error on collection: ' + par.coll)
+							callback({err: U.err.count})
 						} else {
-							callback( {count: count} )
+							callback({count: count})
 						}
 					})
 				} else {
@@ -113,7 +112,7 @@ function get( par, callback, ret ) {
 					if ( par.skip )  options['skip'] = par.skip
 					if ( par.limit )  options['limit'] = par.limit
 					var cur = coll.find( where, fields, options )
-					if ( ret == 'cursor') {
+					if ( par.result == 'cursor') {
 //time = process.hrtime( time )
 //console.log( 'cursor time=%ds %dms', time[0], time[1]/1000000 )
 						callback( cur )
@@ -125,23 +124,28 @@ function get( par, callback, ret ) {
 								if ( err ) {
 									console.log('Database ' + par.db + ':  concat error on collection: ' + par.coll )
 									cur.close()
-									callback( {err: U.err.data} )
+									callback({err: U.err.data})
 								} else if ( doc == null ) {
 									callback( data )
-								} else {
-									data = data.concat( doc[par.concat] )
+								} else if ( doc[par.concat] ) {
+									data = data.concat(doc[par.concat])
 								}
 							})
 						} else {
 							cur.toArray( function(err, docs) {
 								if ( err ) {
 									console.log('Database ' + par.db + ':  toArray error on collection: ' + par.coll )
-									callback( {err: U.err.data} )
+									callback({err: U.err.data})
+								} else if ( par.result == 'code') {		// for client scripts
+									if ( docs[0] && docs[0].code ) {
+										var head = {'Content-Type': 'application/javascript'}
+										callback({head: head, data: docs[0].code})
+									} else callback({err: U.err.script})
 								} else {
 //time = process.hrtime( time )
 //console.log( 'get recs=%d   time=%ds %dms   db=%s  coll=%s  where=%s', docs.length, time[0], time[1]/1000000, par.db, par.coll, JSON.stringify(where) )
 //console.log( 'get recs=%d   db=%s  coll=%s  where=%s', docs.length, par.db, par.coll, JSON.stringify(where) )
-									callback( docs )
+									callback(docs)
 								}
 							})
 						}
@@ -150,18 +154,17 @@ function get( par, callback, ret ) {
 			}
 		})
 	} else {
-		console.log('get: Wrong parameters: ' + JSON.stringify(par) )
+		console.log('get: Wrong parameters: ' + JSON.stringify(par))
 	}
 }
 
 
 
 /* Cursor
-
- par = { db, coll, where, fields, sort }
 */
 function cursor( par, callback ) {
-	get( par, callback, 'cursor')
+	par.result = 'cursor'
+	get(par, callback)
 }
 
 
@@ -207,11 +210,11 @@ console.log( 'update' )
 				// Insert
 				} else {
 console.log( 'insert' )
-					coll.insert( rec, function(err, res) {
+					coll.insert(rec, function(err, res) {
 //console.log( res )
 						if ( err ) {
 							console.log('Database ' + par.db + ':  Collection ' + par.coll + ':  insert error: ' + err )
-							callback( {err: U.err.ins} )
+							callback({err: U.err.ins})
 						} else {
 							ret._id = res[0]._id
 							callback( ret )
@@ -240,7 +243,7 @@ console.log( 'arrayFields' )
 console.log( 'arrayFields: update' )
 console.log( cnd )
 console.log( set )
-									coll.update( cnd, {$set:set}, function(err, res) {
+									coll.update(cnd, {$set:set}, function(err, res) {
 console.log( err )
 console.log( res )
 									})
@@ -256,7 +259,7 @@ console.log( res )
 console.log( 'arrayFields: insert' )
 //console.log( cond )
 //console.log( set )
-								coll.update( cond, {$push:set}, function(err, res) {
+								coll.update(cond, {$push:set}, function(err, res) {
 								})
 							}
 						}
@@ -275,18 +278,18 @@ console.log( 'arrayFields: insert' )
 					
 				function next( i ) {
 					save( dat[i], function(res) {
-						if ( res.err )  callback( res )
+						if ( res.err )  callback(res)
 						else {
-							ret.push( res )
+							ret.push(res)
 							if ( ++i < len )  next( i )
-							else  callback( ret )
+							else  callback(ret)
 						}
 					})
 				}
 
 			} else {
 				save( dat, function(res) {
-					callback( res )
+					callback(res)
 				})
 			}
 		}
@@ -316,10 +319,10 @@ function del( par, callback ) {
 						if ( i > 0 )  s += '.$.'
 						s += sp[i]
 					}
-					pull[s] = { _id : where._id }
-					coll.update( cnd, {$pull:pull}, function(err, res) {
-						if ( err )  callback( {err: U.err.del} )
-						else  callback( {err:0} )
+					pull[s] = {_id : where._id}
+					coll.update(cnd, {$pull:pull}, function(err, res) {
+						if ( err )  callback({err: U.err.del})
+						else  callback({err:0})
 					})
 					
 				} else {
@@ -328,7 +331,6 @@ function del( par, callback ) {
 					var p = U.cloneJSON(par)
 					p.db = p.app
 					p.coll = 'references'
-console.log( p )
 					delete p.where
 					get(p, function(res) {
 						if ( res.dbret ) callback(res)
@@ -340,7 +342,7 @@ console.log( p )
 								if ( i < 0 ) return remove()
 								if ( rel[i].toColl != par.coll ) check(i-1)
 								else {
-									var p = {db: par.db, coll: rel[i].fromColl, where: {$or: []}, func: 'count'}
+									var p = {db: par.db, coll: rel[i].fromColl, where: {$or: []}, result: 'count'}
 										, w = {}
 									if ( rel[i].fromField.substr(-3) == '_id' )  w[rel[i].fromField] = where._id
 									else w[rel[i].fromField] = par.where._id
@@ -394,16 +396,16 @@ function file( par, data, callback ) {
 		new GridStore( db, par._id, par.filename, mode, par.options ).open( function(err, gs) {
 			if ( err ) {
 				console.log('Database ' + par.db + ':  Cannot open GridStore for: ' + par.filename )
-				callback( {err: U.err.file} )
+				callback({err: U.err.file})
 			
 			// Read stream
 			} else if ( par.mode == 'r' ) {
 				if ( !data ) return callback({err: U.err.param})
 				var res = data
 				res.writeHead(200, {'Content-Type': gs.contentType})
-				var stream = gs.stream( true )
+				var stream = gs.stream(true)
 				stream.on('data', function(chunk) {
-					res.write( chunk )
+					res.write(chunk)
 				})
 				.on('end', function() {
 					res.end()
@@ -411,7 +413,7 @@ function file( par, data, callback ) {
 			
 			// Write stream
 			} else if ( par.mode == 'w' ) {
-				if ( !data ) { callback( {err: U.err.data} );  return }
+				if ( !data ) return callback({err: U.err.data})
 				var len = data.length
 				write( 0 )
 
@@ -419,12 +421,12 @@ function file( par, data, callback ) {
 					gs.write( data[i], function(err, gs) {
 						if ( err ) {
 							console.log('Database ' + par.db + ':  Cannot write file: ' + par.filename )
-							callback( {err: U.err.file} )
+							callback({err: U.err.file})
 						} else if ( i < len-1 ) {
 							write( i+1 )
 						} else {
 							gs.close( function(err, result) {
-								callback( {newid:result._id} )
+								callback({newid:result._id})
 							})
 						}
 					})
@@ -436,22 +438,22 @@ function file( par, data, callback ) {
 					gs.read( function(err, data) {
 						if ( err ) {
 							console.log('Database ' + par.db + ':  Cannot read file: ' + par.filename )
-							callback( {err: U.err.file} )
+							callback({err: U.err.file})
 						} else {
-							callback( data )
+							callback(data)
 						}
 					})
 				})
 				
 			// Write file
 			} else if ( par.mode == 'wf') {
-				gs.writeFile( par.path, function(err, g) {
+				gs.writeFile(par.path, function(err, g) {
 					gs.close( function(err, result) {
 						if ( err ) {
 							console.log('Database ' + par.db + ':  Cannot write file: ' + par.path )
-							callback( {err: U.err.file} )
+							callback({err: U.err.file})
 						} else {
-							callback( {newid:result._id} )
+							callback({newid:result._id})
 						}
 					})
 				})
@@ -472,7 +474,7 @@ function oid( rec ) {
 		for ( var p in rec ) {
 			if ( (p.substr(-3) == '_id' && typeof rec[p] == 'string' && hex24.test(rec[p])) ||
 					(p.substr(-4) == '.val' && typeof rec[p] == 'string' && hex24.test(rec[p])) )
-				rec[p] = new ObjectID( rec[p] )
+				rec[p] = new ObjectID(rec[p])
 		}
 	}	
 }
@@ -483,26 +485,19 @@ function oid( rec ) {
 */
 function subQuery( par, callback ) {
 	if ( par.field ) {
+		var	p = par.field.lastIndexOf('.')
+			, f, ar
+		if ( p > 0 ) {
+			f = par.field.substr(p+1)
+			ar = par.field.substr(0, p)
+		} else f = par.field
+		if ( ar ) par.concat = ar
 		get(par, function(res) {
 			if ( res.err ) return callback(res)
 			var ret = []
-				, p = par.field.lastIndexOf('.')
-				, f, ar
-			if ( p > 0 ) {
-				a = par.field.substr(p+1)
-				f = par.field.substr(0, p)
-			} else f = par.field
 			for( var i=0, len=res.length; i < len; i++ ) {
 				var r = res[i]
-				if ( r[f] ) {
-					if ( p > 0 ) {
-						var rf = r[f]
-						for ( var j=0, lenj=rf.length; j < len; j++ ) {
-							var rj = rf[j]
-							if ( rj[a] ) ret.push(rj[a])
-						}
-					} else ret.push(r[f])
-				}
+				if ( r[f] ) ret.push(r[f])
 			}
 			callback(ret)
 		})

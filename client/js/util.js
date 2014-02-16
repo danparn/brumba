@@ -252,33 +252,6 @@ function empty( obj ) {
 }
 
 
-/* Check valid date
-*/
-function dateValid( date ) {
-	return false
-}
-
-
-/* Elapsed time
-*/
-function timeElapsed( d1, d2, unit ) {
-	if ( dateValid(d1) && dateValid(d2) ) {
-		
-	}
-	return -1
-}
-
-
-
-/* Set decimals
-*/
-function decimals( num, dec ) {
-	var k = Math.pow( 10, dec )
-	return Math.floor(num * k) / k
-}
-
-
-
 
 /* Merge objects
 */
@@ -291,14 +264,32 @@ function objMerge( obj1, obj2 ) {
 
 
 
+/* Extend objects
+*/
+function objExtend( obj, ext ) {
+    for ( var k in ext )  obj[k] = ext[k]
+}
+
+
+
 /* Return selected object fields
 */
 function objFields( obj, fields ) {
-	var sp = fields.split( ',' ),
-		n = sp.length,
-		o = {}
-	for ( var i=0; i < n; i++ )  o[sp[i]] = obj[sp[i]]
+	var sp = fields.split( ',' )
+		, o = {}
+	for ( var i=0; i < sp.length; i++ )  o[sp[i]] = obj[sp[i]]
 	return o
+}
+
+
+
+/* Object has this fields
+*/
+function objHasFields( obj, fields ) {
+	var sp = fields.split( ',' )
+	for ( var i=0; i < sp.length; i++ )
+		if ( ! (sp[i] in obj) ) return false
+	return true
 }
 
 
@@ -316,23 +307,33 @@ function cloneJSON( json ) {
 */
 function toJSON( str ) {
 	if ( str ) {
-		str = strRep(str, "'", '"')
-		var p = 0
+		var s = strRep(str, "'", '"')
+			, p = 0
 			, i, c
 		while ( true ) {
-			p = str.indexOf(':', p)
-			if ( p < 0 ) return JSON.parse(str)
+			p = s.indexOf(':', p)
+			if ( p < 0 ) {
+				try	{
+					return JSON.parse(s)
+				} catch (e) {
+					console.log( s )
+					console.log( 'JSON.parse error: ' + e )
+					return null
+				}
+			}
 			i = p-1
-			do c = str.charAt(i--)
+			do c = s.charAt(i--)
 			while ( ',{"'.indexOf(c) < 0 && i >= 0 )
 			if ( ',{'.indexOf(c) >= 0 ) {
-				str = str.substring(0,i+2) + '"' + str.substring(i+2,p).trim() + '"' + str.substr(p)
+				s = s.substring(0,i+2) + '"' + s.substring(i+2,p).trim() + '"' + s.substr(p)
 			}
 			p++ 
 		}
 	}
-	return {}
+	return null
 }
+
+
 
 
 
@@ -342,15 +343,17 @@ function toJSON( str ) {
 if ( typeof module != 'undefined' && module.exports ) {
 	// export for node
 	exports.err = err
-	exports.decimals = decimals
 	exports.strCountChar = strCountChar
 	exports.strGetBet = strGetBet
 	exports.strDelBet = strDelBet
 	exports.strRep = strRep
+	exports.strIns = strIns
 	exports.strDate = strDate
 	exports.strSplit = strSplit
 	exports.objMerge = objMerge
+	exports.objExtend = objExtend
 	exports.objFields = objFields
+	exports.objHasFields = objHasFields
 	exports.cloneJSON = cloneJSON
 	exports.toJSON = toJSON
 	exports.isEmpty = isEmpty

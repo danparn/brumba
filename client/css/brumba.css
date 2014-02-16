@@ -20,7 +20,7 @@ body {
 }
 #workspace {
 	position: relative;
-	width: 50%;
+	width: 80%;
 	height: 100%;
 	float: left;
 	padding-left: 10px;
@@ -45,7 +45,6 @@ button.toolbar[name="delete"] {
 
 /* Page */
 #page {
-	width: 1110px;
 	height: 600px;
 	margin-top: 10px;
 }

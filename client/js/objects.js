@@ -241,40 +241,11 @@ Form.prototype = {
 				else {
 					if ( self instanceof Tabular )  self.res = res
 					else  self.dataset = res
-					var auto = self.tag.find('input[type="autocomplete"]')
-
-					function after() {
+					self.dropdown( function() {
 						if ( $(self).triggerHandler('retrieve') )  self.clear()
 						else if ( !(self instanceof Tabular) )  self.display()
 						callback()
-					}
-					
-					if ( auto.length == 0 )  after()
-					else {
-						// Autocomplete
-						var n = auto.length
-						auto.each( function() {
-							var q =  toJSON($(this).attr('data-query'))
-								, f = $(this).attr('id')
-								, rec = res[0]
-							if ( q.extra && rec[f] && rec[f].val ) {			// extra
-								var par = {
-										cmd : q.cmd || 'GET',
-										db : br.db,
-										coll : q.coll,
-										fields : q.extra,
-										where : { _id : rec[f].val }
-									}
-								remote(par, function(res) {
-									if ( !res.err && res.length > 0 ) {
-										delete res[0]._id
-										self.dataset[0] = objMerge(self.dataset[0], res[0] )
-									}
-									if ( --n == 0 )  after()
-								})
-							}
-						})
-					}
+					})
 				}
 			})
 		} else {
@@ -282,6 +253,46 @@ Form.prototype = {
 			if ( !(this instanceof Tabular) )  this.display()
 			callback()
 		}
+	},
+	
+	
+	// Retrive autocomplete and select data
+	dropdown : function( callback ) {
+		var self = this
+			, auto = self.tag.find('input[type="autocomplete"]')
+			, sel = self.tag.find('select.br-query-args')
+			, n = auto.length + sel.length
+		if ( n == 0 ) return (callback) ? callback() : null
+
+		// autocomplete
+		auto.each( function() {
+			var q =  toJSON($(this).attr('data-query'))
+				, f = $(this).attr('id')
+				, rec = res[0]
+			if ( q.extra && rec[f] && rec[f].val ) {			// extra
+				var par = {
+							cmd: q.cmd || 'GET',
+							db: br.db,
+							coll: q.coll,
+							fields: q.extra,
+							where: {_id: rec[f].val}
+						}
+				remote(par, function(res) {
+					if ( !res.err && res.length > 0 ) {
+						delete res[0]._id
+						self.dataset[0] = objMerge(self.dataset[0], res[0])
+					}
+					if ( --n == 0 && callback )  callback()
+				})
+			}
+		})
+		
+		// select
+		sel.each( function() {
+			Select(this, function(res) {
+				if ( --n == 0 && callback )  callback()
+			})
+		})
 	},
 
 
@@ -301,14 +312,18 @@ Form.prototype = {
 			form.find('.br-field').each( function() {
 				var fld = $(this)
 					, id = fld.attr('id')
-					, value = rec[id]
-				if ( value ) {
+				if ( id in rec ) {
+					var value = rec[id]
 					if ( fld.is('input:checkbox') && value )
 						fld.prop('checked', true)
 					else if ( fld.is('input[type="datetime"]') )
 						fld.val(strDate(new Date(value), true))
 					else if ( fld.is('input[type="date"]') )
 						fld.val(strDate(new Date(value)))
+					else if ( fld.is('input[type="number"]') && fld.attr('data-decimals') )
+						fld.val(parseFloat(value).toFixed(parseInt(fld.attr('data-decimals'), 10)))
+					else if ( fld.is('input[type="color"]') )
+						fld.css('background', value)
 					else if ( value.txt ) {
 						fld.val(value.txt)
 						fld.data('id', value.val)
@@ -316,10 +331,39 @@ Form.prototype = {
 						fld.val(value)
 				}
 			})
+
+			// computed fields
+			var formulaValues = function( formula ) {
+				var op = '*+/-()'
+					, p = 0, b = 0, res = ''
+				do {
+					p = strFindAny(formula, op, p)
+					if ( p < 0 ) p = formula.length
+					var v = form.find('#'+formula.substring(b,p).trim()).val()
+					if ( !v ) return null
+					res += v + formula.charAt(p)
+					p++
+					b = p
+				} while ( p < formula.length )
+				return res
+			}
+
+			var self = this
+			form.find('input[data-formula]').each( function() {
+				var fld = $(this)
+					, expr = formulaValues(fld.attr('data-formula'))
+				if ( expr ) {
+					var value = eval(expr)
+						, dec = fld.attr('data-decimals')
+					if ( dec ) value = parseFloat(value).toFixed(dec)
+					fld.val(value)
+				}
+			})
+
 		}
 	},
-
-
+	
+	
 	// Change event for input fields creates modif object
 	setChangeField : function() {
 		var self = this
@@ -369,7 +413,7 @@ Form.prototype = {
 		var q = cloneJSON(this.query)
 		if ( !q.cmd )  q.cmd = cmd
 		q.app = br.app
-		if ( q.coll == 'languages' ) q.db = br.app
+		if ( q.coll in ['languages','references'] ) q.db = br.app
 		else q.db = br.db
 		
 		if ( !fields ) delete q.fields
@@ -585,7 +629,7 @@ console.log( 'iconDel.click' )
 					if ( par.where )  $.extend(par.where, page.srcond)
 					else  par.where = page.srcond
 				}
-				par.func = 'count'
+				par.result = 'count'
 				remote(par, function(res) {
 					if ( res.err )  return (callback) ? callback(res) : null
 					self.recs = res.count
@@ -624,10 +668,13 @@ console.log( 'iconDel.click' )
 			if ( this.master.rec && this.master.rec[this.field] )
 				this.dataset = this.master.rec[this.field]
 			else this.dataset = []
-			this.recs = this.dataset.length
-			this.display()
-			this.scrollbar()
-			if ( callback )  callback()
+			var self = this
+				self.recs = self.dataset.length
+			this.dropdown( function() {
+				self.display()
+				self.scrollbar()
+				if ( callback )  callback()
+			})
 		
 		} else if ( this.query.concat ) {			// concat
 			this.dataset = []
@@ -772,7 +819,7 @@ console.log( 'iconDel.click' )
 
 
 /*********************************************
- * 				Autocomplete object
+ * 				Autocomplete
  *********************************************/
 function Autocomplete( input ) {
 	var query = input.attr("data-query")
@@ -817,7 +864,78 @@ function Autocomplete( input ) {
 		})
 	}
 }
-/*************** END Autocomplete object *************/
+/*************** END Autocomplete *************/
+
+
+
+
+
+
+
+
+/*********************************************
+ * 				Select
+ *********************************************/
+function Select( select, callback ) {
+	var $select = $(select)
+		, query = $select.attr('data-query')
+		, fields = $select.attr('data-fields')
+	if ( query ) {
+		var q = toJSON(query)
+		if ( !q ) return callback()
+		if ( Array.isArray(q) ) {			// array of data
+			$select.append('<option value=""></option>')
+			for ( var i=0, len=q.length; i < len; i++ ) {
+				var s = q[i].txt || q[i].val
+				$select.append('<option value="' + q[i].val + '">'+ s + '</option>')
+			}
+			callback()
+		} else if ( fields ) {
+			$select.empty()
+			if ( !q.cmd )  q.cmd = 'GET'
+			q.db = br.db
+			q.app = br.app
+			if ( $select.hasClass('br-query-args') ) substArgs(q.where)
+			remote(q, function(res) {
+				if ( res.err )  return callback()
+				var fld = strSplit(fields, ',')
+					, txt = ''
+				$select.append('<option></option>')
+				for ( var i=0, len=res.length; i < len; i++ ) {
+					var r = res[i]
+					txt = ''
+					for ( var j=1; j < fld.length; j++ ) {
+						var fl = fld[j]
+						if ( j > 1 ) { 
+							if ( fld[j].charAt(0) == '+' ) {
+								fl = fld[j].substr(1)
+								txt += ' '
+							} else {
+								txt += ' - '
+							}
+						}
+						if ( fl.charAt(0) == '\'' )  txt += fl.substring(1, fl.length-2)
+						else  txt += r[fl]
+					}
+					$select.append('<option value="' + r[fld[0]] + '">'+ txt + '</option>')
+				}
+				callback()
+			})
+		} else if (  q.cmd == 'SRV' ) {		// olready formated from server script 
+			q.db = br.db
+			q.app = br.app
+			remote(q, function(res) {
+				if ( res.err )  return
+				$select.append(res.html)
+				callback()
+			})
+		} else callback()
+	} else callback()
+}
+/*************** END Select *************/
+
+
+
 
 
 
@@ -847,3 +965,6 @@ function deleteDialog( delFunc ) {
 		}
 	})
 }
+
+
+

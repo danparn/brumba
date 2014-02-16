@@ -14,7 +14,7 @@ body {
 	background: #E3E4E5;
 }
 div#wrapper {
-	width: 1500px;
+	width: 2000px;
 	height: 800px;
 }
 div#menubar {
@@ -156,6 +156,7 @@ span.color.icon {
 .br-band {
 	position: relative;
 	background: #E3E4E5;
+	overflow: hidden;
 }
 
 .selector {

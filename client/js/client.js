@@ -112,6 +112,23 @@ function mainArgs ( str ) {
 
 
 
+/* Substitutes retrieve arguments
+*/
+function substArgs ( where ) {
+	if ( where ) {
+		var dat = page.forms[0].dataset[0]
+		for ( k in where ) {
+			if ( typeof where[k] == 'string' && where[k].charAt(0) == '#' ) {
+				var v = dat[where[k].substr(1)]
+				if ( v ) where[k] = v
+				else delete where[k]
+			}
+		}
+	}
+}
+
+
+
 /* Check fields
  * 
  * form: form object
@@ -499,6 +516,7 @@ function clearFields( form ) {
 	form.find('input:checkbox').removeProp('checked')
 	form.find('input[type="autocomplete"]').removeData('id')
 	form.find('input[type="filelink"]').removeData('id')
+	form.find('input[type="color"]').css('background', '')
 }
 
 
@@ -506,7 +524,7 @@ function clearFields( form ) {
 	debugging and which references the script files as external resources
 	rather than inline.
 */
-function loadScript(url, callback){			   
+function dynamicScript(url, callback){			   
 	var head = document.getElementsByTagName("head")[0];
 	var script = document.createElement("script");
 	script.src = url;
@@ -530,6 +548,26 @@ function loadScript(url, callback){
 	// We handle everything using the script element injection
 	return undefined;			   
 };
+
+
+
+function appScript( name, callback ) {
+	var par = {
+			cmd: 'GET',
+			db: br.app,
+			app: br.app,
+			coll: 'scripts',
+			where: {name: name},
+			result: 'code',
+			usercode: br.usercode
+		}
+	dynamicScript('/brumba?' + JSON.stringify(par), function() {
+		if ( callback ) callback()
+	})
+
+remote({cmd:'SRV', db:br.app, app:br.app, script:name+'.test'}, function(res) {})
+
+}
 
 
 

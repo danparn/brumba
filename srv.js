@@ -49,10 +49,10 @@ function remote( par, callback, dat ) {
 /* Flexigrid data format
 */ 
  function flexigridData( par, callback ) {
-	par.func = 'count'
+	par.result = 'count'
 	M.get(par, function(res) {
 		var tot = res.count
-		delete par.func
+		delete par.result
 		par.skip = (par.page-1) * par.limit
 		M.get(par, function(res) {
 			callback({"page":par.page, "total":tot, "rows":res})
@@ -670,7 +670,7 @@ var scripts = []
 /* Load application scripts on disk
 */
 function loadScripts( par, callback ) {
-	M.get({db: par.app, coll: 'scripts', fields: {name:1, updated:1, external:1}}, function(res) {
+	M.get({db:par.app, coll:'scripts', fields:'name,updated,external'}, function(res) {
 		if ( res.err || res.length == 0 )  return callback(res)
 		else {
 			var cd = process.cwd()
@@ -683,12 +683,12 @@ function loadScripts( par, callback ) {
 						, path = cd + '/'+ sc.name + '.js'
 						, u = updated(sc)
 					if ( !u.found || u.updated ) {
-						M.get({db: par.app, coll: 'scripts', where: {name: sc.name}}, function(res) {
+						M.get({db:par.app, coll:'scripts', where:{name:sc.name}}, function(res) {
 							if ( res.err || res.length == 0 )  return callback(res)
 							else {
 								fs.writeFileSync(path, res[0].code)
 								delete require.cache[path]
-								if ( !u.found )  scripts.push({name: sc.name, updated: sc.updated})
+								if ( !u.found )  scripts.push({name:sc.name, updated:sc.updated})
 								loop(i+1)
 							}
 						})

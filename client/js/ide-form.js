@@ -381,8 +381,8 @@ function loadForm( id, isReport ) {
 			var form = $(ws.children())
 				, events = res[0].events
 				, eventsDlg = $('.br-events')
-			if ( events )  form.data('events', res[0].events)
-			else  events = ''
+			if ( events ) form.data('events', res[0].events)
+			else events = ''
 			if ( eventsDlg.length > 0 )  eventsDlg.data('editor').setValue(events)
 			if ( form.hasClass('br-tabular') || isReport ) {
 				form.children().each( function() {

@@ -22,8 +22,6 @@ var propElem = null			// element you see properties of
 /* Main brumba object
 */
 var br = {
-	app: sessionStorage.getItem( 'br.app' ),
-	db: sessionStorage.getItem( 'br.app' ),
 	lang: sessionStorage.getItem( 'br.lang' ),
 	usercode: sessionStorage.getItem( 'br.usercode' ) || 'ide',
 	userid: sessionStorage.getItem( 'br.userid' ),
@@ -68,6 +66,7 @@ $(function() {
 		$('.selected').removeClass('selected')
 	})
 	
+	// CTRL+S
 	$( document ).keydown( function(ev) {
 		if ( ev.which == 83 && lastKey == 17 ) {
 			onSave()
@@ -227,7 +226,7 @@ function showProperties( elem ) {
 	
 	id.val( propElem.attr('id') )
 	if ( propElem.hasClass('br-label') || propElem.hasClass('br-button') )  p.find('input[name="text"]').val( propElem.text() )
-	if ( propElem.hasClass('br-hidden') )  p.find('input[name="hidden"]').attr('checked', 'checked')
+	if ( propElem.hasClass('br-hidden') )  p.find('input[name="hidden"]').prop('checked', true)
 	
 	// non standard data-* attributes
 	var typ = ty.val()
@@ -270,6 +269,11 @@ function showProperties( elem ) {
 	else if ( typ == 'BAND' ) {
 		tx.prop('disabled', true)
 		dataElem('textarea', 'query')
+	}
+	// formula
+	else if ( typ == 'number' ) {
+		dataElem('input', 'decimals', 'number')
+		dataElem('input', 'formula')
 	}
 	// Select
 	else if ( typ == 'select' ) {
@@ -608,6 +612,7 @@ function onLoad() {
 	var app = $('#app-name').val()
 	if ( app ) {
 		br.app = app
+		br.db = app
 		var selmenu = function() {
 			$('.accordion li.selected-menu').removeClass('selected-menu')
 			$(this).addClass('selected-menu')
@@ -715,7 +720,9 @@ function onSave() {
 					, isrep = $el.hasClass('br-report')
 				if ( isrep )  par.coll = 'reports'
 				if ( id )  dat._id = id
-				dat.events = frm.data('events')
+				var ed = $('.br-events').data('editor')
+				if ( ed ) dat.events = ed.getValue()
+				else dat.events = frm.data('events')
 				remote(par, function(res) {
 					if ( res.dbret < 0 )  alert( translate('Database error: ') + res.dbret)
 					else {
@@ -827,7 +834,7 @@ function onDelete() {
 	if ( app ) {
 		var el = ws.children()[0]
 		if ( el ) {
-			var $el = $( el ), coll
+			var $el = $(el), coll
 				, id = $el.data( '_id' )
 			if ( !id )  return alert('No id fund')
 			if ( $el.hasClass('br-report') )  coll = 'reports'
@@ -842,6 +849,7 @@ function onDelete() {
 					else {
 						ws.empty()
 						onLoad()
+						if ( coll == 'scripts' ) openScript()
 					}
 				})
 			}
