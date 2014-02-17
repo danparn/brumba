@@ -410,7 +410,7 @@ Form.prototype = {
 
 	// Query string
 	querySet : function( cmd, fields, noid ) {
-		var q = cloneJSON(this.query)
+		var q = cloneJSON(this.query) || {}
 		if ( !q.cmd )  q.cmd = cmd
 		q.app = br.app
 		if ( q.coll in ['languages','references'] ) q.db = br.app

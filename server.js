@@ -269,3 +269,29 @@ function sysform( par, callback ) {
 	}
 	callback( [] )
 }
+
+
+
+/* Get user
+*/
+function getUser( par, callback ) {
+	if ( !U.objHasFields(par, 'db,usercode') ) return callback({err: U.err.user})
+	
+	var i = 0
+		, len = logged.length
+	while ( i < len && !(logged[i].db == par.db && logged[i].usercode == par.usercode) ) i++
+	if ( i == len ) callback({err: U.err.user})
+	else {
+		M.get({db:par.db, coll:'_users', where:{username:logged[i].username}}, function(res) {
+			if ( res.err || !res[0] ) callback({err: U.err.user})
+			else {
+				delete res[0].password
+				callback(res[0])
+			}
+		})
+	}
+}
+
+
+
+exports.getUser = getUser

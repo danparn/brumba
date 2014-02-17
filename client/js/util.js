@@ -286,10 +286,13 @@ function objFields( obj, fields ) {
 /* Object has this fields
 */
 function objHasFields( obj, fields ) {
-	var sp = fields.split( ',' )
-	for ( var i=0; i < sp.length; i++ )
-		if ( ! (sp[i] in obj) ) return false
-	return true
+	if ( typeof obj == 'object' && typeof fields == 'string' ) {
+		var sp = fields.split( ',' )
+		for ( var i=0; i < sp.length; i++ )
+			if ( ! (sp[i] in obj) ) return false
+		return true
+	}
+	return false
 }
 
 
