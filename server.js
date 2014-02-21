@@ -68,6 +68,7 @@ console.log( JSON.stringify(par) )
 				console.log( 'brumba: unknoun command: ' + par.cmd )
 				callback({err: U.err.param})
 		}
+		//if ( par.cmd == 'POST' && par.coll == 'scripts' ) uncache(data)
 	})
 
 	// callback
@@ -260,15 +261,28 @@ var sysforms = null
 /* Load form from sysform.json file
 */
 function sysform( par, callback ) {
-	if ( !sysforms )  sysforms = JSON.parse( fs.readFileSync('sysforms.json'))
+	if ( !sysforms )  sysforms = JSON.parse(fs.readFileSync('sysforms.json'))
 	for ( var i=0; i < sysforms.length; i++ ) {
 		if ( sysforms[i].name == par.where.name &&
-				(par.coll == 'pages' && sysforms[i].html.indexOf('br-page') > 0 ||
+				( par.coll == 'pages' && sysforms[i].html.indexOf('br-page') > 0 ||
 				par.coll == 'forms' && sysforms[i].html.indexOf('br-form') > 0) )
-			return callback( [sysforms[i]] )
+			return callback([sysforms[i]])
 	}
-	callback( [] )
+	callback([])
 }
+
+
+
+
+/* Uncache module
+*/
+function uncache( data ) {
+	var name = JSON.parse(Buffer.concat(data)).name
+console.log( require.resolve('./'+name) )
+console.log( require.cache[require.resolve('./'+name)] )
+	delete require.cache[require.resolve('./'+name)]
+}
+
 
 
 

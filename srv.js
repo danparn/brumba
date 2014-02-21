@@ -640,7 +640,7 @@ function report( par, callback ) {
 /* Server script
 */
 function script( par, callback ) {
-	if ( par.db && par.script ) {
+	if ( par.app && par.script ) {
 		var m = par.script.split('.')
 		if ( m[1] ) {
 			loadScripts(par, function(res) {
@@ -651,7 +651,7 @@ function script( par, callback ) {
 						mod[m[1]](par, function(res) {callback(res)})
 					} catch (err) {
 						console.log(err)
-						callback({err: U.err.srv})
+						callback({err: U.err.script})
 					}
 				}
 			})
@@ -670,6 +670,7 @@ var scripts = []
 /* Load application scripts on disk
 */
 function loadScripts( par, callback ) {
+console.log( 'loadScripts' )
 	M.get({db:par.app, coll:'scripts', fields:'name,updated,external'}, function(res) {
 		if ( res.err || res.length == 0 )  return callback(res)
 		else {
@@ -686,6 +687,7 @@ function loadScripts( par, callback ) {
 						M.get({db:par.app, coll:'scripts', where:{name:sc.name}}, function(res) {
 							if ( res.err || res.length == 0 )  return callback(res)
 							else {
+//console.log( 'write ' + sc.name )
 								fs.writeFileSync(path, res[0].code)
 								delete require.cache[path]
 								if ( !u.found )  scripts.push({name:sc.name, updated:sc.updated})
@@ -697,6 +699,7 @@ function loadScripts( par, callback ) {
 			}
 
 			function updated( sc ) {
+//console.log( sc )
 				for ( var i=0, len=scripts.length; i < len; i++ ) {
 					if ( scripts[i].name == sc.name ) {
 						if ( scripts[i].updated == sc.updated )  return {found: true, updated: false}

@@ -580,3 +580,25 @@ function hasAnyClass( el, cls ) {
 	}
 	return false
 }              
+
+
+
+/* Timezone
+*/
+function timezone() {
+	var d = new Date()
+	return d.getTimezoneOffset() * -60000
+}
+
+function toTimezone( data, fields ) {
+	if ( data && fields ) {
+		var fld = strSplit(fields, ',')
+			, tz = timezone()
+		for ( var i=0, len=data.length; i < len; i++ ) {
+			var rec = data[i]
+			if ( rec )
+				for ( var j=0; j < fld.length; j++ )
+					if ( rec[fld[j]] ) rec[fld[j]] += tz 
+		}
+	}
+}

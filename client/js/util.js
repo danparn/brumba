@@ -184,8 +184,8 @@ function strElem( elem, text, attr ) {
 
 /* Date to string
 */
-function strDate( date, addtime ) {
-	var pad = function(n) { return n<10 ? '0'+n : n }	
+function strDate( date, time ) {
+	var pad = function(n) { return n<10 ? '0'+n : n }
 		, s
 	
 	if ( date ) {
@@ -196,7 +196,7 @@ function strDate( date, addtime ) {
 		else  s = pad(m) + '/'+ pad(d) + '/'
 		s += date.getFullYear()
 		
-		if ( addtime ) {
+		if ( time ) {
 			s += ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds())
 		}
 	}
