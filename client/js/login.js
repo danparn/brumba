@@ -130,3 +130,4 @@ function filterMenu( menu ) {
 	}
 	return $('<div>').append( m.clone() ).html()
 }
+
