@@ -372,7 +372,9 @@ Form.prototype = {
 			var fld = $(this)
 				, val = fld.val()
 			
-			if ( fld.is('input[type*="date"]') ) {		// date
+			if ( fld.is('select') ) {
+				if ( !isNaN(val) ) val = parseInt(val, 10)
+			} else if ( fld.is('input[type*="date"]') ) {		// date
 				if ( val != '' ) {
 					var d = inputDate(val)
 					val = d.getTime()
@@ -547,7 +549,7 @@ console.log( 'iconDel.click' )
 		this.rows[0] = this.tag.find('.br-detail')
 		this.rows[0].data('row', 0)
 		var frm = this.tag
-			, fh = parseInt(frm.css('height'), 10)
+			, fh = parseInt(frm.css('height'), 10) - 20
 			, hh = parseInt(frm.find('.br-header').css('height'), 10)
 			, dh = parseInt(this.rows[0].css('height'), 10)
 			, th = parseInt(frm.find('.br-total').css('height'), 10)
@@ -728,7 +730,10 @@ console.log( 'iconDel.click' )
 		if ( this.query.coll ) { 
 			var mod = []
 			for ( var i=0, len = this.dataset.length; i < len; i++ ) {
-				if ( this.dataset[i]._idx >= 0 )  mod.push(this.dataset[i])
+				if ( this.dataset[i]._idx >= 0 ) {
+					if ( this.query.coll == '_options' ) this.dataset[i].type = br.menuid
+					mod.push(this.dataset[i])
+				}
 			}
 			if ( $(this).triggerHandler('save', mod) )  return callback(err)
 			else if ( mod.length > 0 ){

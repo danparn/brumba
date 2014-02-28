@@ -168,7 +168,7 @@ function pageInit() {
 	for ( var i=0; i < page.forms.length; i++ ) {
 		var form = page.forms[i]
 		if ( form.query ) {
-			var mas
+			var mas = null
 				, field =  form.query.field || form.query.concat
 			if ( field && !form.query.coll ) {
 				var p = field.lastIndexOf('.')
@@ -179,7 +179,7 @@ function pageInit() {
 					form.field = field
 				}
 			}
-			for ( var j=page.formPos(form); j >= 0; j-- ) {
+			for ( var j=i; j >= 0; j-- ) {
 				var f = page.forms[j]
 				if ( mas ) {
 					if ( f.query.field == mas ) {

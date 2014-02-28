@@ -68,7 +68,7 @@ console.log( JSON.stringify(par) )
 				console.log( 'brumba: unknoun command: ' + par.cmd )
 				callback({err: U.err.param})
 		}
-		//if ( par.cmd == 'POST' && par.coll == 'scripts' ) uncache(data)
+		if ( par.cmd == 'POST' && par.coll == 'scripts' ) uncache(data)
 	})
 
 	// callback
@@ -278,8 +278,8 @@ function sysform( par, callback ) {
 */
 function uncache( data ) {
 	var name = JSON.parse(Buffer.concat(data)).name
-console.log( require.resolve('./'+name) )
-console.log( require.cache[require.resolve('./'+name)] )
+console.log( 'uncache ' + name )
+//console.log( require.cache[require.resolve('./'+name)] )
 	delete require.cache[require.resolve('./'+name)]
 }
 

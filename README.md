@@ -55,7 +55,7 @@ Ver1.0:
 - [x] Form/select/autocomplete: data from server script
 - [x] Reports: PDF generated on server
 - [x] Https
-- [x] Multilaguage
+- [x] Multilanguage
 - [ ] Export selected data in Excel format
 
 Ver2.0:

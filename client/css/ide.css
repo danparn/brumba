@@ -14,7 +14,7 @@ body {
 	background: #E3E4E5;
 }
 div#wrapper {
-	width: 3000px;
+	width: 2000px;
 	height: 800px;
 }
 div#menubar {
@@ -36,7 +36,7 @@ div#upper-band {
 }
 div#workspace {
 	position: relative;
-	width: 2500px;
+	width: 80%;
 	height: 90%;
 	top: 25px;
 	background: #E3E4E5;
@@ -47,7 +47,7 @@ div#workspace {
 }
 input#app-name {
 	position: relative;
-	width: 15%;
+	width: 150px;
 	float: left;
 	border-style: inset;
 	border-width: 1px;

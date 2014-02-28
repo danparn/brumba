@@ -558,14 +558,19 @@ function appScript( name, callback ) {
 			app: br.app,
 			coll: 'scripts',
 			where: {name: name},
-			result: 'code',
+			result: 'count',
 			usercode: br.usercode
 		}
-	dynamicScript('/brumba?' + JSON.stringify(par), function() {
-		if ( callback ) callback()
+	remote(par, function(res) {
+		if ( res.count > 0 ) {
+			par.result = 'code'
+			dynamicScript('/brumba?' + JSON.stringify(par), function() {
+				if ( callback ) callback()
+			})
+remote({cmd:'SRV', db:br.app, app:br.app, script:name+'.test'}, function(res) {})
+		}
 	})
 
-remote({cmd:'SRV', db:br.app, app:br.app, script:name+'.test'}, function(res) {})
 
 }
 
