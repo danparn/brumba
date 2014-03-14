@@ -175,7 +175,7 @@ function cursor( par, callback ) {
 function post( par, data, callback ) {
 	if ( !par.db || !par.coll || !data )  return callback({err: U.err.param})
 	
-	var dat = ( Buffer.isBuffer(data[0]) ) ? JSON.parse(Buffer.concat(data)) : data
+	var dat = ( Buffer.isBuffer(data[0]) ) ? JSON.parse(Buffer.concat(data)) : data.join('')
 	if ( dat.length == 0 )  return callback({err: U.err.data})
 	
 	coll( par.db, par.coll, function(coll) {

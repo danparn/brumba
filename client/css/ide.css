@@ -243,6 +243,11 @@ img {
 	overflow: hidden;
 	background: white;
 }
+.br-report .br-footer {
+	position: absolute;
+	bottom: 0;
+	display: block;
+}
 .br-nested {
 	position: absolute;
 	overflow: hidden;
@@ -323,7 +328,7 @@ img {
 .br-band {
 	position: relative;
 }
-.br-total {
+.br-tabular .br-total {
 	position: absolute;
 	bottom: 0;
 	display: block;

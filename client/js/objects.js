@@ -911,16 +911,19 @@ function Select( select, callback ) {
 					txt = ''
 					for ( var j=1; j < fld.length; j++ ) {
 						var fl = fld[j]
-						if ( j > 1 ) { 
-							if ( fld[j].charAt(0) == '+' ) {
-								fl = fld[j].substr(1)
-								txt += ' '
-							} else {
-								txt += ' - '
+						if ( r[fl] ) {
+							if ( j > 1 ) { 
+								if ( fld[j].charAt(0) == '+' ) {
+									fl = fld[j].substr(1)
+									txt += ' '
+								} else {
+									txt += ' - '
+								}
 							}
+							//if ( fl.charAt(0) == '\'' )  txt += fl.substring(1, fl.length-2)
+							//else  txt += r[fl]
+							txt += r[fl]
 						}
-						if ( fl.charAt(0) == '\'' )  txt += fl.substring(1, fl.length-2)
-						else  txt += r[fl]
 					}
 					$select.append('<option value="' + r[fld[0]] + '">'+ txt + '</option>')
 				}

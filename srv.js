@@ -165,7 +165,7 @@ function Report( par, callback, pdf ) {
 	this.par = par						// parameters
 	this.err = null
 	this.$ = null							// report html DOM
-	this.band = []
+	this.bands = []
 	this.grps = 0
 	this.pdf = pdf
 	this.nested = (pdf) ? true : false
@@ -173,6 +173,11 @@ function Report( par, callback, pdf ) {
 	this.top = (this.nested) ? par.args.top : 0
 	this.font = {size: 11, fam: 'Helvetica'}
 	this.selects = []
+	this.bottom = 0
+	this.pgnum = 0
+	this.data = null
+	this.rec = null
+	this.time = process.hrtime()
 
 	this.init(callback)
 }
@@ -191,18 +196,22 @@ Report.prototype = {
 		M.get({db: this.par.app, coll: 'reports', where: { name: this.par.args.report}}, function(res) {
 			if ( res.err )  return callback(res)
 			if ( res.length == 0 )  return callback({err: U.err.param})
+			var band
 			self.$ = cheerio.load(res[0].html)
 			self.$('.br-band').each( function() {
 				var $this = self.$(this)
 					, name = $this.attr('name')
 				if ( name == 'group' ) name += self.grps++
-				self.band.push({name: name, html: $this})
+				band = {name: name, html: $this, height: parseInt($this.css('height'), 10)}
+				if ( name == 'footer' ) band.rec = {}
+				self.bands.push(band)
 			})
 			// new page
 			if ( !self.nested ) {
-				var opt = { size: 'A4' }
-				if ( self.$('.br-report').attr('data-lanscape') )  opt.layout = 'landscape'
+				var opt = { size: 'A4', margin: 0 }
+				if ( self.$('.br-report').attr('data-landscape') == 'true' )  opt.layout = 'landscape'
 				self.pdf = new PDFDocument(opt)
+				self.bottom = self.pdf.page.height - band.height
 			}
 			// font
 			var s = self.$('.br-report').attr('style')
@@ -225,7 +234,7 @@ Report.prototype = {
 							, id = sel.attr('id')
 							
 						if ( qs ) {
-							var q = json.toJSON(qs)
+							var q = U.toJSON(qs)
 							if ( exists(id, q) ) selData(i+1)
 							else {
 								if ( Array.isArray(q) ) {
@@ -288,6 +297,7 @@ Report.prototype = {
 		
 		function header( i ) {
 			if ( i < h.count ) {
+				if ( self.data ) self.rec = self.data[i]
 				if ( !self.nested ) self.newPage(i)
 				self.print('header', function(err) {
 					if ( err )
@@ -306,12 +316,17 @@ console.log( 'print header err' )
 			} else {
 				if ( self.nested ) callback(self.top)
 				else {
+					self.print('footer', function(err) {
+						if ( err ) console.log( 'print footer err' )
 /*self.pdf.output(function(pdf) {
 	callback(pdf)
 })*/
-					var fn = new M.ObjectID() + '.pdf'
-					self.pdf.write('client/tmp/' + fn)
-					self.callback({filepath: 'tmp/'+fn})
+						var fn = new M.ObjectID() + '.pdf'
+						self.pdf.write('client/tmp/' + fn)
+self.time = process.hrtime( self.time )
+console.log( 'report done in %ds %dms', self.time[0], self.time[1]/1000000 )
+						self.callback({filepath: 'tmp/'+fn})
+					})
 				}
 			}
 		}
@@ -363,7 +378,14 @@ console.log( 'print detail err' )
 									callback(err)
 								} else prn(i+1)
 							}, i)
-						} else callback()
+						} else {
+							self.print('total', function(err) {
+								if ( err ) {  
+console.log( 'print total err' )
+									callback(err)
+								} else callback()
+							})
+						}
 					}
 				}
 			})
@@ -373,12 +395,12 @@ console.log( 'print detail err' )
 	
 	
 	query : function( bandname, callback ) {
-console.log( 'query %s  %s', bandname, this.par.args.report  )
+//console.log( 'query %s %s', bandname, this.par.args.report  )
 		var band = this.findBand(bandname)
 			, qs =  band.html.attr('data-query')
 			, self = this
 		if ( qs ) {
-			var q = json.toJSON(qs)
+			var q = U.toJSON(qs)
 			if ( q.coll ) {
 				if ( q.where && qs.indexOf('#') >= 0 ) {
 					for ( p in q.where ) {
@@ -411,56 +433,86 @@ console.log( 'query %s  %s', bandname, this.par.args.report  )
 				if ( band.data ) band.count = band.data.length
 				else band.count = 0
 				callback()
-			} else if ( q.script ) {
+			} else if ( q.script && bandname == 'header' ) {
 				q.app = this.par.app
 				q.db = this.par.db
-				q.args = this.par.args
+				q.args = U.cloneJSON(this.par.args)
+				q.band = bandname
 				script(q, function(res) {
 					if ( res.err ) {
 						self.callback(res)
 						callback(true)
 					} else {
-						band.data = res
-						band.count = band.data.length
+						self.data = res
+						band.count = self.data.length
 						callback()
 					}
 				})
 			} else  callback()
+		} else if ( self.rec && bandname == 'detail' ) {
+			band.count = self.rec['detail'].length
+			callback()
 		} else  callback()
 	},
 	
 	
 	print : function( bandname, callback, idx ) {
-console.log( 'print %s  %s', bandname, this.par.args.report  )
+//console.log( 'print %s %s', bandname, this.par.args.report  )
 		var band = this.findBand(bandname)
 			, self = this
 			, ret = function(err) {callback(err)}
-		if ( band.cursor ) {
-			band.cursor.nextObject( function(err, doc) {
-				if ( err ) {
-console.log( err )	
-					self.callback({err: U.err.data})
-					callback(true)
-				} else {
-					band.rec = doc
-					prn(ret)
-				}
+		if ( self.top + band.height > self.bottom && bandname != 'footer' ) {
+			self.print('footer', function(err) {
+				if ( err ) console.log( 'print footer err' )
+				self.newPage(1)
+				self.print('header', function(err) {
+					if ( err ) console.log( 'print header err' )
+					bandrec()
+				})
 			})
-		} else if ( band.data ) {
-			band.rec = band.data[idx]
-			prn(ret)
-		} else {
-			prn(ret)
+		} else bandrec()
+
+		function bandrec() {
+			if ( band.cursor ) {
+				band.cursor.nextObject( function(err, doc) {
+					if ( err ) {
+console.log( err )	
+						self.callback({err: U.err.data})
+						callback(true)
+					} else {
+						band.rec = doc
+						prn(ret)
+					}
+				})
+			} else if ( self.rec ) {
+				if ( bandname == 'header' ) band.rec = self.rec
+				else {
+					var bdata = self.rec[bandname]
+					if ( bdata ) {
+						if ( Array.isArray(bdata) && idx >= 0 ) band.rec = bdata[idx]
+						else U.objExtend(band.rec, bdata)
+					}
+				}
+				prn(ret)
+			/*} else if ( band.data ) {
+				if ( idx >= 0 ) band.rec = band.data[idx]
+				prn(ret)*/
+			} else {
+				prn(ret)
+			}
 		}
 
 		function prn( callback ) {
+			if ( bandname == 'header' && band.rec && idx >= 0 ) U.objExtend(band.rec, self.par.args)
+			self.computedFields(band)
 			var imgs = 0
 			band.html.children().each( function() {
 				var el = self.$(this)
-					, s = el.attr('style')
-					, f = self.getFont(s)
-					, css = json.toJSON('{' + U.strRep(s, ';', ',') + '}')
-//console.log( '%s %d %d', el.text(), css.left + self.left, css.top + self.top )
+				if ( el.hasClass('br-hidden') || el.attr('disabled') ) return
+				var f = self.getFont(el.attr('style'))
+					, css = cssObj(el)
+					, op =  {}
+				if ( css['text-align'] ) op = {align: css['text-align'], width: css.width}
 				// font
 				if ( f ) {
 					self.pdf.fontSize(f.size)
@@ -468,22 +520,32 @@ console.log( err )
 				}
 
 				var left = css.left + self.left + 1
-					, top = css.top + self.top + 2
+					, top = css.top + 2
+				top += (bandname == 'footer') ? self.bottom : self.top 
 				if ( el.hasClass('br-label') ) {
 					self.pdf.text(el.text(), left, top)
 				} else if ( el.hasClass('br-field') && band.rec ) {
-					var val = band.rec[el.attr('id')]
+					var id = el.attr('id')
+						, val
+					if ( id == 'PAGE' ) val = self.pgnum
+					else if ( id == 'DATE' ) val = new Date().getTime()
+					else val = band.rec[id]
 					if ( val ) {
 //console.log( val )
 						if  ( el[0].name == 'select' ) val = selectVal(el[0], val)
 						else if ( el.attr('type') == 'date' ) val = U.strDate(new Date(val))
-						else if ( el.attr('type') == 'datetime' ) val = U.strDate(new Date(val), true)
+						else if ( el.attr('type') == 'datetime' ) val = U.strDate(new Date(val), 'hm')
+						else if ( el.attr('type') == 'time' ) val = U.strTime(val)
 						else if ( val.lab ) val = val.lab
+						else if ( el.attr('type') == 'number' ) {
+							var dec = el.attr('data-decimals')
+							if ( dec && typeof val == 'number' ) val = val.toFixed(dec)
+						} 
 						if ( el[0].name == 'textarea' ) {
 							self.pdf.text(val, left, top, {width: css.width, height: css.height})
 						} else if ( el.attr('type') == 'checkbox' ) {
 							self.pdf.image('client/images/checked.png', left, top, {width: 9})
-						} else self.pdf.text(val, left, top)
+						} else self.pdf.text(val, left, top, op)
 					}
 				} else if ( el[0].name == 'img' ) {
 					imgs++
@@ -521,9 +583,9 @@ console.log( err )
 			function prnend() {
 				var nest = band.html.find('.br-nested')
 				if ( nest.length > 0 ) {
-console.log( 'nest' )
+//console.log( 'nest' )
 					var par = U.cloneJSON(self.par)
-						, css = json.toJSON('{' + U.strRep(nest.attr('style'), ';', ',') + '}')
+						, css = cssObj(nest)
 					par.args.report = nest.attr('data-nested')
 					par.args.parentData = band.rec
 					par.args.left = css.left
@@ -536,11 +598,41 @@ console.log( 'nest' )
 						})
 					}, self.pdf)
 				} else {
-					var css = json.toJSON('{' + U.strRep(band.html.attr('style'), ';', ',') + '}')
-					self.top += css.height
+					self.top += band.height
+					if ( bandname == 'detail' ) total(band.rec)
 					callback()
 				}
 			}
+		
+			function total( detrec ) {
+				var tot = self.findBand('total')
+				if ( !tot.rec ) tot.rec = {}
+				var rec = tot.rec
+				tot.html.find('input[type=number],input[type=time]').each( function() {
+					var el = self.$(this)
+						, id = el.attr('id')
+					if ( !isNaN(detrec[id]) ) {
+						if ( !rec[id] ) rec[id] = 0
+						rec[id] += detrec[id]
+					}
+				})
+			}
+
+		}
+	
+		function cssObj( el ) {
+			var s = el.attr('style')
+			if ( s ) {
+				var st = U.strSplit(s, ';')
+					, css = {}
+				for ( var i=0; i < st.length; i++ ) {
+					var pr = U.strSplit(st[i], ':')
+					if ( 'top,left,width,height'.indexOf(pr[0]) > -1 ) css[pr[0]] = parseInt(pr[1].replace('px', ''), 10) 
+					else css[pr[0]] = pr[1]
+				}
+				return css
+			}
+			return {}
 		}
 	
 		function selectVal( el, val ) {
@@ -575,18 +667,63 @@ console.log( 'nest' )
 
 	},
 	
+	computedFields : function( band ) {
+		var self = this
+		band.html.find('input[data-formula]').each( function() {
+			var el = self.$(this)
+				, formula = el.attr('data-formula')
+			if ( formula ) {
+				var expr = formulaExpr(band.rec, formula)
+				if ( expr ) {
+					var v
+					try {
+						v = eval(expr)
+					} catch (e) {
+					}
+					if ( v ) band.rec[el.attr('id')] = v 
+				}
+			}
+		})
+
+		function formulaExpr( rec, formula ) {
+			if ( rec ) {
+				var op = '*+/-()'
+					, p = 0, b = 0
+					, expr = ''
+				formula = U.strRep(formula, ' ', '')
+//console.log( formula )
+				do {
+					while ( op.indexOf(formula.charAt(p)) > -1 ) expr += formula.charAt(p++)
+					b = p
+					p = U.strFindAny(formula, op, p)
+					if ( p < 0 ) p = formula.length
+					var f = formula.substring(b,p)
+						, v = (isNaN(f)) ? rec[f] : f
+//console.log( 'f = ' + f + '  v = ' + v )
+					if ( !v ) return null
+					expr += v + formula.charAt(p)
+					p++
+				} while ( p < formula.length )
+//console.log( expr )
+				return expr
+			}
+			return '0'
+		}
+	},
+	
 	
 	newPage : function( i ) {
 		if ( i > 0 )  this.pdf.addPage()
+		this.pgnum++
 		this.top = 0
 	},
 	
 	
 	findBand : function( name, idx ) {
-		for ( var i=0; i < this.band.length; i++ )
-			if ( this.band[i].name == name ) {
+		for ( var i=0; i < this.bands.length; i++ )
+			if ( this.bands[i].name == name ) {
 				if ( idx ) return i
-				else return this.band[i]
+				else return this.bands[i]
 			}
 	},
 	

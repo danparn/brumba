@@ -28,7 +28,7 @@ function remote ( param, callback, dat ) {
 	
 	var ajax = {
 		url: '/brumba?' + JSON.stringify(param),
-		timeout: 10000,
+		timeout: 15000,
 		success: function(res) {
 			clearTimeout(to)
 			if ( window.loadingIndicator )  loadingIndicator.fadeOut()
@@ -606,4 +606,24 @@ function toTimezone( data, fields ) {
 					if ( rec[fld[j]] ) rec[fld[j]] += tz 
 		}
 	}
+}
+
+
+
+/* Report call
+*/
+function report( form, report ) {
+	if ( form ) { 
+    var par = {
+      cmd: 'REP',
+      app: br.app,
+      db: br.db,
+      args: {report: report}
+    }
+    $.extend(par.args, form.modif)
+    //window.open('/brumba?' + JSON.stringify(par))
+    remote(par, function(res) {
+      if ( !res.err ) window.open(res.filepath)
+    })
+  }
 }

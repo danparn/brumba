@@ -183,12 +183,14 @@ function strElem( elem, text, attr ) {
 
 
 /* Date to string
+time: hm (just hour and minute), else full time
 */
 function strDate( date, time ) {
 	var pad = function(n) { return n<10 ? '0'+n : n }
 		, s
 	
 	if ( date ) {
+		if ( typeof date == 'number' ) date = new Date(date)
 		var d = date.getDate()
 			, m = date.getMonth() + 1
 		
@@ -197,7 +199,8 @@ function strDate( date, time ) {
 		s += date.getFullYear()
 		
 		if ( time ) {
-			s += ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds())
+			s += ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes())
+			if ( time != 'hm' ) s  += ':' + pad(date.getSeconds())
 		}
 	}
 	return s
@@ -212,6 +215,32 @@ function strNowDateTime() {
 	return dt.getFullYear() + '-' + pad(dt.getMonth()) + '-' + pad(dt.getDate()) + ' ' + dt.toLocaleTimeString()
 }
 
+
+
+/* Time from milliseconds to string
+*/
+function strTime( time, sec ) {
+	var pad = function(n) { return n<10 ? '0'+n : n }
+		, ret = ''
+	if ( time > 0 ) {
+		var dt = new Date(time)
+		if ( dt.getFullYear() > 1970 ) {
+			ret = pad(dt.getHours()) + ':' + pad(dt.getMinutes())
+			if ( sec ) ret += pad(dt.getSeconds())
+		} else {
+			var s = time / 1000
+				, h = Math.floor(s/3600)
+			s -= h * 3600
+			var m = Math.floor(s/60)
+			ret = pad(h) + ':' + pad(m)
+			if ( sec ) {
+				s -= m * 60
+				ret += ':' + pad(s)
+			}
+		}
+	}
+	return ret
+}
 
 // 
 
@@ -232,6 +261,16 @@ function strNowDateTime() {
 */
 function isNumber( str ) {
   return !isNaN(parseFloat(str)) && isFinite(str)
+}
+
+
+/* Is valid object
+*/
+function objValid( obj ) {
+	if ( !Array.isArray(obj) ) obj = [obj]
+	for ( var i=0; i < obj.length; i++ )
+		if ( typeof obj[i] != 'object' ) return false
+	return true
 }
 
 
@@ -256,10 +295,10 @@ function empty( obj ) {
 /* Merge objects
 */
 function objMerge( obj1, obj2 ) {
-    var obj3 = {}
-    for ( var k in obj1 )  obj3[k] = obj1[k]
-    for ( var k in obj2 )  obj3[k] = obj2[k]
-    return obj3
+	var obj3 = {}
+	for ( var k in obj1 )  obj3[k] = obj1[k]
+	for ( var k in obj2 )  obj3[k] = obj2[k]
+	return obj3
 }
 
 
@@ -267,7 +306,20 @@ function objMerge( obj1, obj2 ) {
 /* Extend objects
 */
 function objExtend( obj, ext ) {
-    for ( var k in ext )  obj[k] = ext[k]
+	if ( obj )
+		for ( var k in ext )
+			if ( ext[k] ) obj[k] = ext[k]
+}
+
+
+/* Extend objects with some fields
+*/
+function objExtendFields( obj, ext, fields ) {
+	if ( obj && ext && fields ) {
+		var f = strSplit(fields, ',')
+		for ( var i=0; i < f.length; i++ )
+			if ( ext[f[i]] ) obj[f[i]] = ext[f[i]]
+	}
 }
 
 
@@ -277,7 +329,9 @@ function objExtend( obj, ext ) {
 function objFields( obj, fields ) {
 	var sp = fields.split( ',' )
 		, o = {}
-	for ( var i=0; i < sp.length; i++ )  o[sp[i]] = obj[sp[i]]
+	if ( obj )
+		for ( var i=0; i < sp.length; i++ )
+			if ( obj[sp[i]] ) o[sp[i]] = obj[sp[i]]
 	return o
 }
 
@@ -287,7 +341,7 @@ function objFields( obj, fields ) {
 */
 function objHasFields( obj, fields ) {
 	if ( typeof obj == 'object' && typeof fields == 'string' ) {
-		var sp = fields.split( ',' )
+		var sp = strSplit(fields, ',')
 		for ( var i=0; i < sp.length; i++ )
 			if ( ! (sp[i] in obj) ) return false
 		return true
@@ -346,17 +400,21 @@ function toJSON( str ) {
 if ( typeof module != 'undefined' && module.exports ) {
 	// export for node
 	exports.err = err
+	exports.strFindAny = strFindAny
 	exports.strCountChar = strCountChar
 	exports.strGetBet = strGetBet
 	exports.strDelBet = strDelBet
 	exports.strRep = strRep
 	exports.strIns = strIns
 	exports.strDate = strDate
+	exports.strTime = strTime
 	exports.strSplit = strSplit
 	exports.objMerge = objMerge
 	exports.objExtend = objExtend
+	exports.objExtendFields = objExtendFields
 	exports.objFields = objFields
 	exports.objHasFields = objHasFields
+	exports.objValid = objValid
 	exports.cloneJSON = cloneJSON
 	exports.toJSON = toJSON
 	exports.isEmpty = isEmpty

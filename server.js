@@ -68,7 +68,7 @@ console.log( JSON.stringify(par) )
 				console.log( 'brumba: unknoun command: ' + par.cmd )
 				callback({err: U.err.param})
 		}
-		if ( par.cmd == 'POST' && par.coll == 'scripts' ) uncache(data)
+		if ( par.cmd == 'POST' && par.coll == 'scripts' ) uncache(par)
 	})
 
 	// callback
@@ -85,6 +85,7 @@ console.log( JSON.stringify(par) )
 
 	function usercheck() {
 		if ( par.usercode ) {
+return true
 if ( par.usercode == 'ide' ) return true
 			for ( var i=logged.length-1; i >= 0; i-- ) {
 				if ( logged[i].usercode == par.usercode ) {
@@ -276,11 +277,22 @@ function sysform( par, callback ) {
 
 /* Uncache module
 */
-function uncache( data ) {
-	var name = JSON.parse(Buffer.concat(data)).name
+function uncache( par ) {
+	M.get({db:par.db, coll:'scripts', fields:'name'}, function(res) {
+		if ( !res.err )
+			for ( var i=0; i < res.length; i++ ) unc(res[i].name)
+	})
+
+	function unc( name ) {
+		var mod
+		try {
+			mod = require.resolve('./'+name)
+		} catch(e) {
+			return
+		}
 console.log( 'uncache ' + name )
-//console.log( require.cache[require.resolve('./'+name)] )
-	delete require.cache[require.resolve('./'+name)]
+		if ( mod ) delete require.cache[mod]
+	}
 }
 
 

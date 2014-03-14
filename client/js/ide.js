@@ -270,9 +270,13 @@ function showProperties( elem ) {
 		tx.prop('disabled', true)
 		dataElem('textarea', 'query')
 	}
-	// formula
+	// number
 	else if ( typ == 'number' ) {
 		dataElem('input', 'decimals', 'number')
+		dataElem('input', 'formula')
+	}
+	// time
+	else if ( typ == 'time' ) {
 		dataElem('input', 'formula')
 	}
 	// Select
@@ -284,13 +288,14 @@ function showProperties( elem ) {
 	else if ( typ == 'autocomplete' ) {
 		dataElem('textarea', 'query')
 	}
+
 	// text-align
-	else if ( typ != 'textarea' && typ != 'checkbox' && typ != 'NESTED' ) {
+	if ( typ != 'textarea' && typ != 'checkbox' && typ != 'NESTED' ) {
 		var sel = dataElem('select', 'text-align')
 		sel.attr('name', 'text-align')
 		sel.append( '<option value=""></option>' + 
-										'<option value="right">right</option>' +
-										'<option value="center">center</option>' )
+								'<option value="right">right</option>' +
+								'<option value="center">center</option>' )
 	}
 	
 	// css
@@ -453,7 +458,8 @@ function openEvents() {
 		editor = CodeMirror( ed.get(0), {
 			mode: 'javascript',
 			lineNumbers: true,
-			autoCloseBrackets: true		
+			autoCloseBrackets: true		,
+			smartIndent: false
 		})
 		editor.on("gutterClick", CodeMirror.newFoldFunction(CodeMirror.braceRangeFinder))
 		events.data('editor', editor)
@@ -497,6 +503,7 @@ function openScript() {
 			mode: 'javascript',
 			lineNumbers: true,
 			indentWithTabs: true,
+			smartIndent: false,
 			tabSize: 2,
 			autoCloseBrackets: true		
 		})
@@ -587,7 +594,8 @@ function openMenu() {
 	ws.removeAttr('style')
 	ws.append( menu )
 	var editor = CodeMirror( menu.find('.br-editor').get(0), {
-			indentWithTabs: true		
+			indentWithTabs: true,		
+			smartIndent: false
 		})
 	menu.data( 'editor', editor )
 	//menu.find('.CodeMirror-scroll').css( 'height', ed.css('height') )
