@@ -21,8 +21,6 @@ var br = {
 var loadingIndicator = null
 	, page
 
-/* Main function
-*/
 $(function() {
 	// Page instance
 	page = new Page()
@@ -90,6 +88,10 @@ $(function() {
 */
 function pageLoad( pgname ) {
 	if ( !pgname )  return
+	if ( pgname == 'IDE' ) {
+		window.open(window.location.origin + '/IDE.html')
+		return
+	}
 	
 	var p = pgname.indexOf(':')
 	if ( p > 0 ) {

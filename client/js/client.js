@@ -28,7 +28,7 @@ function remote ( param, callback, dat ) {
 	
 	var ajax = {
 		url: '/brumba?' + JSON.stringify(param),
-		timeout: 15000,
+		timeout: 30000,
 		success: function(res) {
 			clearTimeout(to)
 			if ( window.loadingIndicator )  loadingIndicator.fadeOut()

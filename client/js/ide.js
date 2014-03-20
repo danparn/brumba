@@ -23,7 +23,7 @@ var propElem = null			// element you see properties of
 */
 var br = {
 	lang: sessionStorage.getItem( 'br.lang' ),
-	usercode: sessionStorage.getItem( 'br.usercode' ) || 'ide',
+	usercode: sessionStorage.getItem( 'br.usercode' ),
 	userid: sessionStorage.getItem( 'br.userid' ),
 	username: sessionStorage.getItem( 'br.username' ),
 	useradm: sessionStorage.getItem( 'br.useradm' )
@@ -165,6 +165,7 @@ $(function() {
 		onChangeProperty( this )
 	})
 	
+	onLoad()
 })
 
 
@@ -614,10 +615,10 @@ function openMenu() {
 /*********************************************
  * 				BUTTON HANDLERS
  *********************************************/
-/* Load button handler
+/* Load handler
 */
 function onLoad() {
-	var app = $('#app-name').val()
+	var app = localStorage.getItem('br.app')
 	if ( app ) {
 		br.app = app
 		br.db = app
@@ -635,10 +636,8 @@ function onLoad() {
 				sort: { name: 1 }
 			}
 		remote( par, function(res) {
-			var menu = $('li#forms ul').empty()
-			if ( res.dbret ) {
-				alert( translate('Application not found: ') + app )
-			} else {
+			if ( !res.err ) {
+				var menu = $('li#forms ul').empty()
 				forms = res
 				$('#application').text('Application: ' + app )
 				for ( var i=0; i < res.length; i++ ) {
@@ -646,49 +645,51 @@ function onLoad() {
 					menu.append( el )
 					el.click( selmenu )
 				}
+				all()
 			}
 		})
 		
-		// Pages
-		par.coll = 'pages'
-		remote( par, function(res) {
-			var menu = $('li#pages ul').empty()
-			if ( !res.dbret ) {
-				for ( var i=0; i < res.length; i++ ) {
-					var el = $('<li class="menu-item"><a href="#" onclick="loadPage(\'' + res[i]._id + '\')">' + res[i].name + '</a></li>')
-					menu.append( el )
-					el.click( selmenu )
+		function all() {		
+			// Pages
+			par.coll = 'pages'
+			remote( par, function(res) {
+				var menu = $('li#pages ul').empty()
+				if ( !res.dbret ) {
+					for ( var i=0; i < res.length; i++ ) {
+						var el = $('<li class="menu-item"><a href="#" onclick="loadPage(\'' + res[i]._id + '\')">' + res[i].name + '</a></li>')
+						menu.append( el )
+						el.click( selmenu )
+					}
 				}
-			}
-		})
-
-		// Reports
-		par.coll = 'reports'
-		remote( par, function(res) {
-			var menu = $('li#reports ul').empty()
-			if ( !res.dbret ) {
-				reports = res
-				for ( var i=0; i < res.length; i++ ) {
-					var el = $('<li class="menu-item"><a href="#" onclick="loadForm(\'' + res[i]._id + '\', true)">' + res[i].name + '</a></li>')
-					menu.append( el )
-					el.click( selmenu )
+			})
+	
+			// Reports
+			par.coll = 'reports'
+			remote( par, function(res) {
+				var menu = $('li#reports ul').empty()
+				if ( !res.dbret ) {
+					reports = res
+					for ( var i=0; i < res.length; i++ ) {
+						var el = $('<li class="menu-item"><a href="#" onclick="loadForm(\'' + res[i]._id + '\', true)">' + res[i].name + '</a></li>')
+						menu.append( el )
+						el.click( selmenu )
+					}
 				}
-			}
-		})
-
-		// Scripts
-		par.coll = 'scripts'
-		remote( par, function(res) {
-			var menu = $('li#scripts ul').empty()
-			if ( !res.dbret ) {
-				for ( var i=0; i < res.length; i++ ) {
-					var el = $('<li class="menu-item"><a href="#" onclick="loadScript(\'' + res[i]._id + '\')">' + res[i].name + '</a></li>')
-					menu.append( el )
-					el.click( selmenu )
+			})
+	
+			// Scripts
+			par.coll = 'scripts'
+			remote( par, function(res) {
+				var menu = $('li#scripts ul').empty()
+				if ( !res.dbret ) {
+					for ( var i=0; i < res.length; i++ ) {
+						var el = $('<li class="menu-item"><a href="#" onclick="loadScript(\'' + res[i]._id + '\')">' + res[i].name + '</a></li>')
+						menu.append( el )
+						el.click( selmenu )
+					}
 				}
-			}
-		})
-
+			})
+		}
 	}
 }
 

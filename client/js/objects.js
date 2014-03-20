@@ -415,7 +415,7 @@ Form.prototype = {
 		var q = cloneJSON(this.query) || {}
 		if ( !q.cmd )  q.cmd = cmd
 		q.app = br.app
-		if ( q.coll in ['languages','references'] ) q.db = br.app
+		if ( ['languages','references'].indexOf(q.coll) > -1 ) q.db = br.app
 		else q.db = br.db
 		
 		if ( !fields ) delete q.fields

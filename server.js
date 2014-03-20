@@ -85,8 +85,8 @@ console.log( JSON.stringify(par) )
 
 	function usercheck() {
 		if ( par.usercode ) {
-return true
-if ( par.usercode == 'ide' ) return true
+//return true
+//if ( par.usercode == 'ide' ) return true
 			for ( var i=logged.length-1; i >= 0; i-- ) {
 				if ( logged[i].usercode == par.usercode ) {
 					logged[i].lastAccess = (new Date()).getTime()

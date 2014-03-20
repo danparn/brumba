@@ -175,7 +175,8 @@ function cursor( par, callback ) {
 function post( par, data, callback ) {
 	if ( !par.db || !par.coll || !data )  return callback({err: U.err.param})
 	
-	var dat = ( Buffer.isBuffer(data[0]) ) ? JSON.parse(Buffer.concat(data)) : data.join('')
+	var dat = ( Buffer.isBuffer(data[0]) ) ? JSON.parse(Buffer.concat(data)) : 
+						(U.objValid(data)) ? data : data.join('')
 	if ( dat.length == 0 )  return callback({err: U.err.data})
 	
 	coll( par.db, par.coll, function(coll) {
@@ -185,7 +186,7 @@ function post( par, data, callback ) {
 			function save( rec, callback ) {
 				var ret = {}
 				if ( rec._idx >= 0 ) {		// record index assigned by the client data model 
-					 ret._idx = rec._idx
+					ret._idx = rec._idx
 					delete rec._idx
 				}
 				oid(rec)
