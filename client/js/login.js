@@ -1,7 +1,7 @@
 /*
  * Brumba
  *
- * © 2012-2013 Dan Parnete
+ * © 2012-2014 Dan Parnete
  * Dual licensed under the MIT and GPL licenses.
 */
 
@@ -12,23 +12,13 @@ $(function() {
 		, pass = $("#password")
 		, lang = $("#lang")
 		, tips = $(".validateTips")
-		, ide = $('.login-ide').length > 0
+		, ide = $('.idelogin').length > 0
 
 	function updateTips( t ) {
 		tips	.text(t).addClass("ui-state-highlight")
 		setTimeout(function() {
 			tips.removeClass("ui-state-highlight", 1500);
 		}, 500);
-	}
-
-	function checkLength( o, n, min, max ) {
-		if ( o.val().length > max || o.val().length < min ) {
-			o.addClass("ui-state-error")
-			updateTips("Length of " + n + " must be between " + min + " and " + max + ".")
-			return false
-		} else {
-			return true
-		}
 	}
 
 	function checkRegexp( o, regexp, n ) {
@@ -50,6 +40,8 @@ $(function() {
 			"Login": function() {
 				var bValid = true;
 
+				bValid = bValid && checkRegexp(app, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter.");
+				bValid = bValid && checkRegexp(db, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter.");
 				bValid = bValid && checkRegexp(user, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter.");
 				// From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
 				bValid = bValid && checkRegexp(pass, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9");

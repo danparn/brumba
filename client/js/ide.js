@@ -1,7 +1,7 @@
 /*
  * Brumba
  *
- * © 2012-2013 Dan Parnete
+ * © 2012-2014 Dan Parnete
  * Dual licensed under the MIT and GPL licenses.
 */
 
@@ -695,6 +695,8 @@ function onLoad() {
 
 
 
+
+
 /* Save button handler
 */
 function onSave() {
@@ -833,6 +835,14 @@ function onSave() {
 	}
 }
 
+
+
+
+/* Run button handler
+*/
+function onRun() {
+	window.open(window.location.origin)
+}
 
 
 

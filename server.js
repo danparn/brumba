@@ -1,7 +1,7 @@
 /*
  * Brumba
  *
- * © 2012-2013 Dan Parnete
+ * © 2012-2014 Dan Parnete
  * Dual licensed under the MIT and GPL licenses.
  *
  */
@@ -27,7 +27,7 @@ if ( process.argv[3] )   M.setURL( process.argv[3] )
 function brumba( req, res ) {
 	var par = JSON.parse( decodeURIComponent(req.url.substr(2)) )
 		, data = []
-///console.log( req.connection.remoteAddress + '   ' + new Date() )
+//console.log( req.connection.remoteAddress + '   ' + new Date() )
 console.log( JSON.stringify(par) )
 
 	// check user
@@ -86,7 +86,6 @@ console.log( JSON.stringify(par) )
 	function usercheck() {
 		if ( par.usercode ) {
 //return true
-//if ( par.usercode == 'ide' ) return true
 			for ( var i=logged.length-1; i >= 0; i-- ) {
 				if ( logged[i].usercode == par.usercode ) {
 					logged[i].lastAccess = (new Date()).getTime()
@@ -141,15 +140,16 @@ function userMenu( par, callback ) {
 
 	// User
 	M.get({db: par.db, coll: '_users', where: {username: par.username}}, function(res) {
+console.log( res )
 		if ( res.err )  return callback(res)
 		if ( !res[0] ) {
 			if ( par.username == 'admin' && par.password == 'brumba'  ) {
 				user = { username: 'admin', password: 'brumba', admin: true }
-				M.post( {db: par.db, coll: '_users'}, user, function(res) {
+				/*M.post( {db: par.db, coll: '_users'}, user, function(res) {
 					if ( res.err ) callback(res)
 					user._id = res.newid
 					permissions()
-				})
+				})*/
 			} else callback({err: U.err.user})
 		} else if ( res[0].password == par.password ) {
 			user = res[0]
@@ -182,7 +182,7 @@ function userMenu( par, callback ) {
 			var ret = {usercode: newCode(), userid: user._id}
 			if ( user.admin ) ret.useradm = user.admin
 			if ( res.err )  return callback(res)
-			else if ( !res[0] ) return ret
+			else if ( !res[0] ) return callback(ret)
 			else {
 				var m = ''
 					, sp = res[0].menu.split('\n')
@@ -286,7 +286,7 @@ function uncache( par ) {
 	function unc( name ) {
 		var mod
 		try {
-			mod = require.resolve('./'+name)
+			mod = require.resolve('./scripts/'+name)
 		} catch(e) {
 			return
 		}

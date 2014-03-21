@@ -1,7 +1,7 @@
 /*
  * Brumba
  *
- * © 2012-2013 Dan Parnete
+ * © 2012-2014 Dan Parnete
  * Dual licensed under the MIT and GPL licenses.
  *
  */
@@ -784,7 +784,7 @@ function script( par, callback ) {
 				if ( res.err )  return callback(res)
 				else {
 					try {
-						var mod = require('./' + m[0])
+						var mod = require('./scripts/' + m[0])
 						mod[m[1]](par, function(res) {callback(res)})
 					} catch (err) {
 						console.log(err)

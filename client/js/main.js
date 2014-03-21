@@ -1,7 +1,7 @@
 /*
  * Brumba
  *
- * © 2012-2013 Dan Parnete
+ * © 2012-2014 Dan Parnete
  * Dual licensed under the MIT and GPL licenses.
 */
 
@@ -89,7 +89,7 @@ $(function() {
 function pageLoad( pgname ) {
 	if ( !pgname )  return
 	if ( pgname == 'IDE' ) {
-		window.open(window.location.origin + '/IDE.html')
+		window.open(window.location.origin + '/idelogin.html')
 		return
 	}
 	
