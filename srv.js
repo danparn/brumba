@@ -818,7 +818,7 @@ console.log( 'loadScripts' )
 				if ( i < res.length ) {
 					if ( res[i].external ) return loop(i+1) 					
 					var sc = res[i]
-						, path = cd + '/'+ sc.name + '.js'
+						, path = cd + '/scripts/'+ sc.name + '.js'
 						, u = updated(sc)
 					if ( !u.found || u.updated ) {
 						M.get({db:par.app, coll:'scripts', where:{name:sc.name}}, function(res) {

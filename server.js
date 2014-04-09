@@ -140,7 +140,6 @@ function userMenu( par, callback ) {
 
 	// User
 	M.get({db: par.db, coll: '_users', where: {username: par.username}}, function(res) {
-console.log( res )
 		if ( res.err )  return callback(res)
 		if ( !res[0] ) {
 			if ( par.username == 'admin' && par.password == 'brumba'  ) {

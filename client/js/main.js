@@ -188,12 +188,13 @@ function pageInit() {
 						form.master = f
 						break
 					}
-				} else if ( f.query.coll ) {
+				} else if ( f.query && f.query.coll ) {
 					form.master = f
 					break
 				}
 			}
-			if ( !form.master )  alert('No master found for query.field:  ' + form.query.field)
+			//if ( !form.master )  alert('No master found for query.field:  ' + form.query.field)
+			if ( !form.master ) form.master = page.forms[0]
 		} else {
 			form.master = form
 		}
@@ -247,6 +248,7 @@ function pageInit() {
 				constrainInput: false,
 				onSelect: function(date, inst) { 
 					fld.data('fld').val(date)
+					 fld.trigger("change") 
 				}
 			})
 

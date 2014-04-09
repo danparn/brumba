@@ -38,11 +38,12 @@ $(function() {
 		modal: true,
 		buttons: {
 			"Login": function() {
-				var bValid = true;
+				var bValid = true
+					, s = ' may consist of a-z, 0-9, underscores, begin with a letter.'
 
-				bValid = bValid && checkRegexp(app, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter.");
-				bValid = bValid && checkRegexp(db, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter.");
-				bValid = bValid && checkRegexp(user, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter.");
+				bValid = bValid && checkRegexp(app, /^[a-z]([0-9a-z_])+$/i, "Application" + s);
+				bValid = bValid && checkRegexp(db, /^[a-z]([0-9a-z_])+$/i, "Database" + s);
+				bValid = bValid && checkRegexp(user, /^[a-z]([0-9a-z_])+$/i, "Username" + s);
 				// From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
 				bValid = bValid && checkRegexp(pass, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9");
 

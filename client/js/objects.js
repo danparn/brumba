@@ -177,6 +177,8 @@ Form.prototype = {
 		this.dataset = []
 		var s = this.tag.attr('data-query')
 		if ( s )  this.query = toJSON(mainArgs(s))
+console.log(this.name)
+console.log(this.query)
 		s = this.tag.data('events')
 		if ( s )  eval(s)
 	},
@@ -242,14 +244,19 @@ Form.prototype = {
 					if ( self instanceof Tabular )  self.res = res
 					else  self.dataset = res
 					self.dropdown( function() {
-						if ( $(self).triggerHandler('retrieve') )  self.clear()
-						else if ( !(self instanceof Tabular) )  self.display()
+						if ( !(self instanceof Tabular) ) {
+							if ( $(self).triggerHandler('retrieve') )  self.clear()
+							else self.display()
+						}
 						callback()
 					})
 				}
 			})
 		} else {
-			if ( this != page.forms[0] )  this.dataset = page.forms[0].dataset
+			if ( this != page.forms[0] ) {
+				if ( page.forms[0] instanceof Tabular ) this.dataset = [page.forms[0].rec]
+				else this.dataset = page.forms[0].dataset
+			}
 			if ( !(this instanceof Tabular) )  this.display()
 			callback()
 		}
@@ -660,7 +667,8 @@ console.log( 'iconDel.click' )
 							for ( var i=self.query.skip, j=0; j < self.res.length; i++, j++)
 								self.dataset[i] = self.res[j]
 						}
-						self.display()
+						if ( $(self).triggerHandler('retrieve') )  self.clear()
+						else self.display()
 					}
 					if ( callback )  callback()
 				}])

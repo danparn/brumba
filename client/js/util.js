@@ -369,6 +369,19 @@ function objHasFields( obj, fields ) {
 
 
 
+/* Object remove fields
+*/
+function objRemoveFields( obj, fields ) {
+	if ( typeof obj == 'object' && typeof fields == 'string' ) {
+		var sp = strSplit(fields, ',')
+		for ( var i=0; i < sp.length; i++ )
+			delete obj[sp[i]]
+	}
+}
+
+
+
+
 /* Clone JSON
 */
 function cloneJSON( json ) {
@@ -426,6 +439,18 @@ function geoDist( p1, p2 ) {
 
 
 
+/* IN array condition
+*/
+function arrIN( value, arr ) {
+	if ( Array.isArray(arr) && value ) {
+		for ( var i=0; i < arr.length; i++ )
+			if ( value == arr[i] ) return true
+	}
+	return false
+}
+
+
+
 
 
 
@@ -447,8 +472,10 @@ if ( typeof module != 'undefined' && module.exports ) {
 	exports.objExtendFields = objExtendFields
 	exports.objFields = objFields
 	exports.objHasFields = objHasFields
+	exports.objRemoveFields = objRemoveFields
 	exports.objValid = objValid
 	exports.cloneJSON = cloneJSON
 	exports.toJSON = toJSON
 	exports.isEmpty = isEmpty
+	exports.arrIN = arrIN
 }
