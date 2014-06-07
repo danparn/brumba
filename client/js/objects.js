@@ -30,6 +30,7 @@ Page.prototype = {
 	seltab: 0,					// selected tab
 	insave: false, 			// page in save operation
 	prm: null,
+	tickers: [],
 	
 
 	// Call command
@@ -50,7 +51,7 @@ Page.prototype = {
 
 	// Find form by name
 	findForm : function( name ) {
-		for ( var i=0, len=this.forms.length; i < l; i++ )
+		for ( var i=0, l=this.forms.length; i < l; i++ )
 			if ( this.forms[i].name == name )  return this.forms[i]
 		return null
 	},
@@ -133,15 +134,16 @@ console.log( this.srcond )
 	newrec : function() {
 		this.recid = null
 		this.command('C', 0)
+		this.command('N', 0)
 		var self = this
+		onNew(0)
 
 		function onNew( i ) {
 			if ( i < self.forms.length ) {
-				var err = $(self.forms[i]).triggerHandler('br.new')
+				var err = $(self.forms[i]).triggerHandler('new')
 				if ( !err )  onNew(i+1)
 			}
 		}
-		onNew(0)
 	}
 }
 /*************** END Page object *************/
@@ -177,8 +179,6 @@ Form.prototype = {
 		this.dataset = []
 		var s = this.tag.attr('data-query')
 		if ( s )  this.query = toJSON(mainArgs(s))
-console.log(this.name)
-console.log(this.query)
 		s = this.tag.data('events')
 		if ( s )  eval(s)
 	},
@@ -190,8 +190,12 @@ console.log(this.query)
 			case 'R':	 this.retrieve(callback);	 break
 			case 'S':  this.save(callback);  break
 			case 'C':  this.clear();  callback();  break
-			case 'N':  this.dataset = null  
-								if ( this instanceof Tabular ) this.recs = 0
+			case 'N':  this.dataset = []  
+								if ( this instanceof Tabular ) {
+									this.recs = 0
+									this.selectRow(0)
+									this.disableRows()
+								}
 								callback()
 								break
 		}
@@ -232,7 +236,7 @@ console.log(this.query)
 	// Retrieve
 	retrieve : function( callback ) {
 		var self = this
-		if ( this.query.coll || this.query.cmd == 'SRV' ) {
+		if ( this.query && (this.query.coll || this.query.cmd == 'SRV') ) {
 			var par = self.querySet('GET')
 			if ( page.srcond ) {
 				if ( par.where )  $.extend(par.where, page.srcond)
@@ -308,69 +312,11 @@ console.log(this.query)
 		this.clear()
 		if ( this.dataset.length > 0 ) {
 			this.rec = this.dataset[0]
-			this.displayForm(this.tag, this.rec)
+			displayForm(this.tag, this.rec)
 		}
 	},
 
 
-	// Display data
-	displayForm : function(form, rec) {
-		if ( form && rec ) {
-			form.find('.br-field').each( function() {
-				var fld = $(this)
-					, id = fld.attr('id')
-				if ( id in rec ) {
-					var value = rec[id]
-					if ( fld.is('input:checkbox') && value )
-						fld.prop('checked', true)
-					else if ( fld.is('input[type="datetime"]') )
-						fld.val(strDate(new Date(value), true))
-					else if ( fld.is('input[type="date"]') )
-						fld.val(strDate(new Date(value)))
-					else if ( fld.is('input[type="number"]') && fld.attr('data-decimals') )
-						fld.val(parseFloat(value).toFixed(parseInt(fld.attr('data-decimals'), 10)))
-					else if ( fld.is('input[type="color"]') )
-						fld.css('background', value)
-					else if ( value.txt ) {
-						fld.val(value.txt)
-						fld.data('id', value.val)
-					} else
-						fld.val(value)
-				}
-			})
-
-			// computed fields
-			var formulaValues = function( formula ) {
-				var op = '*+/-()'
-					, p = 0, b = 0, res = ''
-				do {
-					p = strFindAny(formula, op, p)
-					if ( p < 0 ) p = formula.length
-					var v = form.find('#'+formula.substring(b,p).trim()).val()
-					if ( !v ) return null
-					res += v + formula.charAt(p)
-					p++
-					b = p
-				} while ( p < formula.length )
-				return res
-			}
-
-			var self = this
-			form.find('input[data-formula]').each( function() {
-				var fld = $(this)
-					, expr = formulaValues(fld.attr('data-formula'))
-				if ( expr ) {
-					var value = eval(expr)
-						, dec = fld.attr('data-decimals')
-					if ( dec ) value = parseFloat(value).toFixed(dec)
-					fld.val(value)
-				}
-			})
-
-		}
-	},
-	
-	
 	// Change event for input fields creates modif object
 	setChangeField : function() {
 		var self = this
@@ -381,6 +327,8 @@ console.log(this.query)
 			
 			if ( fld.is('select') ) {
 				if ( !isNaN(val) ) val = parseInt(val, 10)
+			} else if ( fld.is('.br-number') ) {						// number
+				val = fld.data('val')
 			} else if ( fld.is('input[type*="date"]') ) {		// date
 				if ( val != '' ) {
 					var d = inputDate(val)
@@ -396,8 +344,8 @@ console.log(this.query)
 					val = true
 				else
 					val = false
-			
 			} else if ( fld.is('input[type="autocomplete"]') || fld.is('input[type="filelink"]') ) {		// autocomplete or filelink
+			
 				if ( val != '' )  val = { txt: val,  val: fld.data('id')	}
 			}
 			
@@ -468,6 +416,7 @@ function Tabular( name, html ) {
 	this.res = null
 	this.recs = 0
 	this.noRetrieve = false
+	this.canDelete = false
 
 	Form.call(this, name, html)
 }
@@ -509,6 +458,7 @@ extend( Tabular, {
 							while ( !d[b] )  b++
 							self.query.skip = b - self.query.limit
 						} else  self.query.skip = b
+						if ( self.query.skip < 0 ) self.query.skip = 0
 						if ( self.noRetrieve ) self.noRetrieve = false
 						else self.retrieve()
 					} else self.display()
@@ -547,6 +497,8 @@ console.log( 'iconDel.click' )
 				})
 			})
 		})
+		
+		this.canDelete = !this.tag.attr('readonly') && !this.tag.attr('disabled') 
 	},
 	
 	
@@ -555,6 +507,9 @@ console.log( 'iconDel.click' )
 		this.rows = []
 		this.rows[0] = this.tag.find('.br-detail')
 		this.rows[0].data('row', 0)
+		this.rows[0].find('input,select,textarea').each( function() {
+			if ( $(this).prop('disabled') ) $(this).attr('br-disabled', 'true')
+		})
 		var frm = this.tag
 			, fh = parseInt(frm.css('height'), 10) - 20
 			, hh = parseInt(frm.find('.br-header').css('height'), 10)
@@ -619,7 +574,7 @@ console.log( 'iconDel.click' )
 				this.rows[i].removeClass('br-selected-row' )
 		if ( row >= 0 )  this.selrow = row
 		this.rows[this.selrow].addClass('br-selected-row')
-		this.rows[this.selrow].append(this.iconDel)
+		if ( this.canDelete ) this.rows[this.selrow].append(this.iconDel)
 		if (  this.dataset )  this.rec = this.dataset[this.row0 + this.selrow]
 		cascade(this)
 	},
@@ -656,19 +611,15 @@ console.log( 'iconDel.click' )
 			// Retrieve
 			} else {
 				Form.prototype.retrieve.apply(self, [function() {		// call super
-					if ( self.query.field ) {
-						var rec = self.dataset[0]
-						if ( rec ) {
-							self.dataset = rec[self.query.field]
-						}
-					} else {
-						if ( self.res.length > 0 ) {
-							// Set data
-							for ( var i=self.query.skip, j=0; j < self.res.length; i++, j++)
-								self.dataset[i] = self.res[j]
-						}
-						if ( $(self).triggerHandler('retrieve') )  self.clear()
-						else self.display()
+					if ( self.res.length > 0 ) {
+						// Set data
+						for ( var i=self.query.skip, j=0; j < self.res.length; i++, j++)
+							self.dataset[i] = self.res[j]
+					}
+					if ( $(self).triggerHandler('retrieve') )  self.clear()
+					else {
+						if ( self.query.reorder ) self.reorder()
+						self.display()
 					}
 					if ( callback )  callback()
 				}])
@@ -678,9 +629,10 @@ console.log( 'iconDel.click' )
 			if ( this.master.rec && this.master.rec[this.field] )
 				this.dataset = this.master.rec[this.field]
 			else this.dataset = []
-			var self = this
-				self.recs = self.dataset.length
+			this.recs = this.dataset.length
+			$(this).triggerHandler('retrieve')
 			this.dropdown( function() {
+				if ( self.query.reorder ) self.reorder()
 				self.display()
 				self.scrollbar()
 				if ( callback )  callback()
@@ -705,6 +657,7 @@ console.log( 'iconDel.click' )
 				}
 			}
 			this.recs = this.dataset.length
+			if ( self.query.reorder ) self.reorder()
 			this.display()
 			this.scrollbar()
 			if ( callback )  callback()
@@ -721,13 +674,11 @@ console.log( 'iconDel.click' )
 	
 	// Display
 	display : function() {
-//console.time('display')
-		this.clear()
 //console.log( 'display ' + this.name )
+		this.clear()
 		for ( var i=this.row0, j=0; i < this.recs && j < this.rows.length; i++, j++ ) {
-			this.displayForm(this.rows[j], this.dataset[i])
+			displayForm(this.rows[j], this.dataset[i])
 		}
-//console.timeEnd('display')
 		this.disableRows()
 		this.selectRow(0)
 	},
@@ -737,21 +688,21 @@ console.log( 'iconDel.click' )
 	save : function( callback ) {
 		if ( this.query.coll ) { 
 			var mod = []
-			for ( var i=0, len = this.dataset.length; i < len; i++ ) {
-				if ( this.dataset[i]._idx >= 0 ) {
+			for ( var i=0, len=this.dataset.length; i < len; i++ ) {
+				if ( this.dataset[i] && this.dataset[i]._idx >= 0 ) {
 					if ( this.query.coll == '_options' ) this.dataset[i].type = br.menuid
 					mod.push(this.dataset[i])
 				}
 			}
-			if ( $(this).triggerHandler('save', mod) )  return callback(err)
+			if ( $(this).triggerHandler('save', mod) )  return callback()
 			else if ( mod.length > 0 ){
 				var self = this
 				remote(this.querySet('POST'), function(res) {
 					if ( res.err < 0 )  return callback(res)
 					else {
-						self.recs = self.dataset.length
 						callback()
-						//page.command('R', page.formPos(self) )
+						self.recs = 0
+						page.command('R', page.formPos(self) )
 					}
 				}, mod)
 			} else  callback()
@@ -795,7 +746,7 @@ console.log( 'iconDel.click' )
 			if ( !modif[form.field] )  modif[form.field] = []
 			var fld = modif[form.field]
 				, j = 0
-			while ( j < fld.length && fld[j]._idx != rec._idx )  j++
+			while ( j < fld.length && fld[j]._idx != rec._idx && (!objHasFields(rec, '_id') || fld[j]._id != rec._id) )  j++
 			fld[j] = rec
 		} 
 	},
@@ -808,16 +759,51 @@ console.log( 'iconDel.click' )
 			var r = this.rows[i]
 			if ( i < n ) {
 				if ( r.data('disabled') ) {
-					r.find('input,select,textarea').prop('disabled', false)
+					r.find('input,select,textarea').each( function() {
+						if ( !$(this).attr('br-disabled')) $(this).removeProp('disabled')
+					})
+					if ( !$(this).prop('disabled') && !$(this).prop('readonly') ) {
+						r.find('input[type*="date"]').each( function() {
+							if ( !$(this).prop('disabled') && !$(this).prop('readonly') ) addDatepicker($(this))
+						})
+					}
 					r.data('disabled', false)
 				}
 			} else {
 				if ( !r.data('disabled') ) {
 					r.find('input,select,textarea').prop('disabled', true)
+					r.find('.ui-icon').remove()
 					r.data('disabled', true)
 				}
 			}
 		}
+	},
+	
+	
+	// Reorder dataset
+	reorder : function() {
+		var ord = []
+		for ( var k in this.query.reorder ) {
+			var o = {field: k, ord: this.query.reorder[k]}
+				, f = this.rows[0].find('select#'+k)
+			if ( f[0] ) o.select = f
+			ord.push(o)
+		}
+		var self = this
+		this.dataset.sort( function(a, b) {
+			for ( var i=0; i < ord.length; i++ ) {
+				var f = ord[i].field
+					, va = a[f]
+					, vb = b[f]
+				if ( ord[i].select ) {
+					va = ord[i].select.find('option[value='+va+']').text()
+					vb = ord[i].select.find('option[value='+vb+']').text()
+				}
+				if ( va > vb ) return 1 * ord[i].ord
+				else if ( va < vb ) return -1 * ord[i].ord
+			}
+			return 0
+		})
 	}
 	
 })
@@ -953,34 +939,6 @@ function Select( select, callback ) {
 
 
 
-
-
-
-
-function deleteDialog( delFunc ) {
-	var $d = $('<div id="dialog-form">' +
-								'<p>' + translate('Do you want to delete this record?') + '</p>' +
-							'</div>')
-	$('body').append($d)
-	$d.dialog({
-		modal: true,
-		
-		buttons: {
-			Delete : function() {
-				$d.dialog("close")
-				delFunc()
-			},
-			
-			Cancel : function() {
-				$d.dialog("close")
-			}
-		},
-		
-		close : function() {
-			$d.empty()
-		}
-	})
-}
 
 
 

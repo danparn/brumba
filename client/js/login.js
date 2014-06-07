@@ -46,6 +46,7 @@ $(function() {
 				bValid = bValid && checkRegexp(user, /^[a-z]([0-9a-z_])+$/i, "Username" + s);
 				// From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
 				bValid = bValid && checkRegexp(pass, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9");
+//lower- and upper-case characters, numbers, and punctuation marks
 
 				if ( bValid ) {
 					if ( localStorage ) {

@@ -8,6 +8,7 @@
 
 var querystring = require('querystring')
 	, connect = require('connect')
+	, static = require('serve-static')
 	, https = require('https')
 	, fs = require('fs')
 	, ObjectID = require('mongodb').ObjectID
@@ -41,31 +42,26 @@ console.log( JSON.stringify(par) )
 	req.on('end', function() {
 		switch ( par.cmd ) {
 		  case 'GET':
-		  	if ( (par.coll == 'forms' || par.coll == 'pages') && par.where && par.where.name  && par.where.name.charAt(0) == '_' )
-		  		sysform( par, callback )
-		  	else
-		  		M.get( par, callback, res )
+		  	if ( (par.coll == 'forms' || par.coll == 'pages') && par.where && par.where.name  
+		  					&& par.where.name.charAt(0) == '_' ) {
+		  		var frm = sysform(par)
+		  		if ( frm ) {
+		  			callback([frm])
+		  			break
+		  		}
+		  	}
+		  	M.get(par, callback, res)
 		  	break
 		  case 'POST':  M.post( par, data, callback );  break
 		  case 'DEL':  M.del( par, callback );  break
 		  case 'FILE':
-				if ( par.mode == 'r' )  M.file( par, res, callback )
-				else  M.file( par, data, callback )
+				if ( par.mode == 'r' )  M.file(par, res, callback)
+				else  M.file(par, data, callback)
 				break
-		  case 'SRV':  S.script( par, callback );  break
-		  case 'REP':
-		  	S.report( par, function(pdf) {
-		  		/*var header = {
-			  			'Content-Type': 'application/pdf', 
-							'Content-Length': pdf.length
-						}
-					res.writeHead(200, header)
-					res.end(pdf)*/
-					callback(pdf)
-		  	})
-		  	break
+		  case 'SRV':  par.httpRes = res; S.script(par, callback);  break
+		  case 'REP':  S.report(par, res);  break
 		  default:
-				console.log( 'brumba: unknoun command: ' + par.cmd )
+				console.log('brumba: unknoun command: ' + par.cmd)
 				callback({err: U.err.param})
 		}
 		if ( par.cmd == 'POST' && par.coll == 'scripts' ) uncache(par)
@@ -107,8 +103,8 @@ function login( req, res ) {
 
 
 var app = connect()
-///	.use( connect.logger('short') )
-		.use( connect.static(__dirname + '/client') )
+//	.use( connect.morgan('short') )
+		.use( static(__dirname + '/client') )
 		.use( '/brumba', brumba )
 		.use('/login', login )
 
@@ -144,11 +140,11 @@ function userMenu( par, callback ) {
 		if ( !res[0] ) {
 			if ( par.username == 'admin' && par.password == 'brumba'  ) {
 				user = { username: 'admin', password: 'brumba', admin: true }
-				/*M.post( {db: par.db, coll: '_users'}, user, function(res) {
+				M.post( {db: par.db, coll: '_users'}, user, function(res) {
 					if ( res.err ) callback(res)
 					user._id = res.newid
 					permissions()
-				})*/
+				})
 			} else callback({err: U.err.user})
 		} else if ( res[0].password == par.password ) {
 			user = res[0]
@@ -260,15 +256,21 @@ var sysforms = null
 
 /* Load form from sysform.json file
 */
-function sysform( par, callback ) {
-	if ( !sysforms )  sysforms = JSON.parse(fs.readFileSync('sysforms.json'))
+function sysform( par ) {
+	if ( !sysforms ) {
+		try {
+			sysforms = JSON.parse(fs.readFileSync('sysforms.json'))
+		} catch (e) {
+			return null
+		}
+	}
 	for ( var i=0; i < sysforms.length; i++ ) {
 		if ( sysforms[i].name == par.where.name &&
 				( par.coll == 'pages' && sysforms[i].html.indexOf('br-page') > 0 ||
 				par.coll == 'forms' && sysforms[i].html.indexOf('br-form') > 0) )
-			return callback([sysforms[i]])
+			return sysforms[i]
 	}
-	callback([])
+	return null
 }
 
 
@@ -304,7 +306,7 @@ function getUser( par, callback ) {
 	
 	var i = 0
 		, len = logged.length
-	while ( i < len && !(logged[i].db == par.db && logged[i].usercode == par.usercode) ) i++
+	while ( i < len && !(logged[i].usercode == par.usercode && logged[i].db == par.db ) ) i++
 	if ( i == len ) callback({err: U.err.user})
 	else {
 		M.get({db:par.db, coll:'_users', where:{username:logged[i].username}}, function(res) {

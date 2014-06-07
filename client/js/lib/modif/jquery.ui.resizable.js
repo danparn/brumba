@@ -1,11 +1,12 @@
 /*!
- * jQuery UI Resizable @VERSION
+ * jQuery UI Resizable 1.9.2
+ * http://jqueryui.com
  *
- * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
- * Dual licensed under the MIT or GPL Version 2 licenses.
+ * Copyright 2012 jQuery Foundation and other contributors
+ * Released under the MIT license.
  * http://jquery.org/license
  *
- * http://docs.jquery.com/UI/Resizables
+ * http://api.jqueryui.com/resizable/
  *
  * Depends:
  *	jquery.ui.core.js
@@ -15,7 +16,7 @@
 (function( $, undefined ) {
 
 $.widget("ui.resizable", $.ui.mouse, {
-	version: "@VERSION",
+	version: "1.9.2",
 	widgetEventPrefix: "resize",
 	options: {
 		alsoResize: false,
@@ -203,15 +204,14 @@ $.widget("ui.resizable", $.ui.mouse, {
 		if (this.elementIsWrapper) {
 			_destroy(this.element);
 			var wrapper = this.element;
-			wrapper.after(
-				this.originalElement.css({
-					position: wrapper.css('position'),
-					width: wrapper.outerWidth(),
-					height: wrapper.outerHeight(),
-					top: wrapper.css('top'),
-					left: wrapper.css('left')
-				})
-			).remove();
+			this.originalElement.css({
+				position: wrapper.css('position'),
+				width: wrapper.outerWidth(),
+				height: wrapper.outerHeight(),
+				top: wrapper.css('top'),
+				left: wrapper.css('left')
+			}).insertAfter( wrapper );
+			wrapper.remove();
 		}
 
 		this.originalElement.css('resize', this.originalResizeStyle);
@@ -296,10 +296,12 @@ $.widget("ui.resizable", $.ui.mouse, {
 		this._propagate("resize", event);
 
 		// danp
-console.log( 'ui.resizable: _mouseDrag' )
+//console.log( 'ui.resizable: _mouseDrag' )
 		var hnd = el.find('.ui-resizable-handle')
-		if ( hnd.hasClass('ui-resizable-s') )  el.height(this.size.height);
-		else if ( hnd.hasClass('ui-resizable-e') )  el.width(this.size.width);
+		if ( hnd.hasClass('ui-resizable-s') ) {
+			el.height(this.size.height)
+			if ( el.next().hasClass('br-panel') ) el.next().height('100%')
+		} else if ( hnd.hasClass('ui-resizable-e') )  el.width(this.size.width);
 		else {
 			el.css({
 				top: this.position.top + "px", left: this.position.left + "px",
@@ -473,8 +475,8 @@ console.log( 'ui.resizable: _mouseDrag' )
 			this.helper = this.helper || $('<div style="overflow:hidden;"></div>');
 
 			// fix ie6 offset TODO: This seems broken
-			var ie6 = $.browser.msie && $.browser.version < 7, ie6offset = (ie6 ? 1 : 0),
-			pxyoffset = ( ie6 ? 2 : -1 );
+			var ie6offset = ($.ui.ie6 ? 1 : 0),
+			pxyoffset = ( $.ui.ie6 ? 2 : -1 );
 
 			this.helper.addClass(this._helper).css({
 				width: this.element.outerWidth() + pxyoffset,
@@ -582,7 +584,7 @@ $.ui.plugin.add("resizable", "alsoResize", {
 
 		_alsoResize = function (exp, c) {
 			$(exp).each(function() {
-				var el = $(this), start = $(this).data("resizable-alsoresize"), style = {}, 
+				var el = $(this), start = $(this).data("resizable-alsoresize"), style = {},
 					css = c && c.length ? c : el.parents(ui.originalElement[0]).length ? ['width', 'height'] : ['width', 'height', 'top', 'left'];
 
 				$.each(css, function (i, prop) {

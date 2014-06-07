@@ -107,10 +107,8 @@ function get( par, callback, res ) {
 						}
 					})
 				} else {
-					var options = {}
-					if ( par.sort )  options['sort'] = par.sort
-					if ( par.skip )  options['skip'] = par.skip
-					if ( par.limit )  options['limit'] = par.limit
+					var options = U.objFields(par, 'sort,skip,limit')
+					if ( !par.sort )  options.sort = {_id: 1}
 					var cur = coll.find( where, fields, options )
 					if ( par.result == 'cursor') {
 //time = process.hrtime( time )
@@ -198,11 +196,12 @@ function post( par, data, callback ) {
 					arrayFields( rec, cond )
 					delete rec._id
 					if ( !U.isEmpty(rec) ) {
-console.log( 'update' )
+//console.log( 'update' )
 //console.log( rec )
 						coll.update( cond, {$set:rec}, function(err, res) {
 							if ( err || res != 1  ) {
 								console.log('Database ' + par.db + ':  Collection ' + par.coll + ':  update error: ' + err )
+								console.log(rec)
 								callback( {err: U.err.upd} )
 							} else  callback( ret )
 						})
@@ -210,11 +209,12 @@ console.log( 'update' )
 					
 				// Insert
 				} else {
-console.log( 'insert' )
+//console.log( 'insert' )
 					coll.insert(rec, function(err, res) {
 //console.log( res )
 						if ( err ) {
 							console.log('Database ' + par.db + ':  Collection ' + par.coll + ':  insert error: ' + err )
+							console.log(rec)
 							callback({err: U.err.ins})
 						} else {
 							ret._id = res[0]._id
@@ -225,13 +225,14 @@ console.log( 'insert' )
 			}
 				
 			function arrayFields( rec, cond ) {
-console.log( 'arrayFields' )
+//console.log( 'arrayFields' )
 //console.log( rec )
 				for ( var f in rec ) {
 					if ( Array.isArray(rec[f]) ) {
 						var ar = rec[f]
 						for ( var i=0; i < ar.length; i++ ) {
 							var set = {}, rc = ar[i]
+if ( !rc._idx ) {console.log('POST.arrayFields: no _idx on record?'); console.log(rc)}
 							oid(rc)
 							if ( rc._id )  {					// update
 								var cnd = {}
@@ -241,12 +242,7 @@ console.log( 'arrayFields' )
 									delete rc._idx
 									delete rc._id
 									for ( var p in rc )  set[f+'.$.'+p] = rc[p]
-console.log( 'arrayFields: update' )
-console.log( cnd )
-console.log( set )
 									coll.update(cnd, {$set:set}, function(err, res) {
-console.log( err )
-console.log( res )
 									})
 								}
 							} else {								// insert
@@ -257,7 +253,7 @@ console.log( res )
 								if ( s.indexOf('._id') > 0 )  s = s.replace( '_id', '$.' )
 								else  s = ''
 								set[s+f] = rc
-console.log( 'arrayFields: insert' )
+//console.log( 'arrayFields: insert' )
 //console.log( cond )
 //console.log( set )
 								coll.update(cond, {$push:set}, function(err, res) {
@@ -394,9 +390,10 @@ function file( par, data, callback ) {
 	
 	dbOpen( par.db, function(db) {
 		if ( db.err )  return callback( db )
-		new GridStore( db, par._id, par.filename, mode, par.options ).open( function(err, gs) {
+		new GridStore(db, par._id, par.filename, mode, par.options).open( function(err, gs) {
 			if ( err ) {
 				console.log('Database ' + par.db + ':  Cannot open GridStore for: ' + par.filename )
+				console.log(err)
 				callback({err: U.err.file})
 			
 			// Read stream
@@ -498,7 +495,11 @@ function subQuery( par, callback ) {
 			var ret = []
 			for( var i=0, len=res.length; i < len; i++ ) {
 				var r = res[i]
-				if ( r[f] ) ret.push(r[f])
+					, v = r[f]
+				if ( r[f] ) {
+					if ( typeof v == 'string' && hex24.test(v) ) v = new ObjectID(v)
+					ret.push(v)
+				}
 			}
 			callback(ret)
 		})

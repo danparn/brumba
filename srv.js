@@ -6,7 +6,7 @@
  *
  */
 
-var http = require('http')
+var https = require('https')
 	, fs = require('fs')
 
 	, cheerio =  require('cheerio')
@@ -23,12 +23,13 @@ var http = require('http')
 function remote( par, callback, dat ) {
 	var opt = {
 			host: par.host,
-			port: par.port,
+			port: par.port || 8080,
 			path: '/brumba?' + JSON.stringify(par),
-			method: (dat) ? 'POST' : 'GET'
+			method: (dat) ? 'POST' : 'GET',
+			rejectUnauthorized: false
 		}
 	
-	http.request( opt, function(res) {
+	https.request( opt, function(res) {
 		var data = []
 		res.on('data', function(chunk) {
 			data[data.length] = chunk
@@ -74,31 +75,23 @@ function menuItems( par, callback ) {
 	M.get(op, function(res) {
 		if ( res.err || !res[0] )  callback(res)
 		else {
-			var m = '<option></option>',
+			var m = [],
 				sp = res[0].menu.split('\n'),
 				lastabs = 0
 			for ( var i=0; i <= sp.length; i++ ) {
 				var ln = sp[i]
-					, pg = null, tit = null
-					, tabs = 0
 				if ( ln ) {
-					var tit = U.strGetBet(ln, '"', '"'),
-						pg = ln.substr(ln.lastIndexOf('"') +1).trim()
-					for ( var j=0; ln[j] == '\t'; j++ )  tabs++
+					var p = ln.lastIndexOf('"')
+					if ( p > 0 ) {
+						var item = { 
+							menuitem: U.strRep(ln.substr(0,p), '"', ''),
+							form: ln.substr(p+1).trim()
+						}
+						m.push(item)
+					}
 				}
-				if ( tabs < lastabs ) {
-					for ( var l=tabs; j < lastabs; j++ )  m += '</optgroup>'
-				}
-				if ( pg ) {
-					m += '<option value="' + pg + '">'+ tit + '</option>'
-				} else if ( tit ) {
-					m += '<optgroup'
-					if ( tabs > 0 )  m += ' class="level' + tabs + '"'
-					m += ' label="' + tit + '">'
-				}
-				lastabs = tabs
 			}
-			callback({html: m})
+			callback(m)
 		}
 	})	
 }
@@ -109,28 +102,29 @@ function menuItems( par, callback ) {
 */
 function ideSaveTo( par, callback ) {
 	M.get(par, function(res) {
-		if ( res.err )  return callback(res)
+		if ( res.err || !res[0] )  return callback(res)
 		else {
-			var u = par.url.split('/')
+			var frm = res[0]
+				, u = par.url.split('/')
 				, h = (u[1]) ? u[0].split(':') : null
 				, opt = {
-					host: (h) ? h[0] : null,
-					port: (h) ? h[1] : null,
-					cmd: 'GET',
-					db: u[1] || u[0],
-					coll: par.coll,
-					where: { name: res[0].name },
-					fields: { _id: 1 }
-				}
-			
-			delete res[0]._id
+						host: (h) ? h[0] : null,
+						cmd: 'GET',
+						db: u[1] || u[0],
+						coll: par.coll,
+						where: { name: frm.name },
+						fields: { _id: 1 },
+						usercode: par.usercode
+					}
+			if ( h && h[1] ) opt.port = parseInt(h[1], 10)
+			delete frm._id
 			
 			// Remote
 			if ( h ) {
 				remote(opt, function(r) {
 					if ( r.err ) return callback(r)
 					opt.cmd = 'POST'
-					if ( r[0] )  res[0]._id = r[0]._id
+					if ( r[0] )  frm._id = r[0]._id
 					remote(opt, function(r) {
 						callback(r)
 					}, res)
@@ -140,13 +134,42 @@ function ideSaveTo( par, callback ) {
 			} else {
 				M.get(opt, function(r) {
 					if ( r.err ) return callback(r)
-					if ( r[0] )  res[0]._id = r[0]._id
+					if ( r[0] )  frm._id = r[0]._id
 					M.post(opt, res, function(r) {
 						callback(r)
 					})
 				})
 			}
 			
+		}
+	})
+}
+
+
+
+/* Remote login
+*/
+function remoteLogin( par, callback ) {
+	var opt = {
+			app: app.val(),
+			db: (ide) ? app.val() : db.val(),
+			username: user.val(),
+			password: pass.val()
+		}
+	$.ajax({
+		url: '/login?' ,
+		timeout: 10000,
+		data: opt,
+		success: function(data) {
+			if ( data.usercode ) {
+				sessionStorage.setItem('br.usercode', data.usercode)
+				sessionStorage.setItem('br.userid', data.userid)
+				sessionStorage.setItem('br.useradm', data.useradm)
+				sessionStorage.setItem('br.menu', filterMenu(data.menu))
+				window.location = (ide) ? '/ide.html' : '/default.html'
+			} else {
+				$("body").html("<H1>Login error</H1>")
+			}
 		}
 	})
 }
@@ -163,7 +186,7 @@ function ideSaveTo( par, callback ) {
  *********************************************/
 function Report( par, callback, pdf ) {
 	this.par = par						// parameters
-	this.err = null
+	this.httpRes = null
 	this.$ = null							// report html DOM
 	this.bands = []
 	this.grps = 0
@@ -184,12 +207,9 @@ function Report( par, callback, pdf ) {
 
 Report.prototype = {
 	
-	callback : null,						// build callback function
-	
 	init : function( callback ) {
 		if ( !(this.par.app && this.par.db && this.par.args && this.par.args.report) ) {
-			this.err = U.err.param
-			return callback(this.err)
+			return callback({err: U.err.param})
 		}
 
 		var self = this
@@ -282,9 +302,8 @@ Report.prototype = {
 	},
 	
 	
-	build : function( callback ) {
-		if ( this.err )  return callback({err: this.err})
-		this.callback = callback
+	build : function( httpRes ) {
+		this.httpRes = httpRes
 		var self = this
 			, h = this.findBand('header')
 		
@@ -318,14 +337,11 @@ console.log( 'print header err' )
 				else {
 					self.print('footer', function(err) {
 						if ( err ) console.log( 'print footer err' )
-/*self.pdf.output(function(pdf) {
-	callback(pdf)
-})*/
-						var fn = new M.ObjectID() + '.pdf'
-						self.pdf.write('client/tmp/' + fn)
+						httpRes.writeHead(200, {'Content-Type': 'application/pdf'})
+						self.pdf.pipe(httpRes)
+						self.pdf.end()
 self.time = process.hrtime( self.time )
 console.log( 'report done in %ds %dms', self.time[0], self.time[1]/1000000 )
-						self.callback({filepath: 'tmp/'+fn})
 					})
 				}
 			}
@@ -416,7 +432,7 @@ console.log( 'print total err' )
 				q.db = this.par.db
 				M.cursor(q, function(res) {
 					if ( res.err ) {
-						self.callback(res)
+						self.returnError(res)
 						callback(true)
 					} else {
 						band.cursor = res
@@ -440,7 +456,7 @@ console.log( 'print total err' )
 				q.band = bandname
 				script(q, function(res) {
 					if ( res.err ) {
-						self.callback(res)
+						self.returnError(res)
 						callback(true)
 					} else {
 						self.data = res
@@ -477,7 +493,7 @@ console.log( 'print total err' )
 				band.cursor.nextObject( function(err, doc) {
 					if ( err ) {
 console.log( err )	
-						self.callback({err: U.err.data})
+						self.returnError({err: U.err.data})
 						callback(true)
 					} else {
 						band.rec = doc
@@ -753,6 +769,11 @@ console.log( err )
 			}
 		}
 		return null
+	},
+	
+	returnError : function( res ) {
+		this.httpRes.write('report error:\n')
+		this.httpRes.end(JSON.stringify(res))
 	}
 	
 }
@@ -762,10 +783,12 @@ console.log( err )
 
 /* Default report call
 */
-function report( par, callback ) {
+function report( par, httpRes ) {
 	new Report(par, function(r) {
-		if ( r.err )  return callback(r)
-		r.build(callback)
+		if ( r.err ) {
+			httpRes.write('report error:\n')
+			httpRes.end(JSON.stringify(r))
+		} else r.build(httpRes)
 	})
 }
 

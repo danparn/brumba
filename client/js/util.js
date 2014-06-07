@@ -273,6 +273,15 @@ Date.prototype.getWeek = function() {
 }
 
 
+/* Convert buffer to zero ended string
+*/
+function bufString( buf, start, end ) {
+	var e = start
+	while ( buf[e] != 0x0 && e < end ) e++
+	return buf.toString('utf8', start, e)
+}
+
+
 
 /* Is numeric value
 */
@@ -467,6 +476,7 @@ if ( typeof module != 'undefined' && module.exports ) {
 	exports.strDate = strDate
 	exports.strTime = strTime
 	exports.strSplit = strSplit
+	exports.bufString = bufString
 	exports.objMerge = objMerge
 	exports.objExtend = objExtend
 	exports.objExtendFields = objExtendFields

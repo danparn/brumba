@@ -45,17 +45,17 @@ $(function() {
 		return $('<div class="selector" />').css('opacity', .65)
 				.appendTo( document.body )
 	}).drag( function(ev, dd) {
-		$( dd.proxy ).css({
-			top: Math.min( ev.pageY, dd.startY ),
-			left: Math.min( ev.pageX, dd.startX ),
-			height: Math.abs( ev.pageY - dd.startY ),
-			width: Math.abs( ev.pageX - dd.startX )
+		$(dd.proxy).css({
+			top: Math.min(ev.pageY, dd.startY),
+			left: Math.min(ev.pageX, dd.startX),
+			height: Math.abs(ev.pageY - dd.startY),
+			width: Math.abs(ev.pageX - dd.startX)
 		})
 	}).drag('end', function(ev, dd){
-		$( dd.proxy ).remove()
+		$(dd.proxy).remove()
 	})
    
-	$.drop({ multi: true })
+	$.drop({multi: true})
    
 	ws.mousedown( function() {
 		onProp = false
@@ -67,6 +67,7 @@ $(function() {
 	})
 	
 	// CTRL+S
+	var lastKey = 0
 	$( document ).keydown( function(ev) {
 		if ( ev.which == 83 && lastKey == 17 ) {
 			onSave()
@@ -312,7 +313,7 @@ function showProperties( elem ) {
 	}
 
 	// border
-	if ( $('.br-report')[0] ) {
+	if ( $('.br-report')[0] || propElem.hasClass('br-label') ) {
 		var bor = dataElem('input', 'border', 'checkbox')
 		if ( propElem[0].style.border ) bor.prop('checked', true)
 	}
@@ -453,8 +454,9 @@ function openEvents() {
 		events.append( ed )
 		events.dialog({
 			width: 700,
-			height: 600, 
-			close: function() { events.dialog('destroy') }
+			height: 600,
+			containment: '#workspace',
+			close: function() { events.dialog('destroy'); events.remove() }
 		})	
 		editor = CodeMirror( ed.get(0), {
 			mode: 'javascript',
@@ -471,11 +473,6 @@ function openEvents() {
 }
 
 
-/* Close events
-*/function closeEvents() {
-	var events = $('.br-events')
-	if ( events )  events.dialog('destroy')
-}
 
 
 
@@ -496,7 +493,7 @@ function openScript() {
 										'<label id="forexternal">external file:</label><input id="external" type="checkbox" />' +
 										'<div class="br-editor" />' +
 								'</div>')
-	closeEvents()
+	$('.br-events').dialog('close')
 	ws.empty()
 	ws.removeAttr('style')
 	ws.append( script )
@@ -552,7 +549,7 @@ function openReferences() {
 										'<button onclick="generateReferences()">Generate</button><br/><br/>' +
 								'</div>')
 	page.tag.find('button').button()
-	closeEvents()
+	$('.br-events').dialog('close')
 	ws.empty()
 	ws.removeAttr('style')
 	ws.append(page.tag)
@@ -590,7 +587,7 @@ function openMenu() {
 	var menu = $('<div class="br-menu"><h3>Menu</h3>' +
 										'<div class="br-editor" />' +
 								'</div>')
-	closeEvents()
+	$('.br-events').dialog('close')
 	ws.empty()
 	ws.removeAttr('style')
 	ws.append( menu )

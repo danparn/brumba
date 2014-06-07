@@ -18,7 +18,7 @@ var httpErr = {
 	
 /* Remote ajax request
 */
-function remote ( param, callback, dat ) {
+function remote( param, callback, dat ) {
 //console.time('remote')
 	var to = setTimeout( function () {	
 		if ( window.loadingIndicator )  loadingIndicator.show()
@@ -117,11 +117,13 @@ function mainArgs ( str ) {
 function substArgs ( where ) {
 	if ( where ) {
 		var dat = page.forms[0].dataset[0]
-		for ( k in where ) {
-			if ( typeof where[k] == 'string' && where[k].charAt(0) == '#' ) {
-				var v = dat[where[k].substr(1)]
-				if ( v ) where[k] = v
-				else delete where[k]
+		if ( dat ) {
+			for ( k in where ) {
+				if ( typeof where[k] == 'string' && where[k].charAt(0) == '#' ) {
+					var v = dat[where[k].substr(1)]
+					if ( v ) where[k] = v
+					else delete where[k]
+				}
 			}
 		}
 	}
@@ -517,6 +519,7 @@ function clearFields( form ) {
 	form.find('input[type="autocomplete"]').removeData('id')
 	form.find('input[type="filelink"]').removeData('id')
 	form.find('input[type="color"]').css('background', '')
+	form.find('.br-number').removeData('val')
 }
 
 
@@ -618,12 +621,160 @@ function report( form, report ) {
       cmd: 'REP',
       app: br.app,
       db: br.db,
-      args: {report: report}
+      args: {report: report},
+      usercode: br.usercode
     }
     $.extend(par.args, form.modif)
-    //window.open('/brumba?' + JSON.stringify(par))
-    remote(par, function(res) {
-      if ( !res.err ) window.open(res.filepath)
-    })
+    window.open('/brumba?' + JSON.stringify(par))
+    /*remote(par, function(res) {
+      window.open(res)
+    })*/
   }
 }
+
+
+
+/* Delete dialog
+*/
+function deleteDialog( delFunc ) {
+	var $d = $('<div id="dialog-form">' +
+								'<p>' + translate('Do you want to delete this record?') + '</p>' +
+							'</div>')
+	$('body').append($d)
+	$d.dialog({
+		modal: true,
+		
+		buttons: {
+			Delete : function() {
+				$d.dialog("close")
+				delFunc()
+			},
+			
+			Cancel : function() {
+				$d.dialog("close")
+			}
+		},
+		
+		close : function() {
+			$d.empty()
+		}
+	})
+}
+
+
+
+/* Display data in form
+*/
+function displayForm(form, rec) {
+	if ( form && rec ) {
+		form.find('.br-field').each( function() {
+			var fld = $(this)
+				, id = fld.attr('id')
+			if ( id in rec ) {
+				var value = rec[id]
+				if ( fld.is('input:checkbox') && value )
+					fld.prop('checked', true)
+				else if ( fld.is('input[type="datetime"]') )
+					fld.val(strDate(new Date(value), true))
+				else if ( fld.is('input[type="date"]') )
+					fld.val(strDate(new Date(value)))
+				else if ( fld.is('.br-number') ) { 
+					fld.data('val', value)
+					numberFormat(fld)
+				} else if ( fld.is('input[type="color"]') )
+					fld.css('background', value)
+				else if ( value.txt ) {
+					fld.val(value.txt)
+					fld.data('id', value.val)
+				} else
+					fld.val(value)
+			}
+		})
+
+		computedFields(form)
+	}
+}
+
+
+/* Computed fields
+*/
+function computedFields( form ) {
+	form.find('input[data-formula]').each( function() {
+		var fld = $(this)
+			, expr = formulaValues(fld.attr('data-formula'))
+console.log(expr)
+		if ( expr ) {
+			var value = eval(expr)
+			fld.data('val', value)
+			numberFormat(fld)
+		} else fld.val('')
+	})
+
+	function formulaValues( formula ) {
+		var op = '*+/-()'
+			, p = 0, b = 0, res = ''
+		do {
+			p = strFindAny(formula, op, p)
+			if ( p < 0 ) p = formula.length
+			var f = form.find('#'+formula.substring(b,p).trim())
+				, v = (f.hasClass('br-number')) ? f.data('val') : f.val()
+			if ( !v ) v = 0
+			res += parseFloat(v) + formula.charAt(p)
+			p++
+			b = p
+		} while ( p < formula.length )
+		return res
+	}
+}
+
+	
+
+/* Add datepicker to a field
+*/
+function addDatepicker( field ) {
+	var ico = $('<span class="ui-icon ui-icon-calendar" style="position: absolute"></span>')
+		, l = parseInt(field.css('left'), 10) + parseInt(field.css('width'), 10) - parseInt(ico.css('width'), 10) + 2
+	ico.css('top', field.css('top'))
+	ico.css('left', l)
+	ico.css('z-index', 2)
+	field.parent().append(ico)
+	field.data('ico', ico)
+	ico.click( function() {
+		var gost = $('.br-datepicker')
+		if ( !gost[0] ) console.log('No br-datepicker found')
+		else {
+			gost.attr('id', field.attr('id'))
+			field.datepicker({
+				showWeek: true,
+				dateFormat: dateFormat,
+				constrainInput: false,
+				onSelect: function(date, inst) { 
+					field.val(date)
+					field.trigger("change") 
+				},
+				onClose: function(date, inst) { 
+					field.datepicker('destroy')
+				}
+			})
+			gost.data('datepicker', field.data('datepicker'))
+			field.datepicker('show')
+		}
+	})
+}
+
+
+
+/* Number field format
+*/
+function numberFormat( fld ) {
+	var v = fld.data('val')
+	if ( v ) {
+		if ( fld.attr('data-decimals') )
+			v = parseFloat(v.toFixed(parseInt(fld.attr('data-decimals'), 10)))
+		fld.val(v.toLocaleString('default', {maximumFractionDigits: 6}))
+	} else fld.val('')
+}
+	
+
+
+

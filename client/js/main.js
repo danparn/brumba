@@ -66,7 +66,7 @@ $(function() {
 				menu.find('a').each( function() {
 					$(this).text(translate($(this).text(), br.lang))
 				})
-				$('button').each( function() {
+				$('.br-button').each( function() {
 					$(this).text(translate($(this).text(), br.lang))
 				})
 			} 
@@ -88,8 +88,14 @@ $(function() {
 */
 function pageLoad( pgname ) {
 	if ( !pgname )  return
+	while ( page.tickers.length > 0 ) {
+		var t = page.tickers.pop()
+		clearInterval(t)
+	}
+
 	if ( pgname == 'IDE' ) {
-		window.open(window.location.origin + '/idelogin.html')
+		if ( br.app == br.db ) window.open(window.location.origin + '/ide.html')
+		else window.open(window.location.origin + '/idelogin.html')
 		return
 	}
 	
@@ -112,6 +118,7 @@ function pageLoad( pgname ) {
 		if ( pans.length == 0 && res[0].events )  page.tag.data('events', res[0].events)
 		page.tag.find('span.ui-icon-close').remove()
 		page.tag.find('.watermark').remove()
+		page.tag.find('input[type=number]').removeAttr('type').addClass('br-number')
 		
 		$pg.append(page.tag)
 		if ( pans.length == 0 ) {
@@ -126,6 +133,7 @@ function pageLoad( pgname ) {
 						if ( res.err )  alert(res.err)
 						else {
 							var frm = $(res[0].html)
+							frm.find('input[type=number]').removeAttr('type').addClass('br-number')
 							p.append(frm)
 							if ( res[0].events )  frm.data('events', res[0].events)
 						}							
@@ -143,7 +151,7 @@ function pageLoad( pgname ) {
 /* Initialize page
 */
 function pageInit() {
-	setSplitter($('div.split-s,div.split-e'))
+	//setSplitter($('div.split-s,div.split-e'))
 
 	// Tabs
 	var tabs = $('.br-tabs')
@@ -238,21 +246,35 @@ function pageInit() {
 	}
 
 	function fieldsFunc() {
-		
 		// Date		$('input[type*="date"]').each( function() {
-			var fld = $(this)
-			fld.data('fld', fld)
-			fld.datepicker({
-				showWeek: true ,
-				dateFormat: dateFormat,
-				constrainInput: false,
-				onSelect: function(date, inst) { 
-					fld.data('fld').val(date)
-					 fld.trigger("change") 
+			var self = $(this)
+			if ( self.prop('disabled') || self.prop('readonly') ) return
+			addDatepicker(self)
+		})
+		
+		// Number
+		$('.br-number').focusin( function() {
+			var ed = $('<input id="number-editor" class="br-field" type="number" />')
+				, self = $(this)
+				, org = self.data('val')
+			ed.css('left', self.css('left'))
+			ed.css('top', self.css('top'))
+			ed.css('width', self.css('width'))
+			ed.css('height', self.css('height'))
+			self.parent().append(ed)
+			ed.focus()
+			ed.val(org)
+			ed.focusout( function() {
+				var v = (ed.val()) ? parseFloat(ed.val()) : null
+				if ( v != org ) {
+					self.data('val', v)
+					numberFormat(self)
+					self.trigger('change')
+					computedFields(self.parent())
 				}
+				ed.remove()
+				self.next().focus()
 			})
-
-			fld.attr('title', 'format: dd/mm/yyyy shortcuts: + (today) d (day of current month) d.m  (day and month)')
 		})
 	
 		// Autocomplete
@@ -324,7 +346,7 @@ function pageInit() {
 					}
 					c.process = function( cell, id ) {
 						$(cell).click( function(ev) {
-							page.recid = (typeof page.recid == 'number') ? parseInt(id, 10) : id
+							page.recid = (isNaN(id)) ? id : parseInt(id, 10)
 							page.command('N', 0)
 							page.command('R', 0)
 						})
@@ -396,7 +418,6 @@ function pageInit() {
 	}
 }
 
-	
 
 
 /* Toolbar handlers
@@ -406,19 +427,21 @@ function butSearch() {
 }
 
 function butSave() {
-	if ( page.prm.indexOf('w') >= 0 ) {
-		if ( !page.insave ) {
-			page.insave = true
-			page.command('S', 0)
-		}
-	} else {
-		alert('Permission denied')
+	if ( page.prm ) {
+		if ( page.prm.indexOf('w') >= 0 ) {
+			if ( !page.insave ) {
+				page.insave = true
+				page.command('S', 0)
+			}
+		} else alert('Permission denied')
 	}
 }
 
 function butDelete() {
-	if ( page.prm.indexOf('d') >= 0 )  page.delete()
-	else  alert('Permission denied')
+	if ( page.prm ) {
+		if ( page.prm.indexOf('d') >= 0 )  page.delete()
+		else  alert('Permission denied')
+	}
 }
 
 function butNew() {

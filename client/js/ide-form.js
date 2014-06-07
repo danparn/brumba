@@ -11,7 +11,7 @@
 // New form
 function newForm() {
 	var form = $('<form id="' + strRep(strNowDateTime(),' ','_') + '" class="br-form" />')
-	closeEvents()
+	$('.br-events').dialog('close')
 	ws.empty()
 	addFlds(form, 5, 5)
 	ws.append(form)
@@ -412,10 +412,6 @@ function loadForm( id, isReport ) {
 					}
 				})
 			})
-/*form.removeAttr('_id')
-$('.header').removeClass('header').addClass('br-header')
-$('.detail').removeClass('detail').addClass('br-detail')
-$('.total').removeClass('total').addClass('br-total')*/
 			form.data( '_id', id)
 			showProperties(form.get(0))
 		}
@@ -487,7 +483,7 @@ function multiband( cls, bands, report ) {
 	var form = $('<form id="' + strRep(strNowDateTime(),' ','_') + '" class="' + cls + ' br-form" />')
 		, band = $('<div class="br-band split-s" style="width:100%; height:20px;" />')
 		, sp = strSplit(bands, ',')
-	closeEvents()
+	$('.br-events').dialog('close')
 	ws.empty()
 	ws.append(form)
 	setForm(form)

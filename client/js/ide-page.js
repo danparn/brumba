@@ -12,7 +12,7 @@
 */
 function newPage() {
 	var pg = $('<div id="' + strRep(strNowDateTime(),' ','_') + '" class="br-page br-panel" type="PAGE" />')
-	closeEvents()
+	$('.br-events').dialog('close')
 	ws.empty()
 	ws.append( pg )
 	splitter( pg, 'H' )
@@ -140,7 +140,7 @@ function setPanel( pane ) {
 
 
 function loadPage( id ) {
-	closeEvents()
+	$('.br-events').dialog('close')
 	remote( {cmd: 'GET', db: br.app, coll: 'pages', where: {_id: id}}, function(res) {
 		if ( ! res.dbret ) {
 			ws.empty()
@@ -197,7 +197,6 @@ function copyToApp() {
 	var el = ws.children()
 		, _id = el.data('_id')
 		, coll
-console.log( el.get(0) )
 	if ( !_id )  return
 	if ( el.hasClass('br-form') )  coll = 'forms'
 	else if ( el.hasClass('br-page') )  coll = 'pages'
@@ -209,8 +208,17 @@ console.log( el.get(0) )
 		buttons: {
 			Save: function() {
 				var url = dlg.find('input').val()
+					, q = {
+							cmd: 'SRV', 
+							script: 'ideSaveTo', 
+							url: url, 
+							app: br.app, 
+							db: br.app, 
+							coll: coll, 
+							where: {_id: _id}
+						}
 				if ( !url || url == '' )  return alert('Valid url needed!')
-				remote( {cmd: 'SRV', script: 'ideSaveTo', url: url, db: br.app, coll: coll, where: {_id: _id}}, function(res) {
+				remote(q, function(res) {
 					if ( res.err )  dlg.append('<p style="color:red;">Save ERROR!</p>')
 					else  dlg.append('<p>Saved</p>')
 				})

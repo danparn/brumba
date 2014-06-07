@@ -14,7 +14,7 @@ body {
 	background: #E3E4E5;
 }
 div#wrapper {
-	width: 2000px;
+	width: 3000px;
 	height: 800px;
 }
 div#menubar {
@@ -318,7 +318,6 @@ img {
 /* Tabular */
 .br-tabular {
 	height: 100%;
-	max-height: 500px;
 }
 .br-tabular .br-scrollbar {
 	position: absolute;
