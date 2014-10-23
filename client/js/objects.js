@@ -70,12 +70,19 @@ Page.prototype = {
 	},
 	
 	
+	// Retrieve
+	retrieve : function() {
+		if ( this.list ) this.list.flexReload()
+		this.command('R', 0)
+	},
+	
+	
 	// Search
 	search : function() {
 		if ( this.srcmode ) {
 			this.srcmode = false
 			$('.br-form').css('background', '')
-console.log( this.forms[0].dataset[0] )
+//console.log( this.forms[0].dataset[0] )
 			if ( this.forms[0] instanceof Tabular ) {
 				this.srcond = this.forms[0].dataset[0]
 				if ( this.srcond ) delete this.srcond._idx
@@ -95,10 +102,7 @@ console.log( this.forms[0].dataset[0] )
 				}
 				if ( i == op.length )  this.srcond[k] = { '$regex': val, '$options': 'i' }
 			}
-console.log( 'Page.search' )
-console.log( this.srcond )
-			if ( this.list ) this.list.flexReload()
-			else this.command('R', 0)
+			this.retrieve()
 
 		} else {
 			this.srcmode = true
@@ -123,7 +127,7 @@ console.log( this.srcond )
 					if ( res.err < 0 )  alert('Delete error')
 					else {
 						self.recid = null
-						self.command('R', 0)
+						self.retrieve()
 					}
 				})
 			})
@@ -214,7 +218,7 @@ Form.prototype = {
 	save : function( callback ) {
 		if ( this.query.coll && this.modif && this.tag.attr('readonly') != 'readonly' ) { 
 			if ( !this.modif._id && this.rec && this.rec._id )  this.modif._id = this.rec._id
-			if ( $(this).triggerHandler('save', this.modif) )  return callback(true)
+			if ( $(this).triggerHandler('save') )  return callback(true)
 			else {
 				var self = this
 				remote(this.querySet('POST'), function(res) {
@@ -236,7 +240,7 @@ Form.prototype = {
 	// Retrieve
 	retrieve : function( callback ) {
 		var self = this
-		if ( this.query && (this.query.coll || this.query.cmd == 'SRV') ) {
+		if ( this.query && (this.query.coll || this.query.script ) ) {
 			var par = self.querySet('GET')
 			if ( page.srcond ) {
 				if ( par.where )  $.extend(par.where, page.srcond)
@@ -326,27 +330,25 @@ Form.prototype = {
 				, val = fld.val()
 			
 			if ( fld.is('select') ) {
-				if ( !isNaN(val) ) val = parseInt(val, 10)
+				if ( !isNaN(val) && !fld.hasClass('br-string') ) val = parseInt(val, 10)
 			} else if ( fld.is('.br-number') ) {						// number
 				val = fld.data('val')
 			} else if ( fld.is('input[type*="date"]') ) {		// date
 				if ( val != '' ) {
-					var d = inputDate(val)
-					val = d.getTime()
+					val = inputDate(val)
 					if ( val > 0 ) {
-						if ( fld.is('input[type="date"]') )  fld.val(strDate(d))
-						else  fld.val(strDate(d, true))
+						if ( fld.is('input[type="date"]') ) fld.val(strDate(val))
+						else fld.val(strDate(val, true))
 					}
 				}
-			
 			} else if ( fld.is('input:checkbox') ) {		// checkbox
-				if ( fld.is(':checked') )
-					val = true
-				else
-					val = false
-			} else if ( fld.is('input[type="autocomplete"]') || fld.is('input[type="filelink"]') ) {		// autocomplete or filelink
-			
+				if ( fld.is(':checked') ) val = true
+				else val = false
+			} else if ( fld.is('input[type="autocomplete"]') || fld.is('input[type="filelink"]') 
+									|| fld.is('input[type="image"]')	) {		// autocomplete, filelink, image
 				if ( val != '' )  val = { txt: val,  val: fld.data('id')	}
+			} else if ( fld.is('input[type="password"]') && fld.attr('id') == 'password' ) {
+				if ( validPass(val) ) val = sha256_digest(val)
 			}
 			
 			self.modify(this, val)
@@ -356,19 +358,21 @@ Form.prototype = {
 
 	// Add value in modif
 	modify : function( field, value ) {
-			var m = this.master
-				, name = $(field).attr('id')
-			
-			if ( !m.modif )  m.modif = {}					// create modif
-			if ( m.rec && m.rec._id )  m.modif._id = m.rec._id			// set _id
-			m.modif[name] = value
+		var m = this.master
+			, name = $(field).attr('id')
+		
+		if ( !m.modif )  m.modif = {}					// create modif
+		if ( m.rec && m.rec._id )  m.modif._id = m.rec._id			// set _id
+		m.modif[name] = value
 	},
 
 
 	// Query string
 	querySet : function( cmd, fields, noid ) {
 		var q = cloneJSON(this.query) || {}
-		if ( !q.cmd )  q.cmd = cmd
+		if ( cmd == 'POST' )  q.cmd = cmd
+		else if ( q.script ) q.cmd = 'SRV'
+		else q.cmd = cmd
 		q.app = br.app
 		if ( ['languages','references'].indexOf(q.coll) > -1 ) q.db = br.app
 		else q.db = br.db
@@ -411,7 +415,7 @@ function Tabular( name, html ) {
 	this.iconDel = null
 	this.field = null
 	this.scroll = null
-	this.scrollval = 0
+	this.scrollval = -1
 	this.wheelStep = 0
 	this.res = null
 	this.recs = 0
@@ -442,28 +446,30 @@ extend( Tabular, {
 		frm.append(this.scroll)
 		
 		function scrolled( value ) {
-			if ( value != self.scrollval ) {
-				self.scrollval = value
-				self.row0 = (self.recs > 0) ? self.recs - value - 1 : 0
-				if ( self.query.coll ) {
-					var b = self.row0
-						, e = b + self.rows.length -1
-						, d = self.dataset
-					if ( e >= self.recs )  e = self.recs - 1
-					if ( !d[b] || !d[e] ) {
-						if ( d[b] ) {
-							while ( !d[e-1] )  e--
-							self.query.skip = e
-						} else if ( d[e] ) {
-							while ( !d[b] )  b++
-							self.query.skip = b - self.query.limit
-						} else  self.query.skip = b
-						if ( self.query.skip < 0 ) self.query.skip = 0
-						if ( self.noRetrieve ) self.noRetrieve = false
-						else self.retrieve()
+			self.scrollval = value
+			setTimeout( function() {
+				if ( !self.noRetrieve && self.scrollval > -1 ) { 
+					self.row0 = (self.recs > 0) ? self.recs - self.scrollval - 1 : 0
+					self.scrollval = -1
+					if ( self.query.coll ) {
+						var b = self.row0
+							, e = b + self.rows.length -1
+							, d = self.dataset
+						if ( e >= self.recs )  e = self.recs - 1
+						if ( !d[b] || !d[e] ) {
+							if ( d[b] ) {
+								while ( !d[e-1] )  e--
+								self.query.skip = e
+							} else if ( d[e] ) {
+								while ( !d[b] )  b++
+								self.query.skip = b - self.query.limit
+							} else  self.query.skip = b
+							if ( self.query.skip < 0 ) self.query.skip = 0
+							self.retrieve()
+						} else self.display()
 					} else self.display()
-				} else self.display()
-			}
+				}
+			}, 500)
 		}
 			
 		// Mouse wheel
@@ -478,7 +484,6 @@ extend( Tabular, {
 		
 		// Delete icon
 		this.iconDel = $('<span class="ui-icon ui-icon-trash" style="position: absolute; left: -10px; top: 2px"></span>').click(function() {
-console.log( 'iconDel.click' )
 			deleteDialog(function() {
 				var q = self.querySet('DEL')
 				q.where = { _id : self.rec._id }
@@ -585,9 +590,10 @@ console.log( 'iconDel.click' )
 		if ( !this.query )  return (callback) ? callback() : null
 		var self = this
 		
-		if ( this.query.coll || this.query.cmd == 'SRV' ) {
+		if ( this.query.coll || this.query.script ) {
 			// Dataset dimension
 			if ( self.recs == 0 ) {
+				self.noRetrieve = true
 				var par = this.querySet('GET')
 				if ( page.srcond ) {
 					if ( par.where )  $.extend(par.where, page.srcond)
@@ -599,9 +605,8 @@ console.log( 'iconDel.click' )
 					self.recs = res.count
 					self.dataset = new Array(self.recs)
 					self.query.skip = 0
-					if ( !self.query.limit )  self.query.limit = 25
+					if ( !self.query.limit )  self.query.limit = 50
 					self.scrollbar()
-					self.noRetrieve = true
 					if ( self.recs > 0 ) self.retrieve(callback)
 					else {
 						self.clear()
@@ -610,7 +615,12 @@ console.log( 'iconDel.click' )
 				})
 			// Retrieve
 			} else {
-				Form.prototype.retrieve.apply(self, [function() {		// call super
+				self.noRetrieve = true
+				Form.prototype.retrieve.apply(self, [function(res) {		// call super
+					if ( res && res.err ) {
+						if ( callback )  callback(res)
+						return
+					}
 					if ( self.res.length > 0 ) {
 						// Set data
 						for ( var i=self.query.skip, j=0; j < self.res.length; i++, j++)
@@ -621,11 +631,12 @@ console.log( 'iconDel.click' )
 						if ( self.query.reorder ) self.reorder()
 						self.display()
 					}
+					self.noRetrieve = false
 					if ( callback )  callback()
 				}])
 			}
 		
-		} else if ( this.query.field ) {					// field
+		} else if ( this.query.field ) {												// field
 			if ( this.master.rec && this.master.rec[this.field] )
 				this.dataset = this.master.rec[this.field]
 			else this.dataset = []
@@ -724,7 +735,7 @@ console.log( 'iconDel.click' )
 		var r = this.dataset[i]
 		if ( !r._idx )  r._idx = i			// _idx is the row number, and marks a modified row
 		r[name] = value
-		
+
 		// master
 		checkMaster(this, r)
 		
@@ -899,23 +910,25 @@ function Select( select, callback ) {
 				if ( res.err )  return callback()
 				var fld = strSplit(fields, ',')
 					, txt = ''
+				$select.data('dataset', res)
 				$select.append('<option></option>')
 				for ( var i=0, len=res.length; i < len; i++ ) {
 					var r = res[i]
+					if ( i == 0 && typeof r[fld[0]] == 'string' ) $select.addClass('br-string')
 					txt = ''
 					for ( var j=1; j < fld.length; j++ ) {
 						var fl = fld[j]
-						if ( r[fl] ) {
-							if ( j > 1 ) { 
-								if ( fld[j].charAt(0) == '+' ) {
-									fl = fld[j].substr(1)
-									txt += ' '
-								} else {
-									txt += ' - '
-								}
+							, sep = ''
+						if ( j > 1 ) { 
+							if ( fld[j].charAt(0) == '+' ) {
+								fl = fld[j].substr(1)
+								sep = ' '
+							} else {
+								sep = ' - '
 							}
-							//if ( fl.charAt(0) == '\'' )  txt += fl.substring(1, fl.length-2)
-							//else  txt += r[fl]
+						}
+						if ( r[fl] ) {
+							txt += sep
 							txt += r[fl]
 						}
 					}

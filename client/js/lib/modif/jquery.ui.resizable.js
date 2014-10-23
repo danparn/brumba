@@ -300,7 +300,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 		var hnd = el.find('.ui-resizable-handle')
 		if ( hnd.hasClass('ui-resizable-s') ) {
 			el.height(this.size.height)
-			if ( el.next().hasClass('br-panel') ) el.next().height('100%')
+			if ( el.next().hasClass('br-panel') ) el.next().height(el.parent().height() - el.height())
 		} else if ( hnd.hasClass('ui-resizable-e') )  el.width(this.size.width);
 		else {
 			el.css({

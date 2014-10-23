@@ -43,9 +43,9 @@ $(function() {
 
 				bValid = bValid && checkRegexp(app, /^[a-z]([0-9a-z_])+$/i, "Application" + s);
 				bValid = bValid && checkRegexp(db, /^[a-z]([0-9a-z_])+$/i, "Database" + s);
-				bValid = bValid && checkRegexp(user, /^[a-z]([0-9a-z_])+$/i, "Username" + s);
+				bValid = bValid && checkRegexp(user, /^[a-z]([0-9a-z_.])+$/i, "Username" + s);
 				// From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
-				bValid = bValid && checkRegexp(pass, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9");
+				bValid = bValid && checkRegexp(pass, /^.{6,16}$/, "Password from 6 to 16 chars");
 //lower- and upper-case characters, numbers, and punctuation marks
 
 				if ( bValid ) {
@@ -65,8 +65,9 @@ $(function() {
 							app: app.val(),
 							db: (ide) ? app.val() : db.val(),
 							username: user.val(),
-							password: pass.val()
+							password: sha256_digest(pass.val())
 						}
+console.log(par)
 					$.ajax({
 						url: '/login?' ,
 						timeout: 10000,

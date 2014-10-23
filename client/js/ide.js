@@ -701,21 +701,20 @@ function onSave() {
 	if ( app ) {
 		var el = ws.children()[0]
 		if ( el ) {
-			var $el = $( el )
+			var $el = $(el)
 			if ( $el.hasClass('br-form') ) {
 				
 				// Form
-				//$('.active').removeClass("active")
-				$('.selected').removeClass("selected")
-				$('.ui-selectee').removeClass("ui-selectee")
-				$('.ui-resizable').removeClass('ui-resizable')
-				$('.ui-resizable-handle').remove()
-				$('img').removeAttr('src')
-				//$('.watermark').remove()
-				$('.br-nested').empty()
-				$('img').css('width', 'auto')
+				$el.find('.selected').removeClass("selected")
+				$el.find('.ui-selectee').removeClass("ui-selectee")
+				$el.find('.ui-resizable').removeClass('ui-resizable')
+				$el.find('.ui-resizable-handle').remove()
+				$el.find('img').removeAttr('src').css('width', 'auto')
+				//$el.find('.watermark').remove()
+				$el.find('.br-nested').empty()
 				var frm = toInput( el )
-					, par = {
+				frm.find('[type="image"]').val('')
+				var par = {
 						cmd: 'POST',
 						db: app,
 						coll: 'forms'

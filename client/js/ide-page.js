@@ -147,7 +147,6 @@ function loadPage( id ) {
 			ws.removeAttr('style')
 			ws.append( res[0].html )
 			var pg = $( ws.children() )
-pg.removeAttr( '_id' )
 $('.br-pane').removeClass('br-pane').addClass('br-panel')
 			pg.data('_id', id )
 			pg.find('.br-panel').each( function() {
@@ -198,7 +197,8 @@ function copyToApp() {
 		, _id = el.data('_id')
 		, coll
 	if ( !_id )  return
-	if ( el.hasClass('br-form') )  coll = 'forms'
+	if ( el.hasClass('br-report') )  coll = 'reports'
+	else if ( el.hasClass('br-form') )  coll = 'forms'
 	else if ( el.hasClass('br-page') )  coll = 'pages'
 	else return alert('Cannot identify component')
 	

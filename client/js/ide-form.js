@@ -66,7 +66,7 @@ function setForm( elem ) {
 			},
 			
 			// Image
-			'image': function(el) {
+			'img': function(el) {
 				var pos = $(el).data('relativePos'),
 					img = $('<img src="#" style="top:' + pos.top + 'px;left:' + pos.left + 'px;"/>')
 				setElement(img)

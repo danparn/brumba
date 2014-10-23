@@ -261,19 +261,18 @@ function pageInit() {
 			ed.css('top', self.css('top'))
 			ed.css('width', self.css('width'))
 			ed.css('height', self.css('height'))
-			self.parent().append(ed)
+			self.after(ed)
 			ed.focus()
 			ed.val(org)
 			ed.focusout( function() {
 				var v = (ed.val()) ? parseFloat(ed.val()) : null
+				ed.remove()
 				if ( v != org ) {
 					self.data('val', v)
-					numberFormat(self)
+					numberField(self)
 					self.trigger('change')
 					computedFields(self.parent())
 				}
-				ed.remove()
-				self.next().focus()
 			})
 		})
 	
@@ -290,28 +289,24 @@ function pageInit() {
 			imgLoad(br.app, $(this))
 		})
 		
+		// Input image
+		page.tag.find('input[type="image"]').click( function(ev) {
+			fileShow($(this).data('id'))
+			ev.preventDefault()
+		}).each( function() {
+				fileOpenIco($(this))
+		})
+		
 		// File link
 		page.tag.find('input[type="filelink"]').each( function() {
 			var $this = $(this)
-				, ico = $('<span class="ui-icon ui-icon-folder-open" style="position: absolute"></span>')
-				, l = parseInt($this.css('left'), 10) + parseInt($this.css('width'), 10) - parseInt(ico.css('width'), 10) + 2
-			ico.css('top', $this.css('top'))
-			ico.css('left', l)
-			ico.css('z-index', 2)
-			ico.click( function() {
-				fileUpload(br.db, function(res) {
-					$this.data('id', res.newid)
-					$this.val(res.filename)
-					$this.trigger('change')
-				})
-			})
+				, ico = fileOpenIco($this)
 			$this.click( function() {
 				fileShow($this.data('id'))	
 			})
 			$this.prop('readonly', true)
-			$this.parent().append(ico)
 		})
-			
+		
 		// Translate
 		$('.br-label').each( function() {
 			$(this).text(translate($(this).text(), br.lang))

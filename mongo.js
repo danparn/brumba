@@ -191,25 +191,42 @@ function post( par, data, callback ) {
 				
 				// Update
 				if ( rec._id && !par.insert ) {
-					ret._id = rec._id
 					var cond = { _id : rec._id }
-					arrayFields( rec, cond )
-					delete rec._id
-					if ( !U.isEmpty(rec) ) {
-//console.log( 'update' )
-//console.log( rec )
-						coll.update( cond, {$set:rec}, function(err, res) {
-							if ( err || res != 1  ) {
-								console.log('Database ' + par.db + ':  Collection ' + par.coll + ':  update error: ' + err )
-								console.log(rec)
-								callback( {err: U.err.upd} )
+					coll.count(cond, function(err, count) {	// check if exists
+						if ( !err && count == 1 ) {
+							ret._id = rec._id
+							arrayFields( rec, cond )
+							delete rec._id
+							if ( !U.isEmpty(rec) ) {
+		//console.log( 'update' )
+		//console.log( rec )
+								coll.update( cond, {$set:rec}, function(err, res) {
+									if ( err || res != 1  ) {
+										console.log('Database ' + par.db + ':  Collection ' + par.coll + ':  update error: ' + err )
+										console.log(rec)
+										callback( {err: U.err.upd} )
+									} else  callback( ret )
+								})
 							} else  callback( ret )
-						})
-					} else  callback( ret )
+						} else {																		// force insert
+							par.insert = true
+							save(rec, callback)
+						}
+					})
 					
 				// Insert
 				} else {
 //console.log( 'insert' )
+					for ( var f in rec ) {
+						if ( Array.isArray(rec[f]) ) {
+							var ar = rec[f]
+							for ( var i=0; i < ar.length; i++ ) {
+								var rc = ar[i]
+								rc._id = new ObjectID()
+								delete rc._idx
+							}
+						}
+					}
 					coll.insert(rec, function(err, res) {
 //console.log( res )
 						if ( err ) {

@@ -10,7 +10,7 @@ body {
     font: normal 12px Arial, sans-serif;
 }
 #container {
-	width: 3000px;
+	width: 5000px;
 	height: 2000px;
 }
 #leftbar {
@@ -116,6 +116,12 @@ button.toolbar[name="delete"] {
 #number-editor {
 	position: absolute;
 	z-index: 3;
+}
+input[type=color] {
+	background: none;
+	border: none;
+	margin: 2px 0 2px 0;
+	padding: 0;
 }
 select.br-field {
 	height: 18px;

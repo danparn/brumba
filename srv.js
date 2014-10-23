@@ -114,7 +114,7 @@ function ideSaveTo( par, callback ) {
 						coll: par.coll,
 						where: { name: frm.name },
 						fields: { _id: 1 },
-						usercode: par.usercode
+						usercode: 'trusted'
 					}
 			if ( h && h[1] ) opt.port = parseInt(h[1], 10)
 			delete frm._id
@@ -200,6 +200,7 @@ function Report( par, callback, pdf ) {
 	this.pgnum = 0
 	this.data = null
 	this.rec = null
+	this.srvtz = 0
 	this.time = process.hrtime()
 
 	this.init(callback)
@@ -212,6 +213,7 @@ Report.prototype = {
 			return callback({err: U.err.param})
 		}
 
+		this.srvtz = this.par.args.timezone - new Date().getTimezoneOffset() * -60000
 		var self = this
 		M.get({db: this.par.app, coll: 'reports', where: { name: this.par.args.report}}, function(res) {
 			if ( res.err )  return callback(res)
@@ -319,8 +321,7 @@ Report.prototype = {
 				if ( self.data ) self.rec = self.data[i]
 				if ( !self.nested ) self.newPage(i)
 				self.print('header', function(err) {
-					if ( err )
-console.log( 'print header err' )
+					if ( err ) console.log( 'print header err' )
 					else if ( self.findBand('group0') ) {
 						group(0, function() {
 							header(i+1)
@@ -356,8 +357,7 @@ console.log( 'report done in %ds %dms', self.time[0], self.time[1]/1000000 )
 					function prn( idx ) {
 						if ( idx < band.count ) {
 							self.print('group'+i, function(err) {
-								if ( err )
-console.log( err )	
+								if ( err ) console.log( err )	
 								else {
 									if ( i+1 < self.grps ) {
 										group(i+1, function() {
@@ -380,7 +380,7 @@ console.log( err )
 		function detail( callback ) {
 			self.query('detail', function(err) {
 				if ( err ) {
-console.log( 'query detail err' )	
+					console.log( 'query detail err' )	
 					callback(err)
 				} else {
 					var band = self.findBand('detail')
@@ -390,14 +390,14 @@ console.log( 'query detail err' )
 						if ( i < band.count ) {
 							self.print('detail', function(err) {
 								if ( err ) {  
-console.log( 'print detail err' )
+									console.log( 'print detail err' )
 									callback(err)
 								} else prn(i+1)
 							}, i)
 						} else {
 							self.print('total', function(err) {
 								if ( err ) {  
-console.log( 'print total err' )
+									console.log( 'print total err' )
 									callback(err)
 								} else callback()
 							})
@@ -492,7 +492,7 @@ console.log( 'print total err' )
 			if ( band.cursor ) {
 				band.cursor.nextObject( function(err, doc) {
 					if ( err ) {
-console.log( err )	
+						console.log( err )	
 						self.returnError({err: U.err.data})
 						callback(true)
 					} else {
@@ -520,6 +520,7 @@ console.log( err )
 
 		function prn( callback ) {
 			if ( bandname == 'header' && band.rec && idx >= 0 ) U.objExtend(band.rec, self.par.args)
+if ( bandname == 'footer' ) console.log(band.rec)
 			self.computedFields(band)
 			var imgs = 0
 			band.html.children().each( function() {
@@ -539,7 +540,7 @@ console.log( err )
 					, top = css.top + 2
 				top += (bandname == 'footer') ? self.bottom : self.top 
 				if ( el.hasClass('br-label') ) {
-					self.pdf.text(el.text(), left, top)
+					self.pdf.text(el.text(), left, top, op)
 				} else if ( el.hasClass('br-field') && band.rec ) {
 					var id = el.attr('id')
 						, val
@@ -549,8 +550,8 @@ console.log( err )
 					if ( val ) {
 //console.log( val )
 						if  ( el[0].name == 'select' ) val = selectVal(el[0], val)
-						else if ( el.attr('type') == 'date' ) val = U.strDate(new Date(val))
-						else if ( el.attr('type') == 'datetime' ) val = U.strDate(new Date(val), 'hm')
+						else if ( el.attr('type') == 'date' ) val = U.strDate(new Date(val).getTime()+self.srvtz)
+						else if ( el.attr('type') == 'datetime' ) val = U.strDate(new Date(val).getTime()+self.srvtz, 'hm')
 						else if ( el.attr('type') == 'time' ) val = U.strTime(val)
 						else if ( val.lab ) val = val.lab
 						else if ( el.attr('type') == 'number' ) {
@@ -716,7 +717,7 @@ console.log( err )
 					var f = formula.substring(b,p)
 						, v = (isNaN(f)) ? rec[f] : f
 //console.log( 'f = ' + f + '  v = ' + v )
-					if ( !v ) return null
+					if ( !v ) v = 0
 					expr += v + formula.charAt(p)
 					p++
 				} while ( p < formula.length )

@@ -20,6 +20,7 @@ var querystring = require('querystring')
 	, port = ( process.argv[2] ) ? parseInt(process.argv[2], 10) : 8080
 	, logged = []		// logged users
 	, logTimeout = 60 * 60000
+	, trusted = null	// trusted servers
 
 
 if ( process.argv[3] )   M.setURL( process.argv[3] )
@@ -32,7 +33,7 @@ function brumba( req, res ) {
 console.log( JSON.stringify(par) )
 
 	// check user
-	if ( !usercheck() ) return callback({err: U.err.user})
+	if ( !usercheck(req.connection.remoteAddress) ) return callback({err: U.err.user})
 
 	// data
 	req.on('data', function(chunk) {
@@ -50,7 +51,13 @@ console.log( JSON.stringify(par) )
 		  			break
 		  		}
 		  	}
-		  	M.get(par, callback, res)
+		  	M.get(par, function(r) {
+		  		if ( par.coll == '_users' && Array.isArray(r) ) {
+		  			for ( var i=r.length-1; i >= 0; i-- )
+		  				if ( r[i].password ) r[i].password = 'aa'
+		  		}
+		  		callback(r)
+		  	}, res)
 		  	break
 		  case 'POST':  M.post( par, data, callback );  break
 		  case 'DEL':  M.del( par, callback );  break
@@ -79,14 +86,25 @@ console.log( JSON.stringify(par) )
 		res.end(body)
 	}
 
-	function usercheck() {
+	function usercheck( remoteHost ) {
 		if ( par.usercode ) {
-//return true
-			for ( var i=logged.length-1; i >= 0; i-- ) {
-				if ( logged[i].usercode == par.usercode ) {
-					logged[i].lastAccess = (new Date()).getTime()
-					return true
-				}  
+return true
+			if ( par.usercode == 'trusted' ) {
+				if ( !trusted ) {
+					try {
+						trusted = JSON.parse(fs.readFileSync('trusted.json'))
+					} catch (e) {
+						console.log('Error: trusted.json')
+					}
+				}
+				if ( trusted && trusted.indexOf(remoteHost) > -1 ) return true
+			} else {
+				for ( var i=logged.length-1; i >= 0; i-- ) {
+					if ( logged[i].usercode == par.usercode ) {
+						logged[i].lastAccess = (new Date()).getTime()
+						return true
+					}  
+				}
 			}
 		}
 		return false
@@ -138,8 +156,9 @@ function userMenu( par, callback ) {
 	M.get({db: par.db, coll: '_users', where: {username: par.username}}, function(res) {
 		if ( res.err )  return callback(res)
 		if ( !res[0] ) {
-			if ( par.username == 'admin' && par.password == 'brumba'  ) {
-				user = { username: 'admin', password: 'brumba', admin: true }
+			var brumba = '57b5892eb115f4302e54748e7de9ac80e254f36a6a6b9e9dd90465ed7ef31992'
+			if ( par.username == 'admin' && par.password == brumba  ) {
+				user = { username: 'admin', password: brumba, admin: true }
 				M.post( {db: par.db, coll: '_users'}, user, function(res) {
 					if ( res.err ) callback(res)
 					user._id = res.newid

@@ -273,6 +273,7 @@ Date.prototype.getWeek = function() {
 }
 
 
+
 /* Convert buffer to zero ended string
 */
 function bufString( buf, start, end ) {
@@ -334,7 +335,7 @@ function objMerge( obj1, obj2 ) {
 function objExtend( obj, ext ) {
 	if ( obj )
 		for ( var k in ext )
-			if ( ext[k] ) obj[k] = ext[k]
+			if ( ext[k] || ext[k] == 0 ) obj[k] = ext[k]
 }
 
 
@@ -413,7 +414,7 @@ function toJSON( str ) {
 					return JSON.parse(s)
 				} catch (e) {
 					console.log( s )
-					console.log( 'JSON.parse error: ' + e )
+					console.log( 'toJSON: parse error: ' + e )
 					return null
 				}
 			}
@@ -461,6 +462,38 @@ function arrIN( value, arr ) {
 
 
 
+/* Array find element by condition, returns the first
+cond = function(elem) {return true}
+index: return index
+*/
+function arrFind( arr, cond, index ) {
+	if ( Array.isArray(arr) && typeof cond == 'function' ) {
+		for ( var i=0; i < arr.length; i++ )
+			if ( cond(arr[i]) ) {
+				if ( index ) return i
+				else return arr[i]
+			}
+	} else console.log('arrFind: bad arguments')
+	if ( index ) return -1
+	else return null
+}
+
+
+
+
+/* Array filter elements by condition
+cond = function(elem) {return true}
+*/
+function arrFilter( arr, cond ) {
+	var a = []
+	if ( Array.isArray(arr) && typeof cond == 'function' ) {
+		for ( var i=0,len=arr.length; i < len; i++ )
+			if ( cond(arr[i]) ) a.push(arr[i])
+	} else console.log('arrFind: bad arguments')
+	return a
+}
+
+
 
 
 
@@ -488,4 +521,6 @@ if ( typeof module != 'undefined' && module.exports ) {
 	exports.toJSON = toJSON
 	exports.isEmpty = isEmpty
 	exports.arrIN = arrIN
+	exports.arrFind = arrFind
+	exports.arrFilter = arrFilter
 }

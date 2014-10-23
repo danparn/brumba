@@ -15,7 +15,12 @@ var httpErr = {
 		504: 'Gateway Time-out',
 		505: 'HTTP Version not supported'
 	}
-	
+
+	, decimalSeparator = (1.1).toLocaleString().substring(1, 2)
+
+
+
+
 /* Remote ajax request
 */
 function remote( param, callback, dat ) {
@@ -103,7 +108,8 @@ function accordionMenu( callback ) {
 function mainArgs ( str ) {
 	if ( str ) {
 		var qs = strRep(str, '$username', br.username)
-		qs = strRep(qs, '$userid', br.userid)
+			, uid = ( isNaN(br.userid) ) ? '"'+br.userid+'"' : br.userid
+		qs = strRep(qs, '$userid', uid)
 		if ( br.menuid )  qs = strRep(qs, '$menuid', br.menuid)
 		qs = strRep(qs, '$menulink', br.menulink)
 		return qs
@@ -139,19 +145,15 @@ function substArgs ( where ) {
 */
 function checkFields( form, fields, cmd ) {
 	if ( form && fields && cmd ) {
-console.log( form.modif )
 		var fld = strSplit(fields, ',')
 		for ( var i=0; i < fld.length; i++ ) {
-			if ( cmd.charAt(0) == 'E' && !val ) {
+			if ( cmd.charAt(0) == 'E' && !form.tag.find('#'+fld[i]).val() ) {
 				alert('Required field: ' + fld[i])
 				return false
-			} else {
-				return true
-			} 
+			}
 		}
-	} else {
-		alert('checkFields: wrong parameters')
-	}
+		return true
+	} else alert('checkFields: wrong parameters')
 	return false
 }
 
@@ -274,6 +276,27 @@ function imgLoad( db, img ) {
 			img.attr('src', '/brumba?' + JSON.stringify(par))
 		}
 	}
+}
+
+
+
+/* File Open dialog icon
+*/
+function fileOpenIco( $this ) {
+	var ico = $('<span class="ui-icon ui-icon-folder-open" style="position: absolute"></span>')
+		, l = parseInt($this.css('left'), 10) + parseInt($this.css('width'), 10) - parseInt(ico.css('width'), 10) + 2
+	ico.css('top', $this.css('top'))
+	ico.css('left', l)
+	ico.css('z-index', 2)
+	$this.parent().append(ico)
+	ico.click( function() {
+		fileUpload(br.db, function(res) {
+			$this.data('id', res.newid)
+			$this.val(res.filename)
+			$this.trigger('change')
+		})
+	})
+	return ico
 }
 /*************** END File *************/
 
@@ -407,9 +430,9 @@ function delClassMatch( elem, pat ) {
 		} else {
 			dt.setHours(0, 0, 0)
 		}
-		return dt
+		return dt.getTime()
 	}
-	return null
+	return -1
 }
 
 
@@ -518,6 +541,7 @@ function clearFields( form ) {
 	form.find('input:checkbox').removeProp('checked')
 	form.find('input[type="autocomplete"]').removeData('id')
 	form.find('input[type="filelink"]').removeData('id')
+	form.find('input[type="image"]').removeData('id').removeAttr('src')
 	form.find('input[type="color"]').css('background', '')
 	form.find('.br-number').removeData('val')
 }
@@ -604,9 +628,13 @@ function toTimezone( data, fields ) {
 			, tz = timezone()
 		for ( var i=0, len=data.length; i < len; i++ ) {
 			var rec = data[i]
-			if ( rec )
-				for ( var j=0; j < fld.length; j++ )
-					if ( rec[fld[j]] ) rec[fld[j]] += tz 
+			if ( rec ) {
+				for ( var j=0; j < fld.length; j++ ) {
+					if ( rec[fld[j]] ) {
+						rec[fld[j]] += tz
+					}
+				}
+			} 
 		}
 	}
 }
@@ -670,7 +698,7 @@ function displayForm(form, rec) {
 		form.find('.br-field').each( function() {
 			var fld = $(this)
 				, id = fld.attr('id')
-			if ( id in rec ) {
+			if ( id in rec && rec[id] ) {
 				var value = rec[id]
 				if ( fld.is('input:checkbox') && value )
 					fld.prop('checked', true)
@@ -680,10 +708,12 @@ function displayForm(form, rec) {
 					fld.val(strDate(new Date(value)))
 				else if ( fld.is('.br-number') ) { 
 					fld.data('val', value)
-					numberFormat(fld)
-				} else if ( fld.is('input[type="color"]') )
-					fld.css('background', value)
-				else if ( value.txt ) {
+					numberField(fld)
+				} else if ( fld.is('input[type="image"]') ) {
+					var par = {cmd: 'FILE',	mode: 'r', db: br.db, _id: value.val, usercode: br.usercode}
+					fld.attr('src', '/brumba?' + JSON.stringify(par))
+					fld.data('id', value.val)
+				} else if ( value.txt ) {
 					fld.val(value.txt)
 					fld.data('id', value.val)
 				} else
@@ -696,17 +726,54 @@ function displayForm(form, rec) {
 }
 
 
+
+/* Number field format
+*/
+function numberField( fld ) {
+	var v = fld.data('val')
+	if ( v ) fld.val(numberFormat(v, fld.attr('data-decimals')))
+	else fld.val('')
+}
+
+
+
+/* Number field format
+*/
+function numberFormat( num, dec ) {
+	if ( !isNaN(num) ) {
+		var v = parseFloat(num).toLocaleString('default', {maximumFractionDigits: 6})
+		if ( dec ) {
+			dec = parseInt(dec, 10)
+			var p = v.indexOf(decimalSeparator)
+			if ( p > 0 ) {
+				if ( dec == 0 ) v = v.substr(0, p)
+				else {
+					var n = v.length - p - 1
+					if ( n > dec ) v = v.substr(0, p + 1 + dec)
+					else for ( var i=n; i < dec; i++ ) v += '0'
+				}
+			} else if ( dec > 0 ) {
+				v += decimalSeparator
+				for ( var i=0; i < dec; i++ ) v += '0'
+			}
+		}
+		return v
+	}
+	return ''
+}
+	
+
+
 /* Computed fields
 */
 function computedFields( form ) {
 	form.find('input[data-formula]').each( function() {
 		var fld = $(this)
 			, expr = formulaValues(fld.attr('data-formula'))
-console.log(expr)
 		if ( expr ) {
 			var value = eval(expr)
 			fld.data('val', value)
-			numberFormat(fld)
+			numberField(fld)
 		} else fld.val('')
 	})
 
@@ -764,17 +831,9 @@ function addDatepicker( field ) {
 
 
 
-/* Number field format
+
+/* Validate password
 */
-function numberFormat( fld ) {
-	var v = fld.data('val')
-	if ( v ) {
-		if ( fld.attr('data-decimals') )
-			v = parseFloat(v.toFixed(parseInt(fld.attr('data-decimals'), 10)))
-		fld.val(v.toLocaleString('default', {maximumFractionDigits: 6}))
-	} else fld.val('')
+function validPass( pass ) {
+	return true
 }
-	
-
-
-
