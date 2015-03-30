@@ -180,6 +180,29 @@ function post( par, data, callback ) {
 	coll( par.db, par.coll, function(coll) {
 		if ( coll.err )  callback( coll )
 		else {
+//console.log( dat )
+			if ( Array.isArray(dat) ) {
+				var len = dat.length
+					, ret = []
+				next( 0 )
+					
+				function next( i ) {
+					save( dat[i], function(res) {
+						if ( res.err )  callback(res)
+						else {
+							ret.push(res)
+							if ( ++i < len )  next( i )
+							else  callback(ret)
+						}
+					})
+				}
+
+			} else {
+				save( dat, function(res) {
+					callback(res)
+				})
+			}
+
 			
 			function save( rec, callback ) {
 				var ret = {}
@@ -198,9 +221,9 @@ function post( par, data, callback ) {
 							arrayFields( rec, cond )
 							delete rec._id
 							if ( !U.isEmpty(rec) ) {
-		//console.log( 'update' )
-		//console.log( rec )
-								coll.update( cond, {$set:rec}, function(err, res) {
+//console.log( 'update' )
+//console.log( rec )
+								coll.update( cond, $set(rec), function(err, res) {
 									if ( err || res != 1  ) {
 										console.log('Database ' + par.db + ':  Collection ' + par.coll + ':  update error: ' + err )
 										console.log(rec)
@@ -249,7 +272,7 @@ function post( par, data, callback ) {
 						var ar = rec[f]
 						for ( var i=0; i < ar.length; i++ ) {
 							var set = {}, rc = ar[i]
-if ( !rc._idx ) {console.log('POST.arrayFields: no _idx on record?'); console.log(rc)}
+//if ( !rc._idx ) {console.log('POST.arrayFields: no _idx on record?'); console.log(rc)}
 							oid(rc)
 							if ( rc._id )  {					// update
 								var cnd = {}
@@ -259,7 +282,7 @@ if ( !rc._idx ) {console.log('POST.arrayFields: no _idx on record?'); console.lo
 									delete rc._idx
 									delete rc._id
 									for ( var p in rc )  set[f+'.$.'+p] = rc[p]
-									coll.update(cnd, {$set:set}, function(err, res) {
+									coll.update(cnd, $set(set), function(err, res) {
 									})
 								}
 							} else {								// insert
@@ -282,29 +305,18 @@ if ( !rc._idx ) {console.log('POST.arrayFields: no _idx on record?'); console.lo
 					}
 				}
 			}
-
 			
-//console.log( dat )
-			if ( Array.isArray(dat) ) {
-				var len = dat.length
-					, ret = []
-				next( 0 )
-					
-				function next( i ) {
-					save( dat[i], function(res) {
-						if ( res.err )  callback(res)
-						else {
-							ret.push(res)
-							if ( ++i < len )  next( i )
-							else  callback(ret)
-						}
-					})
+			function $set( rec ) {
+				var uns = {}
+				for ( var k in rec ) {
+					if ( rec[k] == null ) {
+						uns[k] = ''
+						delete rec[k]
+					}
 				}
-
-			} else {
-				save( dat, function(res) {
-					callback(res)
-				})
+				var set = {$set:rec}
+				if ( uns != {} ) set.$unset = uns
+				return set
 			}
 		}
 	})

@@ -340,4 +340,95 @@ function getUser( par, callback ) {
 
 
 
+
+/* Create excel xlsx from json rows
+	columns = [
+		{field: 'serial_identity_number', header: 'Serie sasiu'},
+		{field: 'license_plate', header: 'Numar inmatriculare'},
+		{field: 'start_time', header: 'Data/Ora start', type: 'DateTime'},
+		{field: 'km', header: 'Km parcursi', type: 'Number', decimals: 3},
+		{field: 'total_time', header: 'Durata functionare', type: 'Time'}
+	]
+*/
+function excel( par ) {
+	this.httpRes = par.httpRes
+	this.cols
+	this.colslen
+	
+	this.columns = function( cols ) {
+		this.cols = cols
+		this.colslen = cols.length
+		this.httpRes.writeHead(200, {'Content-Type': 'application/vnd.ms-excel'})
+		this.httpRes.write('<?xml version="1.0"?>' +
+				'<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" ' +
+									'xmlns:x="urn:schemas-microsoft-com:office:excel" ' + 
+									'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+				  '<Styles>' +
+				    '<Style ss:ID="Default" ss:Name="Normal"><Font ss:Size="8"/></Style>' +
+				    '<Style ss:ID="sBold"><Font ss:Size="8" ss:Bold="1"/></Style>' +
+				    '<Style ss:ID="sRight"><Alignment ss:Horizontal="Right"/></Style>' +
+				    '<Style ss:ID="sDate"><NumberFormat ss:Format="Short Date"/></Style>' +
+				    '<Style ss:ID="sDateTime"><NumberFormat ss:Format="General Date"/></Style>' +
+				    '<Style ss:ID="sTime"><NumberFormat ss:Format="Time"/></Style>' +
+				  '</Styles>' +
+				  '<Worksheet ss:Name="Sheet1">' +
+				    '<Table ss:StyleID="Default">' +
+							'<Row ss:StyleID="sBold">')
+		for ( var i=0; i < cols.length; i++ )
+    	this.httpRes.write('<Cell><Data ss:Type="String">' + cols[i].header + '</Data></Cell>')
+		this.httpRes.write('</Row>')
+	}
+
+	this.rows = function( docs ) {
+		for ( var j=0; j < docs.length; j++ ) {
+			var doc = docs[j]
+			this.httpRes.write('<Row>')
+			for ( var i=0; i < this.colslen; i++ ) {
+				var c = this.cols[i]
+				if ( c.field in doc && (c.type != 'Number' || !isNaN(doc[c.field])) ) {
+	        var cell = '<Cell ss:Index="' + (i+1) + '"'
+	        	, data = '<Data ss:Type="'
+						, val = doc[c.field]
+					if ( 'Number,Boolean'.indexOf(c.type) > -1 ) data += 'Number'
+					else data += 'String'
+					data += '">'
+					switch ( c.type ) {
+						case 'Number': 
+							if ( c.decimals ) val = val.toFixed(c.decimals)
+							break
+						case 'Date':
+							cell += ' ss:StyleID="sDate"'
+							val = U.strDate(val)
+							break
+						case 'DateTime':
+							cell += ' ss:StyleID="sDateTime"'
+							val = U.strDate(val, true)
+							break
+						case 'Time':
+							cell += ' ss:StyleID="sTime"'
+							val = U.strTime(val, true)
+							break
+						case 'Boolean': 
+							if ( val ) val = 1
+							else val = 0
+							break
+					}
+					data += val + '</Data>'
+					cell += '>' + data + '</Cell>'
+					this.httpRes.write(cell)
+				}
+			}
+			this.httpRes.write('</Row>')
+		}
+	}
+
+	this.end = function() {
+		this.httpRes.end('</Table></Worksheet></Workbook>')
+	}
+}
+
+
+
+
 exports.getUser = getUser
+exports.excel = excel

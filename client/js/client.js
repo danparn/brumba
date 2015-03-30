@@ -313,9 +313,9 @@ function fileOpenIco( $this ) {
  *********************************************/
 function listBox( title, dat, handler ) {
 	if ( dat && dat.length > 0 && handler ) {
-		var ul = $('<ul></ul>'),
-			len = dat.length,
-			dlg = $('<div/>')
+		var ul = $('<ul></ul>')
+			, len = dat.length
+			, dlg = $('<div/>')
 		for ( var i=0; i < len; i++ ) {
 			ul.append('<li id="' + dat[i].id + '"><a href="#">' + dat[i].text + '</a></li>')
 		}
@@ -615,32 +615,6 @@ function hasAnyClass( el, cls ) {
 
 
 
-/* Timezone
-*/
-function timezone() {
-	var d = new Date()
-	return d.getTimezoneOffset() * -60000
-}
-
-function toTimezone( data, fields ) {
-	if ( data && fields ) {
-		var fld = strSplit(fields, ',')
-			, tz = timezone()
-		for ( var i=0, len=data.length; i < len; i++ ) {
-			var rec = data[i]
-			if ( rec ) {
-				for ( var j=0; j < fld.length; j++ ) {
-					if ( rec[fld[j]] ) {
-						rec[fld[j]] += tz
-					}
-				}
-			} 
-		}
-	}
-}
-
-
-
 /* Report call
 */
 function report( form, report ) {
@@ -657,6 +631,25 @@ function report( form, report ) {
     /*remote(par, function(res) {
       window.open(res)
     })*/
+  }
+}
+
+
+
+/* Excel export call
+*/
+function excel( form, script ) {
+	if ( form ) { 
+    var par = {
+      cmd: 'SRV',
+      script: 'excel',
+      app: br.app,
+      db: br.db,
+      args: form.modif,
+      usercode: br.usercode
+    }
+ 		par.args.datascript = script
+    window.open('/brumba?' + JSON.stringify(par))
   }
 }
 
@@ -813,6 +806,7 @@ function addDatepicker( field ) {
 			gost.attr('id', field.attr('id'))
 			field.datepicker({
 				showWeek: true,
+				firstDay: 1,
 				dateFormat: dateFormat,
 				constrainInput: false,
 				onSelect: function(date, inst) { 
@@ -837,3 +831,62 @@ function addDatepicker( field ) {
 function validPass( pass ) {
 	return true
 }
+
+
+
+
+/* Element bounds
+*/
+function bounds( elem ) {
+	return {
+		left: parseInt(elem.css('left'), 10),
+		top: parseInt(elem.css('top'), 10),
+		width: parseInt(elem.css('width'), 10),
+		height: parseInt(elem.css('height'), 10)
+	}
+}
+
+
+
+/* Form size
+*/
+function formSetSize( form ) {
+	var w = 0, h = 0
+	form.children().each( function() {
+		var b = bounds($(this))
+		if ( b.left + b.width > w ) w = b.left + b.width
+		if ( b.top + b.height > h ) h = b.top + b.height
+	})
+	var sz = {width: w+5, height: h+5}
+	form.css(sz)
+	return sz
+}
+
+
+
+/* Form dialog
+par = {
+	formName: 'TestForm',
+	title: 'Test form'
+}
+*/
+function formDialog( par, callback ) {
+	remote({cmd: 'GET', db: br.app, coll: 'forms', where: {name: par.formName}}, function(res) {
+		if ( res.err ) return callback(res)	
+		var dlg = $('<div class="form-dialog" style="background: #E3E4E5;" />')
+		dlg.append(res[0].html)
+		var fm = $(dlg.find('form')[0])
+		dlg.attr('title', par.title)
+		dlg.dialog({
+			close: function() {
+			  dlg.remove()
+			}
+		})
+		var sz = formSetSize(fm)
+		dlg.dialog('option', 'width', sz.width + 50)
+		callback({})
+	})
+}
+
+
+

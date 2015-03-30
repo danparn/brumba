@@ -505,6 +505,7 @@ function openScript() {
 			tabSize: 2,
 			autoCloseBrackets: true		
 		})
+	editor.on("gutterClick", CodeMirror.newFoldFunction(CodeMirror.braceRangeFinder))
 	script.data( 'editor', editor )
 }
 

@@ -7,8 +7,8 @@
 
 
 function extend( obj, props ) {
-	for( p in props )
-		if( props.hasOwnProperty(p) )  obj.prototype[p] = props[p]
+	for ( p in props )
+		if ( props.hasOwnProperty(p) )  obj.prototype[p] = props[p]
 }
 
 /*********************************************
@@ -164,15 +164,15 @@ Page.prototype = {
  * 				Form object
  *********************************************/
 function Form( name, html ) {
-	this.name = name		// form name
-	this.tag = html			// html tag
+	this.name = name			// form name
+	this.tag = html				// html tag
 
-	this.master  = null			// master of this form
+	this.master  = null		// master of this form
 	this.query  = null		// query 
 	this.srcond  = null		// search condition
-	this.dataset  = null			// recordset, form's data
-	this.rec = null			// active record
-	this.modif = null		// modified fields
+	this.dataset  = null	// recordset, form's data
+	this.rec = null				// active record
+	this.modif = null			// modified fields
 
 	this.init()
 }
@@ -246,8 +246,10 @@ Form.prototype = {
 				if ( par.where )  $.extend(par.where, page.srcond)
 				else  par.where = page.srcond
 			}
+$(self).triggerHandler('cucu')
+console.log('triggerHandler')
 			remote(par, function(res) {
-				if ( res.err )  return callback(res)
+				if ( res.err ) return (callback) ? callback(res) : null
 				else {
 					if ( self instanceof Tabular )  self.res = res
 					else  self.dataset = res
@@ -256,7 +258,7 @@ Form.prototype = {
 							if ( $(self).triggerHandler('retrieve') )  self.clear()
 							else self.display()
 						}
-						callback()
+						if ( callback ) callback()
 					})
 				}
 			})
@@ -266,7 +268,7 @@ Form.prototype = {
 				else this.dataset = page.forms[0].dataset
 			}
 			if ( !(this instanceof Tabular) )  this.display()
-			callback()
+			if ( callback ) callback()
 		}
 	},
 	
@@ -329,8 +331,14 @@ Form.prototype = {
 			var fld = $(this)
 				, val = fld.val()
 			
-			if ( fld.is('select') ) {
-				if ( !isNaN(val) && !fld.hasClass('br-string') ) val = parseInt(val, 10)
+			if ( fld.is('input:checkbox') ) {		// checkbox
+				if ( fld.is(':checked') ) val = true
+				else val = false
+			}
+			else if ( val == '' ) val = null			
+			else if ( fld.is('select') ) {
+				var op = fld.find('option[value="' + val + '"]')
+				if ( op.attr('type') == 'number' ) val = parseInt(val, 10)
 			} else if ( fld.is('.br-number') ) {						// number
 				val = fld.data('val')
 			} else if ( fld.is('input[type*="date"]') ) {		// date
@@ -341,9 +349,6 @@ Form.prototype = {
 						else fld.val(strDate(val, true))
 					}
 				}
-			} else if ( fld.is('input:checkbox') ) {		// checkbox
-				if ( fld.is(':checked') ) val = true
-				else val = false
 			} else if ( fld.is('input[type="autocomplete"]') || fld.is('input[type="filelink"]') 
 									|| fld.is('input[type="image"]')	) {		// autocomplete, filelink, image
 				if ( val != '' )  val = { txt: val,  val: fld.data('id')	}
@@ -374,8 +379,7 @@ Form.prototype = {
 		else if ( q.script ) q.cmd = 'SRV'
 		else q.cmd = cmd
 		q.app = br.app
-		if ( ['languages','references'].indexOf(q.coll) > -1 ) q.db = br.app
-		else q.db = br.db
+		if ( !q.db ) q.db = br.db
 		
 		if ( !fields ) delete q.fields
 		
@@ -386,14 +390,14 @@ Form.prototype = {
 			}
 		}
 		
-		if ( !noid && page.recid ) {
+		if ( !noid && page.recid && (!q.where || !q.where._id) ) {
 			if ( !q.where )  q.where = {}
 			q.where._id = page.recid
 		}
 		
 		return q
 	}
-
+	
 }
 /*************** END Form object *************/
 
@@ -581,6 +585,7 @@ extend( Tabular, {
 		this.rows[this.selrow].addClass('br-selected-row')
 		if ( this.canDelete ) this.rows[this.selrow].append(this.iconDel)
 		if (  this.dataset )  this.rec = this.dataset[this.row0 + this.selrow]
+		$(this).triggerHandler('rowselected')
 		cascade(this)
 	},
 	
@@ -610,7 +615,7 @@ extend( Tabular, {
 					if ( self.recs > 0 ) self.retrieve(callback)
 					else {
 						self.clear()
-						if ( callback )  callback()
+						if ( callback ) callback()
 					}
 				})
 			// Retrieve
@@ -632,7 +637,7 @@ extend( Tabular, {
 						self.display()
 					}
 					self.noRetrieve = false
-					if ( callback )  callback()
+					if ( callback ) callback()
 				}])
 			}
 		
@@ -691,7 +696,7 @@ extend( Tabular, {
 			displayForm(this.rows[j], this.dataset[i])
 		}
 		this.disableRows()
-		this.selectRow(0)
+		this.selectRow(this.selrow)
 	},
 	
 	
@@ -914,7 +919,6 @@ function Select( select, callback ) {
 				$select.append('<option></option>')
 				for ( var i=0, len=res.length; i < len; i++ ) {
 					var r = res[i]
-					if ( i == 0 && typeof r[fld[0]] == 'string' ) $select.addClass('br-string')
 					txt = ''
 					for ( var j=1; j < fld.length; j++ ) {
 						var fl = fld[j]
@@ -925,14 +929,16 @@ function Select( select, callback ) {
 								sep = ' '
 							} else {
 								sep = ' - '
-							}
+							} 
 						}
 						if ( r[fl] ) {
 							txt += sep
 							txt += r[fl]
 						}
 					}
-					$select.append('<option value="' + r[fld[0]] + '">'+ txt + '</option>')
+					var val = r[fld[0]]
+						, typ = (typeof val == 'number') ? 'type="number" ' : ''
+					$select.append('<option ' + typ + 'value="' + val + '">'+ txt + '</option>')
 				}
 				callback()
 			})

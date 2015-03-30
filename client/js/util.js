@@ -222,12 +222,8 @@ function strNowDateTime() {
 function strTime( time, sec ) {
 	var pad = function(n) { return n<10 ? '0'+n : n }
 		, ret = ''
-	if ( time > 0 ) {
-		var dt = new Date(time)
-		if ( dt.getFullYear() > 1970 ) {
-			ret = pad(dt.getHours()) + ':' + pad(dt.getMinutes())
-			if ( sec ) ret += pad(dt.getSeconds())
-		} else {
+	if ( time >= 0 ) {
+		if ( time < 2678400000 ) {	// 1 feb 1970
 			var s = time / 1000
 				, h = Math.floor(s/3600)
 			s -= h * 3600
@@ -237,12 +233,62 @@ function strTime( time, sec ) {
 				s -= m * 60
 				ret += ':' + pad(s)
 			}
+		} else {
+			var dt = new Date(time)
+			ret = pad(dt.getHours()) + ':' + pad(dt.getMinutes())
+			if ( sec ) ret += pad(dt.getSeconds())
 		}
 	}
 	return ret
 }
 
-// 
+
+
+/* To zero hour
+*/
+function timeToZeroHour( time, tzone ) {
+	var dt
+	if ( time instanceof Date ) dt = time
+	else if ( time > 0 ) {
+		if ( tzone ) time += tzone - timezone()
+		dt = new Date(time)
+	} else return time
+	
+	dt.setHours(0)
+	dt.setMinutes(0)
+	dt.setSeconds(0)
+	dt.setMilliseconds(0)
+	return dt.getTime()
+}
+
+
+
+
+/* Timezone
+*/
+function timezone() {
+	var d = new Date()
+	return d.getTimezoneOffset() * -60000
+}
+
+function toTimezone( data, fields ) {
+	if ( data && fields ) {
+		var fld = strSplit(fields, ',')
+			, tz = timezone()
+		for ( var i=0, len=data.length; i < len; i++ ) {
+			var rec = data[i]
+			if ( rec ) {
+				for ( var j=0; j < fld.length; j++ ) {
+					if ( rec[fld[j]] ) {
+						rec[fld[j]] += tz
+					}
+				}
+			} 
+		}
+	}
+}
+
+
 
 
 
@@ -256,11 +302,12 @@ function strTime( time, sec ) {
  *		Miscellaneous functions
  *****************************************************/
 
+/* Get week number
+*/
 // This script is released to the public domain and may be used, modified and 
 // distributed without restrictions. Attribution not necessary but appreciated. 
 // Source: http://weeknumber.net/how-to/javascript 
 // Returns the ISO week of the date.
-
 Date.prototype.getWeek = function() { 
 	var date = new Date(this.getTime()); 
 	date.setHours(0, 0, 0, 0); 
@@ -523,4 +570,5 @@ if ( typeof module != 'undefined' && module.exports ) {
 	exports.arrIN = arrIN
 	exports.arrFind = arrFind
 	exports.arrFilter = arrFilter
+	exports.timeToZeroHour = timeToZeroHour
 }

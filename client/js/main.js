@@ -88,6 +88,7 @@ $(function() {
 */
 function pageLoad( pgname ) {
 	if ( !pgname )  return
+	page.srcond = null
 	while ( page.tickers.length > 0 ) {
 		var t = page.tickers.pop()
 		clearInterval(t)

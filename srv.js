@@ -342,7 +342,7 @@ Report.prototype = {
 						self.pdf.pipe(httpRes)
 						self.pdf.end()
 self.time = process.hrtime( self.time )
-console.log( 'report done in %ds %dms', self.time[0], self.time[1]/1000000 )
+console.log( 'report done in %d.%ds', self.time[0], (self.time[1]/1000000).toFixed(0) )
 					})
 				}
 			}
@@ -520,7 +520,6 @@ console.log( 'report done in %ds %dms', self.time[0], self.time[1]/1000000 )
 
 		function prn( callback ) {
 			if ( bandname == 'header' && band.rec && idx >= 0 ) U.objExtend(band.rec, self.par.args)
-if ( bandname == 'footer' ) console.log(band.rec)
 			self.computedFields(band)
 			var imgs = 0
 			band.html.children().each( function() {
@@ -547,8 +546,7 @@ if ( bandname == 'footer' ) console.log(band.rec)
 					if ( id == 'PAGE' ) val = self.pgnum
 					else if ( id == 'DATE' ) val = new Date().getTime()
 					else val = band.rec[id]
-					if ( val ) {
-//console.log( val )
+					if ( val || typeof val == 'number' ) {
 						if  ( el[0].name == 'select' ) val = selectVal(el[0], val)
 						else if ( el.attr('type') == 'date' ) val = U.strDate(new Date(val).getTime()+self.srvtz)
 						else if ( el.attr('type') == 'datetime' ) val = U.strDate(new Date(val).getTime()+self.srvtz, 'hm')
@@ -591,8 +589,7 @@ if ( bandname == 'footer' ) console.log(band.rec)
 						h += css.border
 					}
 					self.pdf.lineWidth(css.border)
-					self.pdf.rect(css.left + self.left, css.top + self.top, w, h)
-									.stroke()
+					self.pdf.rect(css.left + self.left, css.top + self.top, w, h).stroke()
 				}
 			})
 			if ( imgs == 0 ) prnend()
@@ -628,7 +625,7 @@ if ( bandname == 'footer' ) console.log(band.rec)
 				tot.html.find('input[type=number],input[type=time]').each( function() {
 					var el = self.$(this)
 						, id = el.attr('id')
-					if ( !isNaN(detrec[id]) ) {
+					if ( detrec && !isNaN(detrec[id]) ) {
 						if ( !rec[id] ) rec[id] = 0
 						rec[id] += detrec[id]
 					}
@@ -708,7 +705,6 @@ if ( bandname == 'footer' ) console.log(band.rec)
 					, p = 0, b = 0
 					, expr = ''
 				formula = U.strRep(formula, ' ', '')
-//console.log( formula )
 				do {
 					while ( op.indexOf(formula.charAt(p)) > -1 ) expr += formula.charAt(p++)
 					b = p
@@ -716,12 +712,10 @@ if ( bandname == 'footer' ) console.log(band.rec)
 					if ( p < 0 ) p = formula.length
 					var f = formula.substring(b,p)
 						, v = (isNaN(f)) ? rec[f] : f
-//console.log( 'f = ' + f + '  v = ' + v )
 					if ( !v ) v = 0
 					expr += v + formula.charAt(p)
 					p++
 				} while ( p < formula.length )
-//console.log( expr )
 				return expr
 			}
 			return '0'
