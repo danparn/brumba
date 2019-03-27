@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<meta name="keywords" content="brumba,jquery,ui,widgets,javascript" />
+	<meta name="description" content="Brumba is..." />
+	<meta name="author" content="Unknown" />
+	<link rel="shortcut icon" href="images/favicon.ico" />
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="css/flexigrid.css" type="text/css" />
+ 	<link rel="stylesheet" href="css/menu.css" type="text/css" media="all" />
+ 	<link rel="stylesheet" href="css/brumba.css" type="text/css" media="all" />
+
+	<script src="js/lib/underscore-min.js" type="text/javascript"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+	<script src="js/lib/jquery.mousewheel.js" type="text/javascript"></script>
+	<script src="js/lib/sha256.js" type="text/javascript"></script>
+	<script src="js/lib/modif/flexigrid.js" type="text/javascript"></script>
+	
+	<script src="js/util.js" type="text/javascript"></script>
+	<script src="js/client.js" type="text/javascript"></script>
+	<script src="js/objects.js" type="text/javascript"></script>
+	<script src="js/main.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div id="container">
+	<div id="leftbar" class="br-panel split-e">
+		<div id="toolbar" class="ui-widget-header ui-corner-all">
+			<button class="toolbar" name="new" onclick="butNew()">New</button>
+			<button class="toolbar" name="save" onclick="butSave()">Save</button>
+			<button class="toolbar" name="delete" onclick="butDelete()">Delete</button>
+			<button class="toolbar" name="search" onclick="butSearch()">Search</button>
+			<button class="toolbar" name="help" onclick="butHelp()">Help</button>
+		</div>
+		<div id="menubar"></div>
+		<p></p>
+		<div id="listbar"></div>
+	</div>
+	<div id="workspace" class="br-panel">
+		<input class="br-datepicker" hidden />
+		<div id="page"></div>
+	</div>
+</div>
+</body>
+
+</html>

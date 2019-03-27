@@ -1,0 +1,384 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title>Brumba HowTo</title>
+	<meta name="generator" content="LibreOffice 6.0.1.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2018-03-28T11:24:23.150511205"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		p { color: #000000 }
+		h2 { color: #000000 }
+		h2.cjk { font-family: "Noto Sans CJK SC Regular" }
+		h2.ctl { font-family: "FreeSans" }
+		h4 { color: #000000 }
+		h4.cjk { font-family: "Noto Sans CJK SC Regular" }
+		h4.ctl { font-family: "FreeSans" }
+		code.cjk { font-family: "Courier New", monospace }
+	</style>
+</head>
+<body lang="en-US" text="#000000" dir="ltr">
+<h2 class="western" align="center">Brumba IDE HowTo</h2>
+<p align="center" style="margin-bottom: 0in">by Dan Parnete</p>
+<p align="right" style="margin-bottom: 0in">updated: 1 June 2015</p>
+<p><br/>
+<br/>
+
+</p>
+<p>Use Firefox or Chrome. Chrome has some minor problems in IDE with
+field move/resize by arrow keys. Others browsers are not usable yet.</p>
+<p>Suppose your Brumba server is running on http://localhost:8080
+<br/>
+Open IDE from http://localhost:8080/idelogin.html</p>
+<p><a href="https://81.196.2.213:8080/">Demo aplication</a>&nbsp;&nbsp;
+<code class="western">Application: demo &nbsp;&nbsp; Database: demodb
+&nbsp;&nbsp; User: demo&nbsp;&nbsp;&nbsp; Password: demo2015</code>
+<br/>
+<a href="https://81.196.2.213:8080/idelogin.html">Demo IDE</a> 
+</p>
+<h4 class="western"><br/>
+<br/>
+
+</h4>
+<h4 class="western">Forms</h4>
+<p><b>Create</b>: <i>Tools</i> menu. Write fields names separated by
+comma. Field name should not include spaces or special characters,
+except underscore. Click <i>New Form</i> or <i>New Tabular</i>.
+<br/>
+<b>Properties</b>: Open it from <i>Properties</i> menu. Click
+on form/field/label to see it's properties. <i>Id</i> is the id/name
+of the element. <br/>
+<b>Select fields</b>: click on the field, or
+CTRL+click to add to selection, or mouse drag over. <br/>
+<b>Move
+selected fields</b>: mouse click and drag, or arrow keys, or write
+left/top coordinates in <i>Properties</i> <br/>
+<b>Resize selected
+fields</b>: SHIFT+mouse click and drag, or SHIFT+arrow keys, or write
+width/height in <i>Properties</i> <br/>
+<b>Add fields</b>: From the
+<i>Tool</i> menu, write fields names, click the mouse on the form in
+position you want to add, then click <i>Add Fields</i> menu button.
+For adding just one element, use right click to the desired position,
+choose the element to add from the context menu. <br/>
+<b>Save</b>:
+Use <i>Save</i> button in the toolbar. <br/>
+<b>Open</b>: <i>Application
+/ FORMS</i> menu. <br/>
+<b>Delete</b>: Use <i>Delete</i> button in
+the toolbar. 
+</p>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">Pages</h4>
+<p><b>Create</b>: <i>Tools / New Page</i> menu. A page with
+horizontal splitter is created. Use <i>Split horizontal</i> or <i>Split
+vertical</i> from context menu to divide in more parts. Drag
+splitters to redimension the layout. To see page properties
+doubleckick on it. <br/>
+<b>Set forms</b>: <i>Set form</i> from
+context menu on each panel. <br/>
+<b>Tabs</b>: Context menu <i>Add
+Tab</i> in panel you want to add tabbed forms. Select a tab and <i>Set
+Form</i> in it. <br/>
+<b>Save</b>: Use <i>Save</i> button in the
+toolbar. <br/>
+<b>Open</b>: <i>Application / PAGES</i> menu. <br/>
+<b>Delete</b>:
+Use <i>Delete</i> button in the toolbar. 
+</p>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">Menu</h4>
+<p><b>Create/Modify</b>: Use <i>Application / MENU</i> menu. The menu
+is a simple text, TAB indentation is the level separator. Single
+forms are called as <i>forms.FormName</i> , pages as <i>pages.PageName</i>
+ex.: 
+</p>
+<ul>
+	<li/>
+<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Header
+	1” </code>
+	</p>
+	<ul>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Sub
+		level 1” </code>
+		</p>
+		<ul>
+			<li/>
+<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Item
+			1” forms.Form1 </code>
+			</p>
+			<li/>
+<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Item
+			2” pages.Page2 </code>
+			</p>
+		</ul>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Item
+		3” forms.Form3 </code>
+		</p>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">&quot;Options&quot;
+		forms._options:menuid:menusort </code>
+		</p>
+	</ul>
+	<li/>
+<p><code class="western">“</code><code class="western">Item
+	4” pages.Page4 </code>
+	</p>
+</ul>
+<p><b>Save</b>: Use <i>Save</i> button in the toolbar. 
+</p>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">Forms query</h4>
+<p>Query has the format: <br/>
+<code class="western">{ coll:
+'collectionName', fields: 'field1, field2, …', where: {condition},
+sort: {field1: 1, field2:-1} }</code> <br/>
+Where condition has the
+<a href="http://docs.mongodb.org/manual/reference/operator/query/">MongoDb
+find format</a>. Sort 1 is ascending, -1 descending. <br/>
+If the
+form is the main plain form, <i>query</i> is for the records list. In
+this case, <i>fields</i> defines the list columns: <code class="western">fieldName
+: width : headerText , …</code> <br/>
+If the query has <code class="western">findone:
+true </code>option, only one record will be returned.<br/>
+If the
+form is a Tabular, <i>query</i> is for the table, <i>fields</i> has
+no meaning.<br/>
+A tabular could display an array field of it's
+master (embedded array in a document), and the query will be <code class="western">{
+field: 'arrayFieldName', reorder: {field1: 1, field2:-1} }</code>
+(see <i>PrescriptionDrugs</i> form in the <a href="http://81.196.2.213:8080/">demo
+application</a>), where field could be ‘level1.level2.level3’ for
+multilevel embedded array.<br/>
+A tabular could display the
+concatenation of an array field for the selected documents, and the
+query will be <code class="western">{ concat: 'arrayFieldName', add:
+'field1,fields2,...' }</code> (see <i>Patient_prescriptions</i> form
+in the demo application). Add master fields to each record of the
+result with &quot;add&quot; parameter. <br/>
+If the form is just an
+extension of the main form (record divided in more tabpages), use an
+empty query <code class="western">{}</code> (see <i>Patient_address</i>
+form in the demo application). 
+</p>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">Select query</h4>
+<p><i>query</i> could be a database query (as for the form) or a JSON
+array (fixed options) <br/>
+<code class="western">[ {val:.., txt:..},
+… ]</code> (see <i>Patients</i> form <i>sex</i> field in the demo
+application). <br/>
+<i>Fields</i>: (just for database query) the
+first one is the value, the others separated by ' - ' creates the
+text. To use just a space as separator, start the field name with '+'
+: <code class="western">_id,name,+surname <br/>
+</code>To create a
+multilevel optgroup like tree structure use <code class="western">group:
+true</code> query option, or <code class="western">groupsel: true</code>
+if you want a selectable group item. In this case the value field
+must use &quot;.&quot; to indicate the tree structure ex.: a, <i>a.1,
+a.2, a.2.1, a.2.2, b, b.1, b.2</i> and the data must be ordered by
+value field.</p>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">Autocomplete query</h4>
+<p><i>query</i> could have property <code class="western">extra :
+'filed1,field2,...'</code> used for displaying additional readonly
+data from the autocomplete collection in the current form. The form
+must have this fields set as disable, or at least readonly (see
+<i>Prescriptions</i> form in the demo application). <br/>
+The
+autocomplete field will be saved as an object <code class="western">{val:..,
+txt:..}</code>. Any condition on such a field will be
+<code class="western">patient_id.val:...</code> 
+</p>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">References</h4>
+<p>References are used for referential integrity, to block delete
+operation on documents that have been used as <i>select</i> or
+<i>autocomplete</i> in other documents. <br/>
+Ex.: for the field
+patient_id in the Prescription form should be defined <br/>
+<code class="western">FROM
+coll: Prescription field: patient_id =&gt; TO coll: Patients</code>
+<br/>
+TO field: _id is implicit. 
+</p>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">Run application</h4>
+<ul>
+	<p style="margin-bottom: 0in">https://localhost:8080 
+	</p>
+	<li/>
+<p style="margin-bottom: 0in">Application: myapp 
+	</p>
+	<li/>
+<p style="margin-bottom: 0in">Database: mydb 
+	</p>
+	<li/>
+<p style="margin-bottom: 0in">User: user 
+	</p>
+	<li/>
+<p>Password: pass 
+	</p>
+</ul>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">Events</h4>
+<p>Open events dialog from <i>Events</i> menu. It is always relative
+to the current form. <br/>
+Brumba defines this form events: <br/>
+-
+<i>open</i> (on form open, prior to any other event) <br/>
+- <i>new</i>
+(new button, for some document initialization) <br/>
+- <i>save</i>
+(before save, to check values or alter form.modif) <br/>
+- <i>delete</i>
+(before delete, to check and validate) <br/>
+- <i>retrieve</i> (after
+retrieve, to alter dataset before display) <br/>
+- <i>display</i>
+(after form display data) <br/>
+- <i>rowselected</i> (for tabular
+forms) <br/>
+An event can return <i>true</i> as a STOP message, to
+prevent the normal behavior. Inside the <i>open</i> event you can
+write all other component events: 
+</p>
+<ul>
+	<li/>
+<p style="margin-bottom: 0in"><code class="western">var form =
+	this </code>
+	</p>
+	<li/>
+<p style="margin-bottom: 0in"><code class="western">$(form).on(
+	'open', function(ev) { </code>
+	</p>
+	<ul>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">form.tag.find('#fieldName').on('change',
+		function(ev) { </code>
+		</p>
+		<ul>
+			<li/>
+<p style="margin-bottom: 0in"><code class="western">console.log(
+			$(this).val() ) </code>
+			</p>
+		</ul>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">}) </code>
+		</p>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">form.tag.find('#buttonName').on('click',
+		function(ev) { </code>
+		</p>
+		<ul>
+			<li/>
+<p style="margin-bottom: 0in"><code class="western">doSomething()
+			</code>
+			</p>
+		</ul>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">}) </code>
+		</p>
+	</ul>
+	<li/>
+<p style="margin-bottom: 0in"><code class="western">}).on(
+	'save', function(ev) { </code>
+	</p>
+	<ul>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">//
+		form.modif is the object that collects all modified fields to save </code>
+		</p>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">// add an
+		&quot;updated&quot; field that is not inserted by the user </code>
+		</p>
+		<li/>
+<p style="margin-bottom: 0in"><code class="western">form.modif.updated
+		= Date.new() </code>
+		</p>
+	</ul>
+	<li/>
+<p><code class="western">}) </code>
+	</p>
+</ul>
+<p><br/>
+<br/>
+
+</p>
+<h4 class="western">Scripts</h4>
+<p>Open it from <i>Scripts</i> menu. It is ready for a new script.
+Give it a name and write the cod, then <i>Save</i>. Remember that
+only exported functions are visible from outside the module. <br/>
+Call
+a server function from client with: <br/>
+<code class="western">{
+cmd: 'SRV', app: 'appName', script: 'scriptName.functionName', args
+for the function... }<br/>
+</code>Scripts are cached and loaded from
+brumba/scripts/appName directory.<br/>
+<br/>
+Client scripts could be
+dynamically loaded with:<br/>
+<code class="western">loadScript(scriptName,
+callback)</code></p>
+<h4 class="western"><br/>
+<br/>
+
+</h4>
+<h4 class="western">Database triggers</h4>
+<p>There is a special server script called <code class="western">triggers</code>.
+Here you can define triggers of type: <code class="western">beforeSave,
+afterSave, beforeDelete, afterDelete</code> for any collection. The
+trigger function must be named <code class="western">collection_triggerName</code>.
+Example of <code class="western">beforeSave</code> on Prescriptions
+collection:</p>
+<p style="margin-left: 0.42in; margin-bottom: 0in"><code class="western">var
+U = require('../../util')<br/>
+<br/>
+exports.Prescriptions_beforeSave
+= function( par, callback, data ) {<br/>
+&nbsp;&nbsp;&nbsp; ...<br/>
+&nbsp;&nbsp;&nbsp;
+callback({err: U.err.trig})<br/>
+}</code></p>
+<p style="margin-bottom: 0in"><br/>
+If a <code class="western">before</code>
+trigger returns <code class="western">{err: U.err.trig}</code> the
+transaction will be blocked. <br/>
+<code class="western">after</code>
+triggers will receive the transaction result in <code class="western">par.res</code>
+and the original state of the modified data in <code class="western">par.before</code></p>
+</body>
+</html>

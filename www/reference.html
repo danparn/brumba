@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252" http-equiv="content-type">
+    <title>Brumba Reference</title>
+  </head>
+  <body>
+    <div style="text-align: center">
+      <h2>Brumba Reference</h2>
+    </div>
+    <div style="text-align: center">by Dan Parnete</div>
+    <div style="text-align: right">updated: 1 June 2015</div>
+    <br>
+    <p>Use Firefox or Chrome. Chrome has some minor problems in IDE with field
+      move/resize by arrow keys. Others browsers are not usable yet.</p>
+    <h3>Module util.js</h3>
+    <ul>
+      <li><a href="#err">err</a> - error codes</li>
+      <li>dateFormat - default date format</li>
+    </ul>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+    <p><span style="font-weight: bold;">const</span><br>
+      <code>&nbsp;&nbsp;&nbsp; <a id="err">err</a> = {<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; db: -1,&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; &nbsp; // database not found/opened<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; coll: -2,&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; // collection not found<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; unique:
+        -3,&nbsp;&nbsp;&nbsp;&nbsp; // not unique field<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; count: -4,&nbsp;&nbsp;
+        &nbsp;&nbsp; // count error<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; cursor: -5,&nbsp;&nbsp; &nbsp; //
+        cursor error<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; ins: -6,&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp; // insert error<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; upd: -7,&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp; // update error<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; del: -8,&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp; // delete error<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; file: -9,&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; // file error<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; dupl: -10,&nbsp;&nbsp;
+        &nbsp;&nbsp; // duplicate record<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; param: -11,&nbsp;&nbsp; &nbsp; //
+        wrong parameters<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; data: -12,&nbsp;&nbsp;
+        &nbsp;&nbsp; // wrong data<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; gen: -13,&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; // generic<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; srv: -14,&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; // server<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; script: -15,&nbsp;&nbsp; &nbsp;//
+        script nof found<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; user: -16&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; // user not authenticated<br>
+        &nbsp;&nbsp; &nbsp;},<br>
+        &nbsp;&nbsp; &nbsp;<br>
+        &nbsp;&nbsp; &nbsp;dateFormat = 'dd/mm/yy'&nbsp;&nbsp; &nbsp; // default
+        date format<br>
+        <br>
+      </code></p>
+  </body>
+</html>

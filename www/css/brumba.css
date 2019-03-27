@@ -1,0 +1,270 @@
+/*
+ * Brumba
+ *
+ * © 2012-2013 Dan Parnete
+ * Dual licensed under the MIT and GPL licenses.
+*/
+
+body {
+	background-color: #E3E4E5;
+    font: normal 12px Arial, sans-serif;
+}
+#container {
+	width: 5000px;
+	height: 2000px;
+}
+#leftbar {
+	position: relative;
+	width: 200px;
+	float: left;
+}
+#workspace {
+	position: relative;
+	width: 80%;
+	height: 100%;
+	float: left;
+	padding-left: 10px;
+	background:  #E3E4E5;
+}
+#menubar {
+	width: 200px;
+}
+#toolbar {
+	padding: 4px;
+	display: inline-block;
+}
+button.toolbar {
+	width: 34px;
+}
+
+/* Page */
+#page {
+	height: 600px;
+	margin: 0px;
+}
+.br-page {
+	margin: 0px;
+}
+.br-tabs {
+	position: absolute;
+	width: 1100px;
+	background: none;
+}
+.br-panel {
+	position: relative;
+	overflow: hidden;
+}
+.br-panel.split-s {
+	border-bottom: thin solid lightgrey;
+	width: 100%;
+}
+.br-panel.split-e {
+	border-right: thin solid lightgrey;
+	height: 100%;
+}
+.br-tabs .br-panel {
+	position: relative;
+	height: 95%;
+}
+.br-tabs .br-panel form {
+	position: absolute;
+	height: 95%;
+}
+.br-tabs a {
+	font:11px Tahoma;
+}
+
+
+/* Form */
+.br-field:disabled {
+	color: black;
+	background-color:#EFEFEF;
+}
+.br-form {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	margin-left: 8px;
+}
+.br-label {
+	position: absolute;
+	width: 100px;
+	height: 14px;
+	padding-top: 2px;
+	font-size: 11px;
+	color: #313131;
+	z-index: 2;
+}
+.br-field {
+	position: absolute;
+	border-style: inset;
+	border-width: 1px;
+	font-size: 11px;
+	background: white;
+	width: 100px;
+	height: 14px;
+	overflow: hidden;
+	text-overflow: clip;
+	z-index: 2;
+}
+#number-editor {
+	position: absolute;
+	z-index: 3;
+}
+input.br-field[type='checkbox'] {
+	margin-top: -1px;
+	margin-left: -1px;
+	border: none;
+	padding: 0;
+}
+input.br-field[type=color] {
+	background: none;
+	border: none;
+	margin: 2px 0 2px 0;
+	padding: 0;
+}
+select.br-field {
+	height: 18px;
+}
+select option.br-optgroup {
+	font-weight: bold;
+}
+.br-hidden {
+	visibility: hidden;
+}
+.br-rectangle {
+	position: absolute;
+	border-style: solid;
+	border-width: 1px;
+	width: 100px;
+	height: 16px;
+}
+img {
+	position: absolute;
+	/*border-style: solid;
+	border-width: 1px;*/
+	width: 50px;
+	height: 50px;
+}
+.br-photo-gallery img {
+	position: relative;
+	width: 100px;
+	height: 100px;
+	margin-left:10px;
+	margin-bottom:10px;
+}
+.br-button {
+	position: absolute;
+}
+
+/* Checkbox button */
+.br-ck-button {
+  background-color:#EFEFEF;
+  border-radius:4px;
+  border:1px solid #D0D0D0;
+  overflow:auto;
+  float:left;
+}
+.br-ck-button:hover {
+  background:red;
+}
+.br-ck-button label {
+  float:left;
+  width:4.0em;
+}
+.br-ck-button label span {
+  text-align:center;
+  padding:3px 0px;
+  display:block;
+}
+.br-ck-button label input {
+  position:absolute;
+	margin-right:100px;
+  top:-20px;
+	visibility: hidden;
+}
+.br-ck-button input:checked + span {
+  background-color:#911;
+  color:#fff;
+}
+
+/* Tabular */
+.br-tabular {
+	height: 100%;
+	max-height: 580px;
+}
+.br-tabular .br-scrollbar {
+	position: absolute;
+	font-size: 8px;
+}
+.br-band {
+	position: relative;
+}
+.br-total {
+	position: absolute;
+	bottom: 0;
+	display: block;
+}
+.br-selected-row input,
+.br-selected-row select,
+.br-selected-row textarea {
+	background: #F2F5A9;
+}
+
+
+
+.loading-indicator {
+	display: inline-block;
+	padding: 12px;
+	background: white;
+	-opacity: 0.5;
+	color: black;
+	font-weight: bold;
+	z-index: 9999;
+	border: 1px solid red;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-box-shadow: 0 0 5px red;
+	-webkit-box-shadow: 0px 0px 5px red;
+	-text-shadow: 1px 1px 1px white;
+}
+.loading-indicator label {
+	padding-left: 20px;
+	background: url('../images/ajax-loader-small.gif') no-repeat center left;
+}
+#dialog-form label, #dialog-form input, #dialog-form textarea {
+	display: block;
+	position: relative;
+}
+#dialog-form input.text, #dialog-form textarea.text {
+	margin-bottom: 5px;
+	width: 95%;
+	padding: .4em;
+}
+
+img.ui-datepicker-trigger {
+	border: none;
+}
+
+.flexigrid tr.erow td {
+	background: none;
+}
+
+/* Context menu */
+.br-contextMenu {
+	position: absolute;
+	width: 200px;
+	z-index: 9999;
+}
+
+input::-webkit-calendar-picker-indicator,
+input::-webkit-inner-spin-button {
+    display: none;
+}
+
+/* Help */
+.br-italic-bold {
+	font-size: 20px;
+	font-style: italic;
+	font-weight: bold;
+}

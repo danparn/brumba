@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+<script>
+  function copyToClipboard(text) {
+    window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+  }
+</script>
+</head>
+
+<body>
+	<button id="demo" onclick="copyToClipboard(document.getElementById('demo').innerHTML)">This is what I want to copy</button>
+</body>
+</html>
