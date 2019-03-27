@@ -1,4 +1,4 @@
-Copyright © 2012-2014 Dan Parnete
+Copyright © 2012-2019 Dan Parnete
 
 Dual licensed under the MIT and GPL licenses.
 
