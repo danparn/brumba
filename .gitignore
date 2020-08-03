@@ -13,4 +13,4 @@
 test.js
 inf.txt
 package-lock.json
-*.pem
+server-key.pem
