@@ -11,18 +11,22 @@ import { $, br, modified, createElement, createStyle } from './util'
 import { Dialog, posDialog } from './components'
 import 'https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.10.3/beautify-html.min.js'
 import CodeMirror from 'node/codemirror/src/codemirror'
-import '/lib/codemirror/javascript.js'
+/*import '/lib/codemirror/javascript.js'
 import '/lib/codemirror/css.js'
 import '/lib/codemirror/xml.js'
 import '/lib/codemirror/htmlmixed.js'
 import '/lib/codemirror/foldcode.js'
 import '/lib/codemirror/foldgutter.js'
-import '/lib/codemirror/xml-fold.js'
-//import 'node/codemirror/addon/fold/indent-fold.js'
-/*require('/node_modules/codemirror/addon/fold/brace-fold')
+import '/lib/codemirror/xml-fold.js'*/
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url)
 require('/node_modules/codemirror/addon/dialog/dialog')
 require('/node_modules/codemirror/addon/search/searchcursor')
 require('/node_modules/codemirror/addon/search/search')
+
+//import 'node/codemirror/addon/fold/indent-fold.js'
+/*require('/node_modules/codemirror/addon/fold/brace-fold')
 require('/node_modules/codemirror/addon/edit/closebrackets')
 require('/node_modules/codemirror/mode/xml/xml')
 require('/node_modules/codemirror/mode/javascript/javascript')
