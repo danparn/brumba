@@ -1,0 +1,60 @@
+.container {
+	padding-top: 0 !important;
+}
+
+/* grid */
+.br-grid td {
+	white-space: nowrap;
+}
+.br-grid td.text {
+	min-width: 300px;
+	white-space: pre-wrap;
+}
+
+/* dialog */
+#br-dialog {
+	height: 100%;
+}
+#br-dialog .message {
+	height: 100%;
+}
+#br-dialog .message-body {
+	height: 100%;
+	overflow: auto;
+}
+#br-dialog form {
+	height: 100%;
+}
+.br-grid-form .control.text {
+	width: 400px;
+}
+.br-grid-form {
+	min-width: 300px;
+}
+.width-unset, .width-unset select {
+	width: unset;
+}
+
+
+/* autocomplete */
+.br-autocomplete {
+	width: 100%;
+}
+
+
+/* page */
+.tile {
+	max-height: fit-content;
+}
+
+/* form */
+.br-search {
+	background-color: #BFBFBF;
+}
+
+.br-error {
+  border: 2px solid red !important;
+}
+.modal-background {
+  background-color: rgba(10, 10, 10, 0.75) !important;
+}

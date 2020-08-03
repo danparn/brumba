@@ -1,0 +1,166 @@
+@import './common.css';
+
+
+.br-workon {
+  width: 200px;
+  height: 2em;
+  background-color: #444 !important;
+  color: white !important;
+}
+@media screen and (max-width: 1000px) {
+  .br-workon {
+    display: none;
+  }
+}
+#br-tools-text {
+  background-color: #ddd;
+}
+
+form {
+  padding-top: 20px !important;
+}
+.container {
+	padding-bottom: 2rem;
+}
+.columns .column.dropzone {
+  padding-bottom: 50px !important;
+}
+.br-borders {
+  border-style: dotted;
+}
+
+.br-selected {
+  border: 2px solid red !important;
+}
+.br-hidden {
+  background-image: linear-gradient(45deg, #d9d0e8 25%, #e7dff2 25%, #e7dff2 50%, #d9d0e8 50%, #d9d0e8 75%, #e7dff2 75%, #e7dff2 100%);
+  background-size: 40.00px 40.00px;
+}
+.br-select {
+  -moz-appearance: menulist;
+  -webkit-appearance: menulist;
+}
+.tile:not(.is-ancestor) {
+  margin: 5px;
+  padding: 10px;
+}
+.tab-pane {
+  min-height: 100px;
+}
+
+
+
+/* properties */
+.br-props .hdr {
+	margin-left: 23px;
+}
+.textarea-field {
+	width: 400px;
+}
+
+@media screen and (min-width: 1024px) {
+  .br-navbar a, .logo {
+    margin-left: 10px;
+  }
+}
+
+.br-navbar input {
+	margin-bottom: 0 !important;
+}
+
+
+
+/* editor */
+.br-dialog-editor {
+  width: 1000px;
+  height: 600px;
+}
+.br-dialog-editor .message-body {
+  height: 100% !important;
+  padding: 0;
+}
+.br-dialog-editor .message-header {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.br-dialog-editor a {
+  float: left;
+  padding: 7px;
+  color: white;
+  text-decoration: none !important;
+  font-size: 17px !important;
+}
+.br-dialog-editor a:hover {
+  background-color: #000;
+}
+.CodeMirror {
+  height: 100% !important;
+  background: #1e1e1e !important;
+  font-family: monospace, 'Courier New', Courier;
+  font-size: 13px;
+}
+.CodeMirror-gutters {
+  background: #222 !important;
+}
+
+
+/* Report */
+.br-report {
+	position: absolute;
+	width: 595px;
+	height: 100%;
+	padding-top: 0 !important;
+	font: 11px arial;
+	background-color: #F5F5F5;
+}
+.br-report * {
+	font: inherit;
+}
+.br-landscape {
+	width: 842px;
+}
+.br-band {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	background: white;
+}
+.br-report .br-footer {
+	position: absolute;
+	bottom: 0;
+	display: block;
+}
+.br-nested {
+	position: absolute;
+	overflow: hidden;
+	border-style: solid;
+	border-width: 2px;
+	min-width: 200px;
+	min-height: 50px;
+}
+.br-report .br-label {
+	position: absolute;
+	z-index: 2;
+}
+.br-report .br-field {
+	position: absolute;
+	border: 1px solid #E0E0E0;
+	z-index: 2;
+}
+.br-report img {
+	position: absolute;
+	border: 1px solid #E0E0E0;
+}
+.br-report .selected {
+	border: 1px solid red;
+}
+.watermark {
+	position: relative;
+	float: right;
+	color: #CDCDCD;
+	font-size: 16px;
+	font-style: italic;
+}
+.br-report .br-backward {
+	z-index: 0;
+}

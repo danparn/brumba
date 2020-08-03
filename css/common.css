@@ -1,0 +1,267 @@
+html,
+body,
+#root, .br-container {
+	height: 100%;
+}
+
+
+/* workspace */
+#br-workspace {
+  z-index: 1;
+  margin-top: 40px;
+	height: 100%;
+  min-height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+
+/* modal */
+.modal-background {
+  background-color: rgb(44, 44, 44) !important; 
+}
+.notification {
+	position: absolute;
+	max-width: 500px;
+	top: 50px;
+	left: 50px;
+	z-index: 1000;
+}
+
+
+/* navbar */
+.br-navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 99;
+  background-color: #444;
+  overflow: hidden;
+}
+.br-navbar a, .br-navbar div {
+  float: left;
+  padding: 5px;
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+}
+.br-navbar a:hover {
+  background-color: #000;
+}
+.logo {
+  background-color: #0b7285;
+}
+.br-navbar span {
+  margin-left: 5px;
+}
+.br-navbar a.align-right {
+  float: right;
+}
+@media screen and (max-width: 560px) {
+  .br-navbar span {
+    display: none;
+  }
+  .br-navbar a, .logo {
+    margin-left: 2px;
+  }
+  .br-navbar .space {
+    margin-left: 20px;
+  }
+}
+@media screen and (min-width: 1024px) {
+  #br-dialog {
+    position: fixed;
+    width: fit-content;
+    z-index: 1000;
+  }
+  .br-navbar .space {
+    margin-left: 50px;
+  }
+  .br-bars, .logo {
+    margin-left: 10px;
+  }
+}
+#br-save.modified i {
+  color: #00d1b2;
+}
+
+
+
+/* sidebar */
+#br-sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  background-color: #333;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+#br-sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  color: #b9b8b8;
+}
+@media screen and (max-height: 450px) {
+  #br-sidebar {padding-top: 15px;}
+  #br-sidebar a {font-size: 15px;}
+}
+
+
+
+/* menu */
+.sidebar-nav .metismenu ul a {
+  padding: 0px 15px 0px 30px;
+}
+.sidebar-nav .metismenu a {
+  padding: 8px 15px;
+}
+.sidebar-nav .metismenu ul ul a {
+  padding: 0px 15px 0px 45px;
+}
+.mm-active a.active {
+  color: #f8f9fa;
+  text-decoration: none;
+  background: #0b7285 !important;
+}
+
+
+
+/* form */
+.label {
+	margin-top: 0.5%;
+	margin-bottom: 0 !important;
+	padding: 8px;
+}
+.field {
+  margin-bottom: 0 !important;
+}
+.help {
+  margin-top: 0px !important;
+  margin-bottom: 10px !important;
+}
+.control {
+  padding: 3px;
+	width: -webkit-fill-available;
+	width: -moz-available;
+}
+.select, .select select {
+  width: 100%;
+}
+.field .textarea {
+  margin-bottom: 5px !important;
+}
+/*
+input[type=radio], label.radio, input[type=checkbox], label.checkbox {
+  vertical-align: -moz-middle-with-baseline;
+  vertical-align: -webkit-baseline-middle;
+}
+.radio {
+  padding: 7px 11px !important;
+}
+*/
+label.radio input {
+  margin-right: 2px;
+}
+.radio, .checkbox {
+  padding-top: 11px;
+  padding-right: 10px;
+}
+input[type=checkbox] {
+  margin-top: 11px;
+}
+@media screen and (max-width: 1000px) {
+  .field {
+    margin: 5px !important;
+  }
+  .label {
+    margin: 0;
+    padding-top: 12px;
+    padding-bottom: 0;
+  }
+}
+.container.column {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+
+/* grid */
+.br-grid {
+	max-width: min-content;
+}
+.column.is-narrow, .column.is-narrow-tablet {
+  flex: inherit;
+}
+.table.fixed {
+  padding-right: 0 !important;
+}
+.br-scroll {
+	overflow-y: scroll;
+	width: -webkit-fill-available;
+	width: -moz-available;
+	padding-left: 10px;
+}
+.columns {
+	margin-top: 0;
+	margin-bottom: 0 !important;
+}
+.br-grid .align-right {
+  text-align: right;
+}
+.br-grid .align-center {
+  text-align: center;
+}
+.br-grid button {
+  border: none;
+	display: none;
+}
+
+
+
+/* list */
+.br-list .br-grid {
+  font-size: 12px;
+}
+.br-list .grid-width {
+  width: 90% !important;
+}
+.br-list table {
+  min-width: max-content;
+	min-width: -webkit-max-content;
+  min-width: -moz-max-content;
+}
+.br-list {
+  border-right-style: solid;
+  border-color: lightgrey;
+}
+.br-list.hidden {
+  display: none;
+}
+.br-content {
+	padding: 0;
+	width: -webkit-fill-available;
+	width: -moz-available;
+}
+
+
+/* page */
+.br-page {
+  min-height: 600px;
+}
+.tile.is-ancestor {
+  margin: 5px;
+}
+form {
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+.tile .columns {
+  width: auto;
+}

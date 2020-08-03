@@ -1,3 +1,15 @@
-*~
-./tmp
-./node_modules/*
+# dependencies
+/node_modules
+
+/apps/*
+/css/bulma*
+/tmp
+/scripts/*
+/web_modules/common
+/web_modules/*.map
+/web_modules/*.json
+
+.*
+test.js
+inf.txt
+package-lock.json
