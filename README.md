@@ -1,68 +1,72 @@
 brumba
 ======
 
-Brumba is a desktop-like Web applications builder with Node.js and MongoDb on server.
-Dual licensed under the MIT and GPL licenses.
+Brumba is a Web applications builder with *Node.js* and *MongoDb* on server, *javascript* and *Inferno* (a faster React) on client. ESM modules on both sides.
+Licensed under the MIT license.
 
 The goal is to encapsulate the most of the difficulties of the chain browser/communication/nodejs/mongodb and let you concentrate on:
-- design your forms/pages/reports with facilitated approach (designer task)
-- simplified query sintax {coll, fields, where, sort } mostly for records list, other retrieve/search/save/delete operations are implicit
-- write events (minimal jQuery)
-- eventually write server scripts (nodejs module reduced to minimal javascript with very simple API for database access: get/cursor, post, del, file)
+- design your forms/pages/reports with facilitated approach
+- simplified query syntax {coll, fields, where, sort } mostly for records list, other retrieve/search/save/delete operations are implicit
+- form events
+- server scripts
+- very simple database access API: get/cursor, post, del, file)
 
-The application is saved entierly in a database with the same name. You can use a development site and then copy the 
-modified application database on the server, or just copy the modified component from IDE with _Copy to App_ 
-option. But you can even open IDE on the deployment site and make corrections on the fly, if necessary.
+The application is saved entirely in a database with the same name. 
 
-Take a look at this first minimal [DEMO application](https://81.196.2.213:8080/). Login:
-* Application: demo
-* Database: demodb
+Take a look at this first minimal [DEMO application](https://95.110.198.62:3000). Login:
+* Application: brdemo
+* Database: brdb
 * User: demo
-* Password: demo
+* Password: demo1234
 
-Then open the [IDE](https://81.196.2.213:8080/ide.html) and see it's structure. Write _demo_ in the field and _Load App_ button.
+Then open the [IDE](https://95.110.198.62:3000/ide) and see it's structure.
 
-Here is a brief [IDE HowTo](https://81.196.2.213:8080/howto.html).
-Try it [online](https://81.196.2.213:8080/) with application: **tryme** database: **trydb** (a copy of demo). Feel free to add/modify it.
+Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
 
-For the moment the only browser I'm using is Firefox. There are some minor problems with Chrome. I didn't test the others.
 
 ### Installation
-- node.js and mongodb must be installed and running
+- node.js (min ver.13) and mongodb (ver.4) must be installed and running
+
 - download brumba
-- from the brumba directory install dependences **npm install mongodb connect cheerio pdfkit**
-- from the brumba directory call the short command **node server** 
-  it will default to brumba webserver port 8080 and mongodb localhost:27017
-- to change defaults: **node server webserverport mongohost:mongoport**
-- open Brunba IDE in the browser https://localhost:8080/ide.html, write _yourApp_ name in the field, then create forms/pages/reports/menu
-- open application  https://localhost:8080 and login:
-  * Application: yourApp
-  * Database: yourDb
-  * User: demo          (users non yet implemented use demo)
-  * Password: demo      (or just d and Enter, users/groups/permissions not yet implemented)
-- _yourApp_ and _yourDb_ databases will be created at the first _Save_
+
+  ​		**git clone https://github.com/danparn/brumba.git**
+
+- from the brumba directory install dependences: 
+
+  ​		**npm install**
+
+- start the server: 
+
+  ​		**node server webserverport mongohost:mongoport**
+  the short command **node server** will default to:  brumba server 3000 localhost:27017
+
+- create application and database:
+
+  ​		**node newdb yourapp**
+
+  ​		**node newdb yourdb**
+
+- open Brunba IDE in the browser https://localhost:3000/ide and login:
+
+  - Application: yourapp
+  - User: admin
+  - Password: brumba
+
+- create forms/pages/reports/menu/users
+
+- open application  https://localhost:3000 and login:
+  * Application: yourapp
+  * Database: yourab
+  * User: youruser
+  * Password: yourpassword
+  
+- remember to change admin's default password
+
+- to manage application's users (for IDE access) login as:
+
+  - Application: yourapp
+  - Database: yourapp
 
 ### Support
-[Brumba Google Group](https://groups.google.com/forum/?fromgroups#!forum/brumba) - For support and suggestions
+[Brumba Google Group](https://groups.google.com/forum/?fromgroups#!forum/brumba-1) - For support and suggestions
 
-### To do
-Ver1.0:
-- [x] Events: saved on form
-- [x] Server scripts: application server scripts
-- [x] List and tabular: cursor driven
-- [x] Users/Groups/Permissions: r/w/d on menu entries, user will see only entries with read permission
-- [x] Search: search on all form fields
-- [x] Form/select/autocomplete: data from server script
-- [x] Reports: PDF generated on server
-- [x] Https
-- [x] Multilanguage
-- [ ] Export selected data in Excel format
-
-Ver2.0:
-- [ ] Form/select/autocomplete: data from other then the main database
-- [ ] Design: easy customization of the application look (menu, toolbar, list)
-- [ ] Customized application: extend a main (standard) application without duplicating it
-- [ ] SQL database access: pages with mixed SQL/MongoDb forms/select to extend existing SQL applications
-- [ ] Modular organization for large applications, search facility
-- [ ] Team development: lock component by user
-- [ ] Embedded component to insert in any web page

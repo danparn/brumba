@@ -10,7 +10,7 @@
 /web_modules/*.json
 
 .*
+*.pem
 test.js
 inf.txt
 package-lock.json
-server-key.pem

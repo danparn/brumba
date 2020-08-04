@@ -7,33 +7,32 @@
 
 import { render, Component } from 'web/inferno'
 import { objLess } from './common'
-import { $, br, modified, createElement, createStyle } from './util'
+import { $, br, modified, createElement, createStyle, loadCSS } from './util'
 import { Dialog, posDialog } from './components'
 import 'https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.10.3/beautify-html.min.js'
 import CodeMirror from 'node/codemirror/src/codemirror'
-/*import '/lib/codemirror/javascript.js'
-import '/lib/codemirror/css.js'
-import '/lib/codemirror/xml.js'
-import '/lib/codemirror/htmlmixed.js'
-import '/lib/codemirror/foldcode.js'
-import '/lib/codemirror/foldgutter.js'
-import '/lib/codemirror/xml-fold.js'*/
-import { createRequire } from 'module';
 
-const require = createRequire(import.meta.url)
-require('/node_modules/codemirror/addon/dialog/dialog')
-require('/node_modules/codemirror/addon/search/searchcursor')
-require('/node_modules/codemirror/addon/search/search')
+window.CodeMirror = CodeMirror
 
-//import 'node/codemirror/addon/fold/indent-fold.js'
-/*require('/node_modules/codemirror/addon/fold/brace-fold')
-require('/node_modules/codemirror/addon/edit/closebrackets')
-require('/node_modules/codemirror/mode/xml/xml')
-require('/node_modules/codemirror/mode/javascript/javascript')
-require('/node_modules/codemirror/mode/css/css')
-require('/node_modules/codemirror/mode/htmlmixed/htmlmixed')
-*/
+import('/node_modules/codemirror/addon/fold/foldcode.js')
+import('/node_modules/codemirror/addon/fold/foldgutter.js')
+import('/node_modules/codemirror/addon/fold/xml-fold.js')
+import('/node_modules/codemirror/addon/fold/brace-fold.js')
 
+import('/node_modules/codemirror/addon/dialog/dialog.js')
+import('/node_modules/codemirror/addon/search/searchcursor.js')
+import('/node_modules/codemirror/addon/search/search.js')
+import('/node_modules/codemirror/addon/edit/closebrackets.js')
+
+import('/node_modules/codemirror/mode/xml/xml.js')
+import('/node_modules/codemirror/mode/javascript/javascript.js')
+import('/node_modules/codemirror/mode/css/css.js')
+import('/node_modules/codemirror/mode/htmlmixed/htmlmixed.js')
+
+loadCSS('/node_modules/codemirror/lib/codemirror.css')
+loadCSS('/node_modules/codemirror/theme/darcula.css')
+loadCSS('/node_modules/codemirror/addon/fold/foldgutter.css')
+loadCSS('/node_modules/codemirror/addon/dialog/dialog.css')
 
 
 
@@ -53,7 +52,9 @@ Editor.defaultHooks = {
       extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
       foldGutter: true,
       gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-      autoCloseTags: true
+      autoCloseTags: true,
+      autoCloseBrackets: true,
+      smartIndent: false
     })
     .on('change', instance => modified(true))
   }
