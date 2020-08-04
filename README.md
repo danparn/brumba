@@ -35,6 +35,14 @@ Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
 
   ​		**npm install**
 
+- generate SSL key and certificate
+
+  ​		**openssl genrsa -out brumba-key.pem 2048**
+
+  ​		**openssl req -new -key brumba-key.pem -out brumba-csr.pem**
+
+  ​		**openssl x509 -req -in brumba-csr.pem -signkey brumba-key.pem -out brumba-cert.pem**
+
 - start the server: 
 
   ​		**node server webserverport mongohost:mongoport**
