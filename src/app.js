@@ -12,7 +12,7 @@ import { $, $$, br, remote, createElement, loadCSS } from './util'
 import { pageOpen, pageRender, toggleList, pageSearch } from './page';
 import { formList, formUpdate, formSave, formSearch, formDelete } from './form'
 import { gridRender } from './grid'
-//import { test } from './test';
+import { test } from './test';
 
 // css
 loadCSS('/css/app.css')
@@ -38,12 +38,12 @@ const App = (props) => {
     <div class="br-container">
       <Navbar>
         <div class="logo">logo</div>
-        <a class="space" onClick={clear}><i class="fa fa-file"></i><span></span></a>
-        <a id="br-save" onClick={save}><i class="fa fa-save"></i><span></span></a>
-        <a onClick={formSearch}><i class="fa fa-search"></i><span></span></a>
-        <a onClick={pageSearch}><i class="fa fa-search-plus"></i><span></span></a>
-        <a class="space" onClick={toggleList}><i class="fa fa-list-ol"></i><span></span></a>
-        <a class="align-right" onClick={formDelete}><i class="fa fa-trash"></i><span></span></a>
+        <a class="space" title="new" onClick={clear}><i class="fa fa-file"></i><span></span></a>
+        <a id="br-save" title="save" onClick={save}><i class="fa fa-save"></i><span></span></a>
+        <a title="search" onClick={formSearch}><i class="fa fa-search"></i><span></span></a>
+        <a title="complex search" onClick={pageSearch}><i class="fa fa-search-plus"></i><span></span></a>
+        <a title="toggle list" class="space" onClick={toggleList}><i class="fa fa-list-ol"></i><span></span></a>
+        <a title="delete" class="align-right" onClick={formDelete}><i class="fa fa-trash"></i><span></span></a>
       </Navbar>
       <nav class="sidebar-nav" id="br-sidebar">
         <a class="closebtn" onclick={closeSidebar}>&times;</a>

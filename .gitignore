@@ -10,7 +10,7 @@
 /web_modules/*.json
 
 .*
-*.pem
+brumba.*
 test.js
 inf.txt
 package-lock.json

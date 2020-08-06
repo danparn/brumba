@@ -22,10 +22,10 @@ import { gridRender } from './grid'
  */
 export const pageOpen = (pageName) => {
   const ws = br.ws
-  render(null, ws)
-  ws.innerHTML = ''
   $$('style.br-css').forEach(s => s.remove())
 	$$('script.br-events').forEach(s => s.remove())
+  render(null, ws)
+  ws.innerHTML = ''
 	formsInit()
 	closeDialog()
 	
@@ -199,13 +199,15 @@ export const toggleList = (e) => {
  */
 export const createScript = (code, src, type) => {
 	const script = document.createElement('script')
+	script.classList.add('br-events')
 	script.type = type || 'module'
 	if (src) {
 		script.src = src
 	} else {
 		script.textContent = code
 	}
-	$('head').append(script);
+	//$('head').append(script);
+	br.ws.append(script);
 }
 
 

@@ -328,8 +328,8 @@ const app = connect()
 		})
 		
 const options = {
-    key:    fs.readFileSync('brumba-key.pem'),
-    cert:   fs.readFileSync('brumba-cert.pem')
+    key:    fs.readFileSync('brumba.key'),
+    cert:   fs.readFileSync('brumba.cert')
 }
 
 https.createServer(options, app).listen(port)

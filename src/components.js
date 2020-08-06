@@ -35,7 +35,7 @@ export const Navbar = (props) => {
   return (
     <nav>
       <div class="br-navbar">
-        <a class="br-bars" onClick={openSidebar}><i class="fa fa-bars"></i></a>
+        <a title="menu" class="br-bars" onClick={openSidebar}><i class="fa fa-bars"></i></a>
         {props.children}
       </div>
     </nav>
@@ -488,6 +488,20 @@ export const notification = message => {
 	notif.append(createElement('<p>'+message+'</p>'))
 	e$(notif, 'button').addEventListener('click', e => notif.remove())
 	$('body').append(notif)
+}
+
+
+
+
+
+/* 
+ *  Tooltip
+ */
+export const tooltip = message => {
+	const tt = createElement(`
+		<span class="tag is-dark">${message}</span>
+	`)
+	$('body').append(tt)
 }
 
 

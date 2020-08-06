@@ -17,7 +17,7 @@ Take a look at this first minimal [DEMO application](https://95.110.198.62:3000)
 * Application: brdemo
 * Database: brdb
 * User: demo
-* Password: demo1234
+* Password: demodemo
 
 Then open the [IDE](https://95.110.198.62:3000/ide) and see it's structure.
 
@@ -31,17 +31,19 @@ Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
 
   ​		**git clone https://github.com/danparn/brumba.git**
 
-- from the brumba directory install dependences: 
+- move to brumba directory 
+
+- install dependences: 
 
   ​		**npm install**
 
-- generate SSL key and certificate
+- generate SSL key and auto certificate
 
-  ​		**openssl genrsa -out brumba-key.pem 2048**
+  ​		**openssl genrsa -out brumba.key 2048**
 
-  ​		**openssl req -new -key brumba-key.pem -out brumba-csr.pem**
+  ​		**openssl req -new -key brumba.key -out brumba.csr**
 
-  ​		**openssl x509 -req -in brumba-csr.pem -signkey brumba-key.pem -out brumba-cert.pem**
+  ​		**openssl x509 -req -in brumba.csr -signkey brumba.key -out brumba.cert**
 
 - start the server: 
 
@@ -60,15 +62,19 @@ Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
   - User: admin
   - Password: brumba
 
-- create forms/pages/reports/menu/users
+- create forms/pages/reports/menu
 
 - open application  https://localhost:3000 and login:
   * Application: yourapp
   * Database: yourab
-  * User: youruser
-  * Password: yourpassword
+  * User: admin
+  * Password: brumba
   
+- create users and permissions
+
 - remember to change admin's default password
+
+- enjoy
 
 - to manage application's users (for IDE access) login as:
 
