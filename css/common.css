@@ -265,3 +265,11 @@ form {
 .tile .columns {
   width: auto;
 }
+
+
+/* loading */
+.is-loading {
+	position: fixed;
+  top:  50%;
+  left: 50%;
+}

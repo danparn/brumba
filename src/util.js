@@ -64,8 +64,9 @@ export const remote = (par, dat, type) => {
 		return msg
 	}
 	
-	const to = setTimeout(() => {	
-		//if (window.loadingIndicator)  loadingIndicator.show()
+	//loading(true)
+	const timer = setTimeout(() => {	
+		loading(true)
 	}, 500)
 	
   if (!par.cmd) {
@@ -88,7 +89,8 @@ export const remote = (par, dat, type) => {
   })
   .then(res => res.json())
   .then(data => {
-    clearTimeout(to)
+    clearTimeout(timer)
+    loading(false)
     if (data.err && data.err !== err.file) {
 			if (!data.msg) {
 				const msg = getMsg(data.err)
@@ -99,9 +101,26 @@ export const remote = (par, dat, type) => {
     return data
   })
   .catch(e => {
+    clearTimeout(timer)
     alert(e)
     return {err: err.srv, msg: 'remote error'}
   })
+}
+
+
+
+
+/* 
+ *  Loading indicator
+ */
+export const loading = (flag) => {
+	if (flag) {
+		$('body').append(createElement(
+			`<a class="button is-loading is-primary is-outlined is-large">loading...</a>`
+		))
+	} else {
+		$$('.is-loading').forEach(el => el.remove())
+	}
 }
 
 

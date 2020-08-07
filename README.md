@@ -52,9 +52,9 @@ Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
 
 - create application and database:
 
-  ​		**node newdb yourapp**
+  ​		**node new app yourapp**
 
-  ​		**node newdb yourdb**
+  ​		**node new db yourdb**
 
 - open Brunba IDE in the browser https://localhost:3000/ide and login:
 

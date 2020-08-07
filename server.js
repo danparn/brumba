@@ -11,7 +11,7 @@ import serve_static from 'serve-static'
 import https from 'https'
 import fs from 'fs'
 import { err, strGetBet } from './lib/common.js'
-import { get, post, del, file, ObjectID } from './mongo.js'
+import { get, post, del, file, ObjectID, mongoURL } from './mongo.js'
 import { script, uncacheScripts } from './srv.js'
 import { report } from './report.js'
 
@@ -19,8 +19,10 @@ import { report } from './report.js'
 const port = process.argv[2] || 3000
 const loggedUsers = []
 const logTimeout = 30 * 60000
-const sysForms = []
 
+if (process.argv[3]) {
+	mongoURL(process.argv[3])
+}
 
 
 
@@ -66,7 +68,7 @@ const user = (par, local) => {
 	
 		// Permissions
 		const permissions = () => {
-			if (par.username == 'admin' || user.admin) {
+			if (par.username === 'admin' || user.admin) {
 				perm = {admin: true}
 				menu()
 			} else {
@@ -267,14 +269,6 @@ const brumba = (req, res) => {
 	req.on('end', () => {
 		switch (par.cmd) {
 		  case 'GET':
-		  	if ((par.coll === 'forms' || par.coll === 'pages') && par.where && par.where.name  
-		  					&& par.where.name.charAt(0) === '_' ) {
-		  		const frm = sysform(par)
-		  		if (frm) {
-		  			callback([frm])
-		  			break
-		  		}
-		  	}
 		  	get(par)
 		  	.then(r => {
 		  		if (par.coll === '_users' && Array.isArray(r)) {
@@ -337,30 +331,6 @@ console.log(`Brumba v1.00 listening on port ${port}   (node ${process.version})`
 
 
 
-
-
-
-
-/* 
- * System forms from sysform.json file
- */
-const sysform = par => {
-	if (!sysForms) {
-		try {
-			sysForms = JSON.parse(fs.readFileSync('sysForms.json'))
-		} catch (e) {
-			return null
-		}
-	}
-	for (let i=0; i < sysForms.length; ++i) {
-		if (sysForms[i].name === par.where.name &&
-				(par.coll == 'pages' && sysForms[i].html.indexOf('br-page') > 0 ||
-				par.coll == 'forms' && sysForms[i].html.indexOf('br-form') > 0)) {
-			return sysForms[i]
-		}
-	}
-	return null
-}
 
 
 

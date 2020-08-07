@@ -15,19 +15,29 @@ export const ObjectID = mongodb.ObjectID
 
 const dbs = []
 const hex24 = new RegExp('^[0-9a-fA-F]{24}$') // check for hex string of 24 chars
-let url = 'localhost:17270'
+let url = 'localhost:27017'
+let client
 
-// set url
-export const setURL = newUrl => url = newUrl
+const timer = setTimeout(() => {
+	// open connection
+	client = new mongodb.MongoClient('mongodb://'+url, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true
+	})
+	client.connect(error => {
+		if (error) console.log(error)
+	})
+}, 500)
 
-// open connection
-const client = new mongodb.MongoClient('mongodb://'+url, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true
-})
-client.connect(error => {
-	if (error) console.log(error)
-});
+
+
+
+
+/* 
+ * Set URL
+ */
+export const mongoURL = newUrl => url = newUrl
+
 
 
 
