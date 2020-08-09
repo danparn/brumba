@@ -1,23 +1,23 @@
 brumba
 ======
 
-Brumba is a Web applications builder with *Node.js* and *MongoDb* on server, *javascript* and *Inferno* (a faster React) on client. ESM modules on both sides.
+Brumba is a Web applications builder with *Node.js* and *MongoDb* on server, mostly vanilla *javascript* and *[Inferno](https://infernojs.org/)* (a faster React like) on client. ESM modules on both sides.
 Licensed under the MIT license.
 
 The goal is to encapsulate the most of the difficulties of the chain browser/communication/nodejs/mongodb and let you concentrate on:
 - design your forms/pages/reports with facilitated approach
 - simplified query syntax {coll, fields, where, sort } mostly for records list, other retrieve/search/save/delete operations are implicit
-- form events
+- form specific events and css
 - server scripts
-- very simple database access API: get/cursor, post, del, file)
+- very simple database API: get/cursor, post, del, file)
 
 The application is saved entirely in a database with the same name. 
 
-Take a look at this first minimal [DEMO application](https://95.110.198.62:3000). Login:
+Take a look at this minimal [DEMO application](https://95.110.198.62:3000). Login:
 * Application: brdemo
 * Database: brdb
-* User: demo
-* Password: demodemo
+* User: admin
+* Password: brumba
 
 Then open the [IDE](https://95.110.198.62:3000/ide) and see it's structure.
 
@@ -63,7 +63,7 @@ Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
   - User: admin
   - Password: brumba
 
-- create forms/pages/reports/menu (there is a brief howto.html in the brumba directory)
+- create forms/pages/reports/menu
 
 - open application  https://localhost:3000 and login:
   * Application: yourapp
