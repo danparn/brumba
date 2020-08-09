@@ -252,7 +252,7 @@ export const post = (par, data) => {
 							delete rec._id
 							if (!objEmpty(rec)) {
 console.log('update')
-console.log(cond)
+console.log('cond: '+cond)
 								collection.updateOne(cond, $set(rec), (er, res) => {
 									if (er) {
 										console.log(`Database ${par.db}:  Collection ${par.coll}:  update error: ${er}`)
@@ -352,9 +352,9 @@ console.log(st)
 									st = $set(st)
 console.log('st after')
 console.log(st)
-									if (st.$set) {
+									if (st.$set || st.$unset) {
 console.log( 'arrayUpdate: update')
-console.log(cond)
+console.log('cond: '+cond)
 										collection.updateOne(cond, st, (err, res) => {
 											if (err) console.log(err)
 											row(i+1)
@@ -400,7 +400,7 @@ console.log(st)
 		var uns = {}
 		for (const k in rec) {
 			if (rec[k] === null) { // delete null field
-				uns[k] = ''
+				uns[k] = ""
 				delete rec[k]
 			}
 		}

@@ -206,8 +206,7 @@ export const createScript = (code, src, type) => {
 	} else {
 		script.textContent = code
 	}
-	//$('head').append(script);
-	br.ws.append(script);
+	$('head').append(script)
 }
 
 

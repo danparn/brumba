@@ -3,96 +3,117 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<title>Brumba HowTo</title>
-	<meta name="generator" content="LibreOffice 6.0.1.1 (Linux)"/>
+	<meta name="generator" content="LibreOffice 6.1.5.2 (Linux)"/>
 	<meta name="created" content="00:00:00"/>
-	<meta name="changed" content="2018-03-28T11:24:23.150511205"/>
+	<meta name="changed" content="2020-08-09T18:38:17.539621556"/>
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
+	<meta name="created" content="00:00:00">
 	<meta name="created" content="00:00:00">
 	<meta name="created" content="00:00:00">
 	<meta name="created" content="00:00:00">
 	<style type="text/css">
-		p { color: #000000 }
-		h2 { color: #000000 }
-		h2.cjk { font-family: "Noto Sans CJK SC Regular" }
-		h2.ctl { font-family: "FreeSans" }
-		h4 { color: #000000 }
-		h4.cjk { font-family: "Noto Sans CJK SC Regular" }
-		h4.ctl { font-family: "FreeSans" }
+		@page { size: 21cm 29.7cm; margin-left: 2cm; margin-right: 1cm; margin-top: 1cm; margin-bottom: 1cm }
+		p { margin-bottom: 0.25cm; background: transparent; color: #000000; line-height: 115%; background: transparent }
+		h2 { margin-top: 0.35cm; margin-bottom: 0.21cm; background: transparent; color: #000000; background: transparent; page-break-after: avoid }
+		h2.western { font-family: "Liberation Serif", serif; font-size: 18pt; font-weight: bold }
+		h2.cjk { font-family: "Noto Sans CJK SC Regular"; font-size: 18pt; font-weight: bold }
+		h2.ctl { font-family: "FreeSans"; font-size: 18pt; font-weight: bold }
+		h4 { margin-top: 0.21cm; margin-bottom: 0.21cm; background: transparent; color: #000000; background: transparent; page-break-after: avoid }
+		h4.western { font-family: "Liberation Serif", serif; font-size: 12pt; font-weight: bold }
+		h4.cjk { font-family: "Noto Sans CJK SC Regular"; font-size: 12pt; font-weight: bold }
+		h4.ctl { font-family: "FreeSans"; font-size: 12pt; font-weight: bold }
+		code.western { font-family: "Liberation Mono", monospace }
 		code.cjk { font-family: "Courier New", monospace }
+		code.ctl { font-family: "Liberation Mono", monospace }
+		a:link { color: #000080; so-language: zxx; text-decoration: underline }
+		a:visited { color: #800000; so-language: zxx; text-decoration: underline }
 	</style>
 </head>
-<body lang="en-US" text="#000000" dir="ltr">
-<h2 class="western" align="center">Brumba IDE HowTo</h2>
-<p align="center" style="margin-bottom: 0in">by Dan Parnete</p>
-<p align="right" style="margin-bottom: 0in">updated: 1 June 2015</p>
+<body lang="en-US" text="#000000" link="#000080" vlink="#800000" dir="ltr"><h2 class="western" align="center">
+Brumba IDE HowTo</h2>
+<p align="center" style="margin-bottom: 0cm">by Dan Parnete</p>
+<p align="right" style="margin-bottom: 0cm">updated: 1 June 2015</p>
 <p><br/>
 <br/>
 
 </p>
-<p>Use Firefox or Chrome. Chrome has some minor problems in IDE with
-field move/resize by arrow keys. Others browsers are not usable yet.</p>
-<p>Suppose your Brumba server is running on http://localhost:8080
-<br/>
-Open IDE from http://localhost:8080/idelogin.html</p>
-<p><a href="https://81.196.2.213:8080/">Demo aplication</a>&nbsp;&nbsp;
-<code class="western">Application: demo &nbsp;&nbsp; Database: demodb
-&nbsp;&nbsp; User: demo&nbsp;&nbsp;&nbsp; Password: demo2015</code>
-<br/>
-<a href="https://81.196.2.213:8080/idelogin.html">Demo IDE</a> 
+<p>Run your Brumba server on <a href="https://localhost:3090/">https://localhost:3090</a>
+to avoid password annoyance (no user check).<br/>
+Open IDE from
+<a href="http://localhost:3090/ide">http://localhost:3090/ide</a></p>
+<p><b>Save</b>: Use <i>save</i> button in the toolbar. <br/>
+<b>Delete</b>:
+Use <i>delete</i> button in the toolbar. 
 </p>
-<h4 class="western"><br/>
+<p><b>Records list</b>: If the form/page has to display the records
+list, set it by the toggle list toolbar button.</p>
+<p><br/>
 <br/>
 
-</h4>
+</p>
 <h4 class="western">Forms</h4>
 <p><b>Create</b>: <i>Tools</i> menu. Write fields names separated by
 comma. Field name should not include spaces or special characters,
-except underscore. Click <i>New Form</i> or <i>New Tabular</i>.
+except underscore. Click <i>New Form</i> or <i>New Grid</i>.
 <br/>
-<b>Properties</b>: Open it from <i>Properties</i> menu. Click
-on form/field/label to see it's properties. <i>Id</i> is the id/name
-of the element. <br/>
-<b>Select fields</b>: click on the field, or
-CTRL+click to add to selection, or mouse drag over. <br/>
-<b>Move
-selected fields</b>: mouse click and drag, or arrow keys, or write
-left/top coordinates in <i>Properties</i> <br/>
-<b>Resize selected
-fields</b>: SHIFT+mouse click and drag, or SHIFT+arrow keys, or write
-width/height in <i>Properties</i> <br/>
-<b>Add fields</b>: From the
-<i>Tool</i> menu, write fields names, click the mouse on the form in
-position you want to add, then click <i>Add Fields</i> menu button.
-For adding just one element, use right click to the desired position,
-choose the element to add from the context menu. <br/>
-<b>Save</b>:
-Use <i>Save</i> button in the toolbar. <br/>
-<b>Open</b>: <i>Application
-/ FORMS</i> menu. <br/>
-<b>Delete</b>: Use <i>Delete</i> button in
-the toolbar. 
-</p>
-<p><br/>
+<b>Properties</b>: Open it from <i>Properties</i> toolbat
+button. Click on form/field/label to see it's properties. <br/>
+<b>Container
+borders</b>: Use CTRL+B to toggle container borders.<br/>
+<b>Select
+fields</b>: click on the field, or CTRL+click to toggle selection.
+<br/>
+<b>Move field</b>: by dragging it on the bottom of the same
+container, or in another container. You cam also drop it over another
+field to put it on the same row.<br/>
+<b>Resize selected field</b>:
+SHIFT+arrow left/right keys, or write width % in <i>Properties.</i><br/>
+<b>Add
+fields</b>: From the <i>Tool</i> menu, write fields names, click the
+mouse on the form in position you want to add, then click <i>Add
+Fields</i> menu button. For adding just one element, use right click
+to the desired position, choose the element to add from the context
+menu.<br/>
+<b>Events</b>: write form specific code, from toolbar button.<br/>
+<b>CSS</b>: write form specific CSS, from toolbar button.<br/>
+<b>HTML</b>: view/modify form html, from toolbar button.
+<br/>
 <br/>
 
 </p>
 <h4 class="western">Pages</h4>
-<p><b>Create</b>: <i>Tools / New Page</i> menu. A page with
-horizontal splitter is created. Use <i>Split horizontal</i> or <i>Split
-vertical</i> from context menu to divide in more parts. Drag
-splitters to redimension the layout. To see page properties
-doubleckick on it. <br/>
-<b>Set forms</b>: <i>Set form</i> from
-context menu on each panel. <br/>
-<b>Tabs</b>: Context menu <i>Add
-Tab</i> in panel you want to add tabbed forms. Select a tab and <i>Set
-Form</i> in it. <br/>
-<b>Save</b>: Use <i>Save</i> button in the
-toolbar. <br/>
-<b>Open</b>: <i>Application / PAGES</i> menu. <br/>
-<b>Delete</b>:
-Use <i>Delete</i> button in the toolbar. 
+<p><b>Create</b>: <i>Tools / New Page</i> menu. Use <i>Split
+horizontal</i> or <i>Split vertical</i> from context menu to divide
+in more parts. Use <i>Add column</i> to add more containers
+horizontaly. Select container and use SHIFT+arrow left/right to
+resize it.<br/>
+<b>Set forms</b>: <i>Set form</i> from context menu
+on each container. <br/>
+<b>Tabs</b>: Context menu <i>Add Tab</i> in
+container you want to add tabbed forms. Each tab presents a container
+that can be divided further. Right click on tab zone to <i>Add/Remove</i>
+tabs. Rename tab from <i>Properties</i>.<br/>
+<br/>
+<br/>
+
 </p>
-<p><br/>
+<h4 class="western">Reports</h4>
+<p><b>Create</b>: <i>Tools / New Report</i> menu. Defaults to
+portrait, can switch to landscape from <i>Properties.</i> In report
+everything is fixed size, fixed position. Select band with DblClick
+and resize with SHIFT+arrow up/down. Add label, field, image from
+context menu.<br/>
+<b>Group</b>: Add <i>group</i> band from context
+menu. <br/>
+<b>Move</b>: Move elements with CTRL+arrow.<br/>
+<b>Resize</b>:
+Resize elements with SHIFT+arrow.<br/>
+<b>Multi select</b>:
+CTRL+mouse drag over.<br/>
+<br/>
 <br/>
 
 </p>
@@ -103,41 +124,32 @@ forms are called as <i>forms.FormName</i> , pages as <i>pages.PageName</i>
 ex.: 
 </p>
 <ul>
-	<li/>
-<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Header
+	<li><p style="margin-bottom: 0cm"><code class="western">“</code><code class="western">Header
 	1” </code>
 	</p>
 	<ul>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Sub
+		<li><p style="margin-bottom: 0cm"><code class="western">“</code><code class="western">Sub
 		level 1” </code>
 		</p>
 		<ul>
-			<li/>
-<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Item
+			<li><p style="margin-bottom: 0cm"><code class="western">“</code><code class="western">Item
 			1” forms.Form1 </code>
 			</p>
-			<li/>
-<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Item
+			<li><p style="margin-bottom: 0cm"><code class="western">“</code><code class="western">Item
 			2” pages.Page2 </code>
 			</p>
 		</ul>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">“</code><code class="western">Item
+		<li><p style="margin-bottom: 0cm"><code class="western">“</code><code class="western">Item
 		3” forms.Form3 </code>
 		</p>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">&quot;Options&quot;
+		<li><p style="margin-bottom: 0cm"><code class="western">&quot;Options&quot;
 		forms._options:menuid:menusort </code>
 		</p>
 	</ul>
-	<li/>
-<p><code class="western">“</code><code class="western">Item
-	4” pages.Page4 </code>
+	<li><p><code class="western">“</code><code class="western">Item 4”
+	pages.Page4 </code>
 	</p>
 </ul>
-<p><b>Save</b>: Use <i>Save</i> button in the toolbar. 
-</p>
 <p><br/>
 <br/>
 
@@ -156,21 +168,19 @@ this case, <i>fields</i> defines the list columns: <code class="western">fieldNa
 : width : headerText , …</code> <br/>
 If the query has <code class="western">findone:
 true </code>option, only one record will be returned.<br/>
-If the
-form is a Tabular, <i>query</i> is for the table, <i>fields</i> has
-no meaning.<br/>
-A tabular could display an array field of it's
-master (embedded array in a document), and the query will be <code class="western">{
-field: 'arrayFieldName', reorder: {field1: 1, field2:-1} }</code>
-(see <i>PrescriptionDrugs</i> form in the <a href="http://81.196.2.213:8080/">demo
-application</a>), where field could be ‘level1.level2.level3’ for
-multilevel embedded array.<br/>
-A tabular could display the
+A grid
+could display an array field of it's master (embedded array in a
+document), and the query will be <code class="western">{ field:
+'arrayFieldName', reorder: {field1: 1, field2:-1} }</code> (see
+<i>Patient_visit</i> form in the demo application), where field could
+be ‘level1.level2.level3’ for multilevel embedded array (see
+Patient_prescription form).<br/>
+A grid could display the
 concatenation of an array field for the selected documents, and the
 query will be <code class="western">{ concat: 'arrayFieldName', add:
-'field1,fields2,...' }</code> (see <i>Patient_prescriptions</i> form
-in the demo application). Add master fields to each record of the
-result with &quot;add&quot; parameter. <br/>
+'field1,fields2,...' }</code> (see <i>Patient_all</i> form in the
+demo application). Add master fields to each record of the result
+with &quot;add&quot; parameter. <br/>
 If the form is just an
 extension of the main form (record divided in more tabpages), use an
 empty query <code class="western">{}</code> (see <i>Patient_address</i>
@@ -183,8 +193,8 @@ form in the demo application).
 <h4 class="western">Select query</h4>
 <p><i>query</i> could be a database query (as for the form) or a JSON
 array (fixed options) <br/>
-<code class="western">[ {val:.., txt:..},
-… ]</code> (see <i>Patients</i> form <i>sex</i> field in the demo
+<code class="western">[ {_id:..,
+_txt:..}, … ]</code> (see Drugs_form <i>form</i> field in the demo
 application). <br/>
 <i>Fields</i>: (just for database query) the
 first one is the value, the others separated by ' - ' creates the
@@ -233,19 +243,15 @@ TO field: _id is implicit.
 </p>
 <h4 class="western">Run application</h4>
 <ul>
-	<p style="margin-bottom: 0in">https://localhost:8080 
+	<p style="margin-bottom: 0cm">https://localhost:3000 
 	</p>
-	<li/>
-<p style="margin-bottom: 0in">Application: myapp 
+	<li><p style="margin-bottom: 0cm">Application: yourapp 
 	</p>
-	<li/>
-<p style="margin-bottom: 0in">Database: mydb 
+	<li><p style="margin-bottom: 0cm">Database: yourdb 
 	</p>
-	<li/>
-<p style="margin-bottom: 0in">User: user 
+	<li><p style="margin-bottom: 0cm">User: user 
 	</p>
-	<li/>
-<p>Password: pass 
+	<li><p>Password: pass 
 	</p>
 </ul>
 <p><br/>
@@ -275,62 +281,49 @@ prevent the normal behavior. Inside the <i>open</i> event you can
 write all other component events: 
 </p>
 <ul>
-	<li/>
-<p style="margin-bottom: 0in"><code class="western">var form =
+	<li><p style="margin-bottom: 0cm"><code class="western">var form =
 	this </code>
 	</p>
-	<li/>
-<p style="margin-bottom: 0in"><code class="western">$(form).on(
+	<li><p style="margin-bottom: 0cm"><code class="western">$(form).on(
 	'open', function(ev) { </code>
 	</p>
 	<ul>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">form.tag.find('#fieldName').on('change',
+		<li><p style="margin-bottom: 0cm"><code class="western">form.tag.find('#fieldName').on('change',
 		function(ev) { </code>
 		</p>
 		<ul>
-			<li/>
-<p style="margin-bottom: 0in"><code class="western">console.log(
+			<li><p style="margin-bottom: 0cm"><code class="western">console.log(
 			$(this).val() ) </code>
 			</p>
 		</ul>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">}) </code>
+		<li><p style="margin-bottom: 0cm"><code class="western">}) </code>
 		</p>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">form.tag.find('#buttonName').on('click',
+		<li><p style="margin-bottom: 0cm"><code class="western">form.tag.find('#buttonName').on('click',
 		function(ev) { </code>
 		</p>
 		<ul>
-			<li/>
-<p style="margin-bottom: 0in"><code class="western">doSomething()
+			<li><p style="margin-bottom: 0cm"><code class="western">doSomething()
 			</code>
 			</p>
 		</ul>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">}) </code>
+		<li><p style="margin-bottom: 0cm"><code class="western">}) </code>
 		</p>
 	</ul>
-	<li/>
-<p style="margin-bottom: 0in"><code class="western">}).on(
+	<li><p style="margin-bottom: 0cm"><code class="western">}).on(
 	'save', function(ev) { </code>
 	</p>
 	<ul>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">//
+		<li><p style="margin-bottom: 0cm"><code class="western">//
 		form.modif is the object that collects all modified fields to save </code>
 		</p>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">// add an
+		<li><p style="margin-bottom: 0cm"><code class="western">// add an
 		&quot;updated&quot; field that is not inserted by the user </code>
 		</p>
-		<li/>
-<p style="margin-bottom: 0in"><code class="western">form.modif.updated
+		<li><p style="margin-bottom: 0cm"><code class="western">form.modif.updated
 		= Date.new() </code>
 		</p>
 	</ul>
-	<li/>
-<p><code class="western">}) </code>
+	<li><p><code class="western">}) </code>
 	</p>
 </ul>
 <p><br/>
@@ -364,7 +357,7 @@ afterSave, beforeDelete, afterDelete</code> for any collection. The
 trigger function must be named <code class="western">collection_triggerName</code>.
 Example of <code class="western">beforeSave</code> on Prescriptions
 collection:</p>
-<p style="margin-left: 0.42in; margin-bottom: 0in"><code class="western">var
+<p style="margin-left: 1.07cm; margin-bottom: 0cm"><code class="western">var
 U = require('../../util')<br/>
 <br/>
 exports.Prescriptions_beforeSave
@@ -373,7 +366,7 @@ exports.Prescriptions_beforeSave
 &nbsp;&nbsp;&nbsp;
 callback({err: U.err.trig})<br/>
 }</code></p>
-<p style="margin-bottom: 0in"><br/>
+<p style="margin-bottom: 0cm"><br/>
 If a <code class="western">before</code>
 trigger returns <code class="western">{err: U.err.trig}</code> the
 transaction will be blocked. <br/>

@@ -131,14 +131,14 @@ const Ide = (props) => {
       <div class="br-container">
         <Navbar>
           <div class="logo">brumba</div>
-          <a id="br-save" class="space" onClick={onSave}><i class="fa fa-save"></i><span>save</span></a>
+          <a id="br-save" class="space" onClick={onSave}><i class="fas fa-save"></i><span>save</span></a>
           <a onClick={onProperties}><i class="fa fa-list-alt"></i><span>properties</span></a>
           <a onClick={onEditor}><i class="fa fa-code"></i><span>events</span></a>
-          <a onClick={onEditor}><i class="fa fa-css3"></i><span>css</span></a>
-          <a onClick={onEditor}><i class="fa fa-html5"></i><span>html</span></a>
+          <a onClick={onEditor}><i class="fab fa-css3"></i><span>css</span></a>
+          <a onClick={onEditor}><i class="fab fa-html5"></i><span>html</span></a>
           <a><input class="input is-small br-workon" onchange={workonChange} /></a>
-          <a class="space" onClick={toggleList}><i class="fa fa-list-ol"></i><span></span></a>
-          <a onClick={borders}><i class="fa fa-border-none"></i><span></span></a>
+          <a class="space" onClick={toggleList}><i class="fa fa-list-ol"></i><span>list</span></a>
+          <a onClick={borders}><i class="fa fa-border-none"></i><span>borders</span></a>
           <a class="align-right" onClick={onDel}><i class="fa fa-trash"></i><span>delete</span></a>
         </Navbar>
         <Sidebar>
