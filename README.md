@@ -63,7 +63,7 @@ Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
   - User: admin
   - Password: brumba
 
-- create forms/pages/reports/menu
+- create forms/pages/reports/menu (there is a brief howto.html in the brumba directory)
 
 - open application  https://localhost:3000 and login:
   * Application: yourapp
