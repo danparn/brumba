@@ -5,7 +5,8 @@
 	<title>Brumba HowTo</title>
 	<meta name="generator" content="LibreOffice 6.1.5.2 (Linux)"/>
 	<meta name="created" content="00:00:00"/>
-	<meta name="changed" content="2020-08-09T19:18:13.235565532"/>
+	<meta name="changed" content="2020-08-09T20:28:07.992766282"/>
+	<meta name="created" content="00:00:00">
 	<meta name="created" content="00:00:00">
 	<meta name="created" content="00:00:00">
 	<meta name="created" content="00:00:00">
@@ -56,34 +57,35 @@ list, use the <i>list</i> toolbar button.</p>
 
 </p>
 <h4 class="western">Forms</h4>
-<p><b>Create</b>: <i>Tools</i> menu. Write fields names separated by
-comma. Field name should not include spaces or special characters,
-except underscore. Click <i>New Form</i> or <i>New Grid</i>.
+<p><b>Create</b>: <i>Tools</i> menu. Write fields name (comma
+separated). Field name should not include spaces or special
+characters, except underscore. Click <i>New Form</i> or <i>New Grid</i>.
 <br/>
-<b>Properties</b>: Open it from <i>Properties</i> toolbat
-button. Click on form/field/label to see it's properties. <br/>
-<b>Container
-borders</b>: Use CTRL+B to toggle container borders.<br/>
-<b>Select
-fields</b>: click on the field, or CTRL+click to toggle selection.
+<b>Properties </b><b>button</b>: Open it from <i>Properties</i>
+toolbat button. Click on form/field/label to change it's properties.
 <br/>
-<b>Move field</b>: by dragging it on the bottom of the same
-container, or in another container. You cam also drop it over another
-field to put it on the same row.<br/>
-<b>Resize selected field</b>:
-SHIFT+arrow left/right keys, or write width % in <i>Properties.</i><br/>
+<b>Container borders</b>: Use CTRL+B, or toolbar <i>borders</i>
+button, to toggle container borders.<br/>
+<b>Select fields</b>: click
+on the field, or CTRL+click to toggle selection. <br/>
+<b>Move field</b>:
+by dragging it on the bottom of the same container, or in another
+container. You cam also drop it over another field to put it on the
+same row.<br/>
+<b>Resize selected field</b>: SHIFT+arrow left/right
+keys, or change <i>width</i> % in <i>Properties.</i><br/>
 <b>Add
-fields</b>: From the <i>Tool</i> menu, write fields names, click the
-mouse on the form in position you want to add, then click <i>Add
-Fields</i> menu button. For adding just one element, use right click
-to the desired position, choose the element to add from the context
-menu.<br/>
-<b>Events</b>: write form specific code, from toolbar
-button.<br/>
-<b>CSS</b>: write form specific CSS, from toolbar
-button.<br/>
-<b>HTML</b>: view/modify form html, from toolbar button.
-</p>
+fields</b>: From the <i>Tool</i> menu, write fields name, click the
+mouse on the container you want to add to, then click <i>Add Fields</i>
+menu. For adding just one element, use right click to the desired
+container, choose the element to add from the context menu.<br/>
+<b>Events
+</b><b>button</b>: write form specific script.<br/>
+<b>CSS </b><b>button</b>:
+write form specific CSS.<br/>
+<b>HTM </b><b>button</b><b>L</b>:
+view/modify form’s html. Pay attention, the grid is not saved as
+seen, but only the form tag without it’s innerHTML.</p>
 <h4 class="western">Pages</h4>
 <p><b>Create</b>: <i>Tools / New Page</i> menu. Use <i>Split
 horizontal</i> or <i>Split vertical</i> from context menu to divide
@@ -167,14 +169,14 @@ form is the main plain form, <i>query</i> is for the records list. In
 this case, <i>fields</i> defines the list columns: <code class="western">fieldName
 : width : headerText , …</code> <br/>
 If the query has <code class="western">findone:
-true </code>option, only one record will be returned.<br/>
-A grid
-could display an array field of it's master (embedded array in a
-document), and the query will be <code class="western">{ field:
-'arrayFieldName', reorder: {field1: 1, field2:-1} }</code> (see
-<i>Patient_visit</i> form in the demo application), where field could
-be ‘level1.level2.level3’ for multilevel embedded array (see
-Patient_prescription form).<br/>
+true </code>option, only one record will be returned, no list
+neaded.<br/>
+A grid could display an array field of it's master
+(embedded array in a document), and the query will be <code class="western">{
+field: 'arrayFieldName', reorder: {field1: 1, field2:-1} }</code>
+(see <i>Patient_visit</i> form in the demo application), where field
+could be ‘level1.level2.level3’ for multilevel embedded array
+(see Patient_prescription form).<br/>
 A grid could display the
 concatenation of an array field for the selected documents, and the
 query will be <code class="western">{ concat: 'arrayFieldName', add:
@@ -183,7 +185,7 @@ demo application). Add master fields to each record of the result
 with &quot;add&quot; parameter. <br/>
 If the form is just an
 extension of the main form (record divided in more tabpages), use an
-empty query <code class="western">{}</code> (see <i>Patient_address</i>
+empty query <code class="western">{}</code> (see <i>Patient</i><i>s</i><i>_address</i>
 form in the demo application). 
 </p>
 <p><br/>
@@ -196,32 +198,19 @@ array (fixed options) <br/>
 <code class="western">[ {_id:..,
 _txt:..}, … ]</code> (see Drugs_form <i>form</i> field in the demo
 application). <br/>
-<i>Fields</i>: (just for database query) the
-first one is the value, the others separated by ' - ' creates the
-text. To use just a space as separator, start the field name with '+'
-: <code class="western">_id,name,+surname <br/>
-</code>To create a
-multilevel optgroup like tree structure use <code class="western">group:
-true</code> query option, or <code class="western">groupsel: true</code>
-if you want a selectable group item. In this case the value field
-must use &quot;.&quot; to indicate the tree structure ex.: a, <i>a.1,
-a.2, a.2.1, a.2.2, b, b.1, b.2</i> and the data must be ordered by
-value field.</p>
+<i>Fields</i>: the first field is the select
+value, the others separated by ' - ' creates the text. To use just a
+space as separator, start the field name with '+' : <code class="western">_id,name,+surname</code></p>
 <p><br/>
 <br/>
 
 </p>
 <h4 class="western">Autocomplete query</h4>
-<p><i>query</i> could have property <code class="western">extra :
-'filed1,field2,...'</code> used for displaying additional readonly
-data from the autocomplete collection in the current form. The form
-must have this fields set as disable, or at least readonly (see
-<i>Prescriptions</i> form in the demo application). <br/>
-The
-autocomplete field will be saved as an object <code class="western">{val:..,
-txt:..}</code>. Any condition on such a field will be
-<code class="western">patient_id.val:...</code> 
-</p>
+<p><span style="font-style: normal">Same as select, with a</span>
+property <code class="western">extra : 'filed1,field2,...'</code>
+used for displaying additional readonly data from the autocomplete
+record in the current form. The form must have this fields set as
+disable, or at least readonly.</p>
 <p><br/>
 <br/>
 
