@@ -7,7 +7,7 @@
 
 import querystring from 'querystring'
 import connect from 'connect'
-import serve_static from 'serve-static'
+import serveStatic from 'serve-static'
 import https from 'https'
 import fs from 'fs'
 import { err, strGetBet } from './lib/common.js'
@@ -313,7 +313,7 @@ const brumba = (req, res) => {
 
 
 const app = connect()
-		.use(serve_static(process.cwd() + '/'))
+		.use(serveStatic(process.cwd() + '/'))
 		.use('/brumba', brumba)
 		.use('/login', login)
 		.use('/ide', (req, res) => {

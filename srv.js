@@ -192,6 +192,8 @@ export const script = par => {
 						.then(mod => {
 							if (f in mod) {
 								mod[f](par, callback)
+							} else if (f === '_just_load') {
+								return resolve({})
 							} else {
 								console.log(`Cannot import script: ${par.script}`)
 								reject({err: err.script})

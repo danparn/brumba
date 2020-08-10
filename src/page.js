@@ -8,7 +8,8 @@
 
 import { render } from 'web/inferno'
 import { toJSON, objEmpty } from './common'
-import { $, $$, e$, e$$, br, remote, modified, unselect, createElement, createStyle, inputDate } from './util'
+import { $, $$, e$, e$$, br, remote, modified, unselect, createElement, createStyle, createScript,
+				inputDate } from './util'
 import { closeDialog } from './components'
 import { formInit, formList, formUpdate } from './form'
 import { formsInit, addForm, findForm, getDetails } from './forms'
@@ -192,22 +193,6 @@ export const toggleList = (e) => {
 }
 
 
-
-
-/* 
- *  Create script
- */
-export const createScript = (code, src, type) => {
-	const script = document.createElement('script')
-	script.classList.add('br-events')
-	script.type = type || 'module'
-	if (src) {
-		script.src = src
-	} else {
-		script.textContent = code
-	}
-	$('head').append(script)
-}
 
 
 

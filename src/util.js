@@ -322,3 +322,34 @@ export const inputDate = str => {
 	}
 	return `${y}-${pad(dayFirst?m:d)}-${pad(dayFirst?d:m)}`
 }
+
+
+
+
+/* 
+ *  Create script
+ */
+export const createScript = (code, src, type) => {
+	const script = document.createElement('script')
+	script.classList.add('br-events')
+	script.type = type || 'module'
+	if (src) {
+		script.src = src
+	} else {
+		script.textContent = code
+	}
+	$('head').append(script)
+}
+
+
+
+
+/* 
+ *  Client script
+ */
+export const clientScript = async (scriptName, cb) => {
+	await remote({script: scriptName+'._just_load'}).catch()
+	const module = await import(`/scripts/${br.app}/${scriptName}.js`).catch(alert)
+	if (cb) cb(module)
+	
+}
