@@ -5,8 +5,9 @@
  * This source code is licensed under the MIT license.
 */
 
-/* Error codes
-*/
+/**
+ *  Error codes
+ */
 export const err = {
   db: -1,				// database not found/opened
   coll: -2,			// collection not found
@@ -33,11 +34,14 @@ export let dateFormat = 'dd/mm/yyyy'
 
 
 
+/** 
+ *  hex24 regular expresion
+ */
 export const hex24 = new RegExp('^[0-9a-fA-F]{24}$') // check for hex string of 24 chars
 
 
 
-/* 
+/** 
  *  Timezone
  */
 export const timezone = () => new Date().getTimezoneOffset() * -60000
@@ -45,21 +49,21 @@ export const timezone = () => new Date().getTimezoneOffset() * -60000
 
 
 
-/* 
+/** 
  *   Set decimals
  */
 export const decimals = (value, dec) => Number(Math.round(value+'e'+dec)+'e-'+dec)
 
 
 
-/* 
+/** 
  *   Capitalize string
  */
 export const strCap = str => (str.charAt(0).toUpperCase() + str.slice(1))
 
 
 
-/* 
+/** 
  *   Split string by separator, trim spaces and eliminates empties
  */
 export const strSplit = (str, sep) => {
@@ -82,7 +86,7 @@ export const strSplit = (str, sep) => {
 
 
 
-/* 
+/** 
  * Get substring between delimiters
  */
 export const strGetBet = (str, from, to, startFrom, include) => {
@@ -104,7 +108,7 @@ export const strGetBet = (str, from, to, startFrom, include) => {
 
 
 
-/* 
+/** 
  * Find one of any char in pat
  */
 export const strFindAny = (str, pat, start) => {
@@ -126,7 +130,7 @@ export const strFindAny = (str, pat, start) => {
 
 
 
-/* 
+/** 
  *   Is empty object?
  */
 export const objEmpty = (obj) => {
@@ -138,7 +142,7 @@ export const objEmpty = (obj) => {
 
 
 
-/* 
+/** 
  *   Pick props of object
  */
 export const objPick = (obj, props) => {
@@ -166,7 +170,7 @@ export const objPick = (obj, props) => {
 
 
 
-/* 
+/** 
  *   Pick all properties less then props, recursively
  */
 export const objLess = (obj, props) => {
@@ -194,7 +198,7 @@ export const objLess = (obj, props) => {
 
 
 
-/* 
+/** 
  *   Delete props of object
  */
 export const objDel = (obj, props) => {
@@ -208,7 +212,7 @@ export const objDel = (obj, props) => {
 
 
 
-/* 
+/** 
  *   Add multilevel prop to object
  */
 export const objAddProp = (obj, prop, value, append) => {
@@ -237,7 +241,7 @@ export const objAddProp = (obj, prop, value, append) => {
 
 
 
-/* 
+/** 
  *   Object clone
  */
 export const objClone = (obj) => {
@@ -249,7 +253,7 @@ export const objClone = (obj) => {
 
 
 
-/* 
+/** 
  *   Parse string to JSON
  */
 export const toJSON = (str) => {
@@ -284,8 +288,8 @@ export const toJSON = (str) => {
 
 
 
-/* 
- *   Parse string to JSON
+/** 
+ *   Translate string to lang
  */
 export const translate = (str, lang) => {
 	return str
@@ -294,7 +298,7 @@ export const translate = (str, lang) => {
 
 
 
-/* 
+/*
  * Set field values on formula
  */
 export const formulaValues = (form, formula) => {

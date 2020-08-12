@@ -17,7 +17,7 @@
     "codemirror": "^5.55.0",
     "connect": "^3.7.0",
     "inferno": "^7.4.2",
-    "jsdom": "^16.3.0",
+    "jsdom": "^16.4.0",
     "metismenujs": "^1.2.1",
     "mongodb": "^3.5.9",
     "nodemailer": "^6.4.10",
@@ -28,16 +28,20 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
+    "@babel/core": "^7.11.1",
     "@babel/plugin-syntax-jsx": "^7.10.4",
-    "@babel/preset-env": "^7.10.4",
-    "babel-plugin-extension-resolver": "^1.0.10",
+    "@babel/preset-env": "^7.11.0",
+    "babel-plugin-extension-resolver": "^1.0.12",
     "babel-plugin-inferno": "^6.1.1",
     "babel-plugin-module-resolver": "^4.0.0",
     "http-proxy-middleware": "^1.0.5",
     "snowpack": "^1.7.1"
   },
   "nodemonConfig": {
-    "watch": ["*.js", "lib/common.js", "scripts"]
+    "watch": [
+      "*.js",
+      "lib/common.js",
+      "scripts"
+    ]
   }
 }

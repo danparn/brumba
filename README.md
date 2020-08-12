@@ -23,6 +23,8 @@ Then open the [IDE](https://95.110.198.62:3000/ide) and see it's structure.
 
 Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
 
+[API reference](https://95.110.198.62:3000/doc)
+
 
 ### Installation
 - node.js (min ver.13) and mongodb (ver.4) must be installed and running
