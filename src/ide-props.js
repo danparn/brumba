@@ -737,5 +737,20 @@ export const addRadio = (parent, name) => {
 
 
 
+/*
+ * Tools text
+ */
+export const toolsText = () => {
+  const text = $('#br-tools-text').value
+  if (!text.length) {
+    alert('Write some comma separeted field names in the Tools text area')
+    return ''
+  }
+  if (localStorage) {
+    localStorage.setItem('br.tools-text', text)
+  }
+  return text
+}
+
 
 

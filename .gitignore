@@ -14,3 +14,4 @@ brumba.*
 test.js
 inf.txt
 package-lock.json
+*.bak

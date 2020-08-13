@@ -7,8 +7,8 @@
 
 import { render } from 'web/inferno'
 import { strSplit, strCap } from './common'
-import { $, $$, br, modified, toolsText } from './util'
-import { properties } from './ide-props'
+import { $, $$, br, modified } from './util'
+import { properties, toolsText } from './ide-props'
 import { pageWrapper } from './page'
 import { Grid } from './grid'
 import { show } from './basiccontext/basicContext'

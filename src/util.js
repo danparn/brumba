@@ -4,46 +4,67 @@
  *
  * This source code is licensed under the MIT license.
 */
-
 import { err, objPick, strSplit, timezone, dateFormat } from './common'
 import { formChanges } from './forms'
 
 
+/** 
+ * Globals - login info and other
+ * <br>br = {
+ * <br><ul><ui>app: 'applicationName'
+ * <br><ui>db: 'databaseName'
+ * <br><ui>usercode: '5f33f94ce1e692204f4d1697'
+ * <br><ui>ws: DOM element - workspace container, root
+ * <br><ui>dlg: DOM element - dialogs container
+ * <br></ul>}
+ */
 export let br = {}
 
-/** 
- *  Alias of document.querySelector
- */
 
+/** 
+ * Alias of document.querySelector
+ * <br>
+ * <br>import { $ } from '/lib/util.js'
+ * <br>const frm = $('form')
+ */
 export const $ = document.querySelector.bind(document)       // alias
-/** 
- *  Alias of document.querySelectorAll
- */
 
-export const $$ = document.querySelectorAll.bind(document)   // alias
+
 /** 
- *  Element.querySelector syntax sugar
- * @property {Element} elem element to search on
- * @property {String} sel selector string
+ * Alias of document.querySelectorAll
+ * <br>
+ * <br>import { $$ } from '/lib/util.js'
+ * <br>const frms = $$('form')
+ */
+export const $$ = document.querySelectorAll.bind(document)   // alias
+
+
+/** 
+ * DOM element.querySelector syntax sugar
+ * @function
+ * @param {element} elem element to search on
+ * @param {string} sel selector
+ * @returns {element}
  */
 export const e$ = (elem, sel) => (elem ? elem.querySelector(sel) : null)
 
+
 /** 
- *  Element.querySelectorAll syntax sugar
- * @property {Element} elem element to search on
- * @property {String} sel selector string
+ * DOM element.querySelectorAll syntax sugar
+ * @function
+ * @param {element} elem element to search on
+ * @param {string} sel selector
+ * @returns {NodeList}
  */
 export const e$$ = (elem, sel) => (elem ? elem.querySelectorAll(sel) : [])
 
-export const decimalSeparator = (1.1).toLocaleString().substring(1, 2)
-
-
 
 /** 
- *  Name selector syntax sugar
+ * Name selector syntax sugar
  * <br>ex.:  n$$('foo,bar') is an abbreviation of document.querySelectorAll('[name=foo],[name=bar]')
- * @property {String} nameList - Coma separated names list
- * 
+ * @function
+ * @param {string} nameList - Coma separated names list
+ * @returns {NodeList}
  */
 export const n$$ = nameList => {
 	let selector = ''
@@ -57,29 +78,36 @@ export const n$$ = nameList => {
 
 
 
+export const decimalSeparator = (1.1).toLocaleString().substring(1, 2)
+
+
+
+
 /** 
- *  Remote query
+ * Remote query
  * <br>ex.: const res = await remote({coll: 'Patients', fields: 'firs_name,last_name', where:{active: true}, sort:{last_name: 1})
  * <br>ex.: const res = await remote({script: 'demoSrv.formData'})
  * <br>Query parameters: par = {
  * <br><ul><ui>cmd: default 'GET' if coll, 'SRV' if script, 'REP' if report, 'POST' for data save, 'DEL' for delete
- * <br><ui>app: default br.app (from login)
- * <br><ui>db: default br.db (from login)
+ * <br><ui>app: 'applicationName', default br.app (from login)
+ * <br><ui>db: 'databaseName', default br.db (from login)
  * <br><ui>coll: 'collectionName'
  * <br><ui>script: 'scriptName.function', exludes coll
  * <br><ui>fields: 'fld1,fld2,...', returns only this fields; only with coll
  * <br><ui>concat: 'fieldName', returns only this embedded array field, merging all selected documents; only with coll; excludes fields
  * <br><ui>add: 'fld1,fld2,...', adds fields to concat result; only with concat
  * <br><ui>where: {_id: '...'}, query selector
- * <br><ui>sort: {fld1: 1, fld2: -1}, sort records, 1 ascendin, -1 descending
+ * <br><ui>sort: {fld1: 1, fld2: -1}, sort documents, 1 ascendin, -1 descending
  * <br><ui>args: {...}, more arguments if neaded
  * <br><ui>result: 'count', returns only the documents count
  * <br><ui>findOne: true, returns only one document
  * <br><ui>usercode: default br.usercode (from login)
- * <br>}
- * @property {Object} par - query parameters
- * @property {JSON} data - data to send on server
- * @property {String} type - data type, default 'application/json'
+ * <br></ul>}
+ * @function
+ * @param {object} par query parameters
+ * @param {json} data data to send on server; only for POST
+ * @param {string} type data type, default 'application/json'
+ * @returns {json}
  */
 export const remote = (par, dat, type) => {
   // getMsg
@@ -156,9 +184,9 @@ export const remote = (par, dat, type) => {
 
 
 /*
- *  Loading indicator
+ * Loading indicator toggle
  */
-export const loading = (flag) => {
+export const loading = flag => {
 	if (flag) {
 		$('body').append(createElement(
 			`<a class="button is-loading is-primary is-outlined is-large">loading...</a>`
@@ -172,7 +200,7 @@ export const loading = (flag) => {
 
 
 /*
- *  Modified
+ * Modified
  */
 export const modified = (flag) => {
   const save = $('#br-save')
@@ -185,32 +213,18 @@ export const modified = (flag) => {
 
 
 
-/** 
- *  Unselect
+/*
+ * Unselect
  */
 export const unselect = () => $$('.br-selected').forEach(elem => elem.classList.remove('br-selected'))
 
 
 
 /** 
- *  Tools text
- */
-export const toolsText = () => {
-  const text = $('#br-tools-text').value
-  if (!text.length) {
-    alert('Write some comma separeted field names in the Tools text area')
-    return ''
-  }
-  if (localStorage) {
-    localStorage.setItem('br.tools-text', text)
-  }
-  return text
-}
-
-
-
-/** 
- *  Child index
+ * Child index in the children list
+ * @function
+ * @param {element} elem - child element
+ * @returns {number}
  */
 export const childIndex = elem => {
 	let i = 0
@@ -223,9 +237,12 @@ export const childIndex = elem => {
 
 
 /** 
- *  Create element
+ * Create DOM element from string HTML syntax
+ * @function
+ * @param {string} str - html syntax
+ * @returns {element}
  */
-export const createElement = (str) => {
+export const createElement = str => {
   const div = document.createElement('div')
   div.innerHTML = str.trim()
   return div.firstChild
@@ -235,7 +252,7 @@ export const createElement = (str) => {
 
 
 /*
- *  Create style
+ * Create style
  */
 export const createStyle = (css, isPage) => {
   const cls = isPage ? ' br-page-css' : ''
@@ -245,7 +262,7 @@ export const createStyle = (css, isPage) => {
 
 
 /*
- *  Load CSS
+ * Load CSS
  */
 export const loadCSS = (href) => {
 	//if (!$(`link[href="${href}"]`)) {
@@ -258,7 +275,13 @@ export const loadCSS = (href) => {
 
 
 /** 
- *  Validate fields
+ * Validate inputs.
+ * <br>If fields parameter undefined, all fields of the form are validated.
+ * <br>All specified fields are considered required, some has type check.
+ * <br>Returns the non valid element, or true if all valid.
+ * @function
+ * @param {string} fields - comma separated fields list
+ * @returns {boolean|element}
  */
 export const validate = fields => {
 	// valid
@@ -329,15 +352,19 @@ export const substArgs = (where, elem) => {
 
 
 /** 
- * Report call
+ * Report call. All form inputs are passed as arguments.
+ * @method
+ * @param {string} formName
+ * @param {string} reportName
+ * @param {object} args - more arguments, if neaded
  */
-export const report = (formName, report, args) => {
+export const report = (formName, reportName, args) => {
 	if (formName) { 
     const par = {
       cmd: 'REP',
       app: br.app,
       db: br.db,
-      args: {report: report, timezone: timezone()},
+      args: {report: reportName, timezone: timezone()},
       usercode: br.usercode
     }
     Object.assign(par.args, formChanges(formName))
@@ -353,6 +380,12 @@ export const report = (formName, report, args) => {
 
 /** 
  * Input date to 'yyyy-mm-dd' string. Separators accepted: . / -
+ * <br>ex.: '1.1.17' will be converted to '2017-01-01'
+ * <br>ex.: '1.1' will be converted to 'currentYear-01-01'
+ * <br>ex.: '1' will be converted to 'currentYear-currentMonth-01'
+ * @function
+ * @param {string} str - imput string
+ * @returns {string}
  */
 export const inputDate = str => {
 	const pad = n => n<10 ? '0'+n : n
@@ -372,7 +405,7 @@ export const inputDate = str => {
 
 
 /*
- *  Create script
+ * Create script
  */
 export const createScript = (code, src, type) => {
 	const script = document.createElement('script')
@@ -390,11 +423,17 @@ export const createScript = (code, src, type) => {
 
 
 /** 
- *  Client script
+ * Client script. Dynamic import of a server saved module.
+ * <br>It's methods canot be imported as usual, but called by module.method
+ * <br>
+ * <br>import { clientScript } from '/lib/util.js'
+ * <br>clientScript('scriptName', mod => {mod.functionName()})
+ * @method
+ * @param {string} scriptName
+ * @param {callback} cb
  */
 export const clientScript = async (scriptName, cb) => {
 	await remote({script: scriptName+'._just_load'}).catch()
 	const module = await import(`/scripts/${br.app}/${scriptName}.js`).catch(alert)
 	if (cb) cb(module)
-	
 }
