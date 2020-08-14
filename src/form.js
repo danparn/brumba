@@ -88,8 +88,11 @@ export const formInit = (formE) => {
 
 
 
-/* 
- *  Form retrieve
+/**
+ * Form: retrieve, then update.
+ * @method
+ * @param {object} form
+ * @param {string} id - document id
  */
 export const formRetrieve = (form, id) => {
 	remote({db: br.db, coll: form.query.coll, where: {_id: id}}).then(res => {
@@ -104,8 +107,11 @@ export const formRetrieve = (form, id) => {
 
 
 
-/* 
- *  Form update
+/**
+ * Form: data update
+ * @method
+ * @param {element} formE
+ * @param {json} data
  */
 export const formUpdate = (formE, data) => {
 	if (!formE || !data) return console.log('formUpdate no args')
@@ -227,32 +233,51 @@ export const updateDetails = (form) => {
 
 
 
-/* 
- *  Form colect data
+
+/**
+ * Form input. Collect input data.
+ * @function
+ * @param {object|string} form - form or formName
+ * @param {string} fields - comma separated fields list
+ * @param {boolean} required - required fields
+ * @returns {object|null} collected data, null if errors
  */
-export const formColect = form => {
-	let rec = {}
+export const formInput = (form, fields, required) => {
+	if (typeof form === 'string') form = findForm(form)
+	if (!form) return null
+	
+	const data = {}
+	const flds = fields ? strSplit(fields, ',') : null
 	form.fields.forEach(f => {
-		if ('newval' in f) {
+		const inFields = flds && flds.includes(f.name)
+		if (inFields && !f.newval && check) {
+			alert('Required field: ' + fname)
+			return null
+		}
+		if (f.newval && (inFields || !fields)) {
 			if (f.type === 'password') {
-				rec[f.name] = sha256(f.newval)
+				data[f.name] = sha256(f.newval)
 			} else {
-				rec[f.name] = f.newval
+				data[f.name] = f.newval
 			}
 		}
 	})
-	return rec
+	return data
 }
 
 
 
-/* 
- *  Form save
+
+
+/**
+ * Form: save modified data
+ * @method
+ * @param {element} formE
  */
 export const formSave = (formE) => {
 	const form = findForm(formE)
 	if (form && form.modified && form.query) {
-		let rec = formColect(form)
+		let rec = formInput(form)
 		if (!objEmpty(rec)) {
 			let coll
 			let master
@@ -325,7 +350,7 @@ export const formSearch = () => {
 	if (form.searchMode) {
 		form.searchMode = false
 		formE.classList.remove('br-search')
-		form.search = formColect(form)
+		form.search = formInput(form)
 		formUpdate(form, [])
 		formList()
 		

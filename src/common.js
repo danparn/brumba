@@ -9,62 +9,74 @@
  *  Error codes
  */
 export const err = {
-  db: -1,				// database not found/opened
-  coll: -2,			// collection not found
-  unique: -3,		// not unique field
-  count: -4,		// count error
-  cursor: -5,		// cursor error
-  ins: -6,			// insert error
-  upd: -7,			// update error
-  del: -8,			// delete error
-  file: -9,			// file error
-  dupl: -10,		// duplicate record
-  param: -11,		// wrong parameters
-  data: -12,		// wrong data
-  gen: -13,			// generic
-  srv: -14,			// server
-  script: -15,	// script not found
-  user: -16,		// user not authenticated
-  trig: -17,		// trigger error
-  sock: -18			// socket error
+  db: -1,       // database not found/opened
+  coll: -2,     // collection not found
+  unique: -3,   // not unique field
+  count: -4,    // count error
+  cursor: -5,   // cursor error
+  ins: -6,      // insert error
+  upd: -7,      // update error
+  del: -8,      // delete error
+  file: -9,     // file error
+  dupl: -10,    // duplicate record
+  param: -11,   // wrong parameters
+  data: -12,    // wrong data
+  gen: -13,     // generic
+  srv: -14,     // server
+  script: -15,  // script not found
+  user: -16,    // user not authenticated
+  trig: -17,    // trigger error
+  sock: -18     // socket error
 }
 
 
+/**
+ *  Date format, default 'dd/mm/yyyy'.
+ */
 export let dateFormat = 'dd/mm/yyyy'
 
 
 
 /** 
- *  hex24 regular expresion
+ *  hex24 regular expresion, used for for mongodb ObjectId() check.
  */
 export const hex24 = new RegExp('^[0-9a-fA-F]{24}$') // check for hex string of 24 chars
 
 
 
 /** 
- *  Timezone
+ * Timezone, based on the system timezone.
+ * @function
+ * @returns {number} +-milliseconds
  */
 export const timezone = () => new Date().getTimezoneOffset() * -60000
 
 
 
 
-/** 
- *   Set decimals
+/*
+ * Set decimals
  */
 export const decimals = (value, dec) => Number(Math.round(value+'e'+dec)+'e-'+dec)
 
 
 
 /** 
- *   Capitalize string
+ * Capitalize string
+ * @function
+ * @param {string} str
+ * @returns {string}
  */
 export const strCap = str => (str.charAt(0).toUpperCase() + str.slice(1))
 
 
 
 /** 
- *   Split string by separator, trim spaces and eliminates empties
+ * Split string by separator, trim spaces and eliminates empty items
+ * @function
+ * @param {string} str
+ * @param {string} sep
+ * @returns {string[]}
  */
 export const strSplit = (str, sep) => {
 	if (str && sep) {
@@ -88,10 +100,17 @@ export const strSplit = (str, sep) => {
 
 /** 
  * Get substring between delimiters
+ * @function
+ * @param {string} str
+ * @param {string} from - from delimiter
+ * @param {string} to - to delimiter
+ * @param {number} startIndex - index to start, default 0
+ * @param {boolean} include - if delimiters must be included in the return slice, default false
+ * @returns {string}
  */
-export const strGetBet = (str, from, to, startFrom, include) => {
+export const strGetBet = (str, from, to, startIndex, include) => {
 	if (str && from && to) {
-		let f = str.indexOf(from, startFrom  || 0)
+		let f = str.indexOf(from, startIndex  || 0)
 		let t = str.indexOf(to, f+from.length)
 		
 		if (f >= 0 && t > 0) {
@@ -109,11 +128,16 @@ export const strGetBet = (str, from, to, startFrom, include) => {
 
 
 /** 
- * Find one of any char in pat
+ * Find any of chars in pattern
+ * @function
+ * @param {string} str
+ * @param {string} pat - pattern of chars
+ * @param {number} startIndex - index to start, default 0
+ * @returns {number} Index of the first char found, -1 if non.
  */
-export const strFindAny = (str, pat, start) => {
+export const strFindAny = (str, pat, startIndex) => {
 	if (str && pat) {
-		for (let i=start || 0, len=str.length; i < len; ++i) {
+		for (let i=startIndex || 0, len=str.length; i < len; ++i) {
 			for (let j=0; j < pat.length; ++j) {
 				if (str.charAt(i) === pat.charAt(j)) {
 					return i
@@ -131,9 +155,12 @@ export const strFindAny = (str, pat, start) => {
 
 
 /** 
- *   Is empty object?
+ * Is empty object?
+ * @function
+ * @param {object} obj
+ * @returns {boolean}
  */
-export const objEmpty = (obj) => {
+export const objEmpty = obj => {
 	for (let key in obj) {
 		if(obj.hasOwnProperty(key)) return false
 	}
@@ -143,7 +170,11 @@ export const objEmpty = (obj) => {
 
 
 /** 
- *   Pick props of object
+ * Pick a selection of properties.
+ * @function
+ * @param {object} obj
+ * @param {string} props - comma separated property names
+ * @returns {object} New object containing only selected properties.
  */
 export const objPick = (obj, props) => {
   let newobj = {}
@@ -171,7 +202,11 @@ export const objPick = (obj, props) => {
 
 
 /** 
- *   Pick all properties less then props, recursively
+ * Pick all properties less then props list, recursively.
+ * @function
+ * @param {object} obj
+ * @param {string} props - comma separated property names
+ * @returns {object} New object containing non excluded properties.
  */
 export const objLess = (obj, props) => {
   let newobj = {}
@@ -199,7 +234,10 @@ export const objLess = (obj, props) => {
 
 
 /** 
- *   Delete props of object
+ * Delete properties of object. ATTENTION it will modify the original object.
+ * @method
+ * @param {object} obj
+ * @param {string} props - comma separated property names
  */
 export const objDel = (obj, props) => {
   if (obj && props) {
@@ -212,8 +250,8 @@ export const objDel = (obj, props) => {
 
 
 
-/** 
- *   Add multilevel prop to object
+/*
+ * Add multilevel properties to object
  */
 export const objAddProp = (obj, prop, value, append) => {
   if (obj && prop && value) {
@@ -242,7 +280,10 @@ export const objAddProp = (obj, prop, value, append) => {
 
 
 /** 
- *   Object clone
+ * Object clone
+ * @function
+ * @param {object} obj
+ * @returns {object} New object, clone of the original.
  */
 export const objClone = (obj) => {
   if (obj) {
@@ -254,9 +295,12 @@ export const objClone = (obj) => {
 
 
 /** 
- *   Parse string to JSON
+ * Parse string to JSON. More forgiving then the JSON.parse()
+ * @function
+ * @param {string} str
+ * @returns {json}
  */
-export const toJSON = (str) => {
+export const toJSON = str => {
 	if (str) {
 		let s = str.replace(/'+/g, '"')
 		let p = 0
@@ -289,7 +333,11 @@ export const toJSON = (str) => {
 
 
 /** 
- *   Translate string to lang
+ * Translate string to lang
+ * @function
+ * @param {string} str
+ * @param {json} lang
+ * @returns {string}
  */
 export const translate = (str, lang) => {
 	return str

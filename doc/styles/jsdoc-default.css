@@ -356,3 +356,8 @@ tr > th:last-child { border-right: 1px solid #ddd; }
 .disabled {
     color: #454545;
 }
+
+.subsection-title, .name {
+	margin-top: 100px;
+	color: green;
+}

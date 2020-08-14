@@ -9,23 +9,6 @@ import { toJSON, strSplit, objEmpty } from './common'
 import { br } from './util'
 import { formRetrieve, formUpdate } from './form'
 
-/* 
- *  Form = {
- * 			name: string,
- * 			query: {coll: '', firlds: 'fld1,fld2', where: {}, sort: {field:1}},
- * 			list: string,
- * 			fields: [{
- * 								name: string,
- * 								type: string,
- * 								newval: newval
- * 							},
- * 							...
- * 							],
- * 			data: {},
- * 			newval: false
- * 	}
- */
-
 let forms = []
 export const formsInit = () => {forms = []}
 
@@ -33,7 +16,7 @@ export const formsInit = () => {forms = []}
 /* 
  *  Add new form
  */
-export const addForm = (formE) => {
+export const addForm = formE => {
 	const name = formE.getAttribute('name')
 	const	form = {
 	  name: name,
@@ -56,7 +39,7 @@ export const addForm = (formE) => {
 /* 
  *  Add new grid
  */
-export const addGrid = (grid) => {
+export const addGrid = grid => {
 	if (!findForm(grid.name)) {
 		forms.push(grid)
 		setMaster(grid)
@@ -66,10 +49,25 @@ export const addGrid = (grid) => {
 
 
 
-/* 
+/**
  *  Find form
+ * <br>Form = {
+ * <br><ul><ui>name: 'fname',
+ * <br><ui>query: {coll: 'cname', fields: 'fld1,fld2', where: {}, sort: {field:1}},
+ * <br><ui>list: string,
+ * <br><ui>fields: [{
+ * <br><ul><ui>name: string,
+ * <br><ui>type: string,
+ * <br><ui>newval: val
+ * <br></ul>},...]
+ * <br><ui>data: {},
+ * <br><ui>modified: false
+ * <br></ul>}
+ * @function
+ * @param {string|object} arg
+ * @returns {object} form
  */
-export const findForm = (arg) => {
+export const findForm = arg => {
 	if (!arg) return null
 	
 	if (typeof arg !== 'string') {
@@ -83,7 +81,7 @@ export const findForm = (arg) => {
 /* 
  *  Get details
  */
-export const getDetails = (form) => {
+export const getDetails = form => {
 	let det = []
 	if (form) {
 		forms.forEach(f => {
@@ -106,52 +104,10 @@ export const listForm = () => {
 
 
 
-/*
- * Get fields values and check
- */
-export const formChanges = (formName, fields, check) => {
-	if (formName) {
-		const form = findForm(formName)
-		if (form) {
-			let data = {}
-			// fields
-			if (fields) {
-				const fld = strSplit(fields, ',')
-				for (let i=0; i < fld.length; ++i) {
-					const fname = fld[i]
-					const val = form.fields.find(f => f.name === fname).newval
-					if (val) {
-						data[fname] = val
-					} else if (check) {
-						alert('Required field: ' + fname)
-						return false
-					}
-				}
-			// all modified
-			} else {
-				for (let i=0; i < form.fields.length; ++i) {
-					if (form.fields[i].newval) {
-						data[form.fields[i].name] = form.fields[i].newval
-					}
-				}
-			}
-			return data
-		} else {
-			alert('getValues: form not found')
-		}
-	} else {
-		alert('getValues: wrong parameters')
-	}
-	return false
-}
-
-
-
-
 /* 
  *  Set form's master
  */
-export const setMaster = (form) => {
+export const setMaster = form => {
 	if (form && form.query && !form.query.coll && !form.master) {
 		const field = form.query.field || form.query.concat
 		
