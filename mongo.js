@@ -9,7 +9,7 @@ import mongodb from 'mongodb'
 import fs from 'fs'
 import sharp from 'sharp'
 import { err, strSplit, objPick, objClone, objEmpty } from './lib/common.js'
-import { script } from './srv.js'
+import { script, references } from './srv.js'
 
 export const ObjectID = mongodb.ObjectID
 
@@ -434,6 +434,7 @@ console.log(st)
 		
 		const dat = (Buffer.isBuffer(data[0])) ? JSON.parse(Buffer.concat(data)) : data
 		if (dat.length === 0) return reject({err: err.data})
+		if (par.coll === 'forms') references(par, dat)
 		datc = objClone(dat)
 		const db = await database(par.db).catch(reject)
 		if (!db) return
