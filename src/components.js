@@ -276,8 +276,12 @@ export const imgLoad = (db, img) => {
 
 
 
-/* 
- *  Confirm modal
+/**
+ * Opens a modal dialog asking for confirmation
+ * @method
+ * @param {string} message - message to be displayed
+ * @param {function} okHandler - ok button handler
+ * @param {string} color - ok button color, default 'is-primary'
  */
 export const confirmModal = (message, okHandler, color) => {
   const close = e => br.dlg.innerHTML = ''
@@ -476,8 +480,10 @@ const extraFields = (extraStr, rec, input) => {
 
 
 
-/* 
- *  Notification
+/**
+ * Display a notification 
+ * @method
+ * @param {string} message - message to be displayed
  */
 export const notification = message => {
 	const notif = createElement(`

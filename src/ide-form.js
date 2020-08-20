@@ -74,7 +74,8 @@ export const newFields = (names) => {
  *  Add fields
  */
 export const addFields = () => {
-  const container = $('form')
+	if (!$('form')) return alert('Form not found')
+  const container = $('.container.br-selected')
   if (container) {
     const fields = newFields(toolsText())
     fields.forEach(fld => {
@@ -83,7 +84,7 @@ export const addFields = () => {
       fieldEvents(el)
     })
   } else {
-    alert('Form not found')
+    alert('Please select a container')
   }
 }
 

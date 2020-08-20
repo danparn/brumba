@@ -394,7 +394,7 @@ export class Grid extends Component {
 					let id
 					let val = rec[name]
 //console.log(`col=${col.name}  type=${col.type}  val=${val}  dummy=${this.dummy}`)
-					if (!this.dummy && val !== undefined && !this.grid.ide) {
+					if (!this.dummy && !this.grid.dummy && val !== undefined && !this.grid.ide) {
 						switch (col.type) {
 							case 'number':
 								if (col.decimals) {
