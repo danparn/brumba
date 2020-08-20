@@ -8,11 +8,13 @@
 
 import fs from 'fs'
 import https from 'https'
-import { err, strSplit } from './lib/common.js'
-import { get, ObjectID } from './mongo.js'
-import { createRequire } from 'module';
+import jsdom from 'jsdom'
+import { err, strSplit, toJSON } from './lib/common.js'
+import { get, post, ObjectID } from './mongo.js'
+//import { createRequire } from 'module';
 
-const require = createRequire(import.meta.url)
+//const require = createRequire(import.meta.url)
+const { JSDOM } = jsdom
 
 
 /* 
@@ -255,12 +257,64 @@ export const uncacheScripts = par => {
  *
  **************************************************************/
 /* 
- * References
+ * Reference set
  */
-export const references = (par, data) => {
-	console.log(data)
+export const referenceSet = (par, data) => {
+	const formE = JSDOM.fragment(data.html).firstChild
+	let grid = formE.getAttribute('data-grid')
+	if (grid) {
+		grid = JSON.parse(grid)
+		const cols = grid.columns.filter(c => 'select,autocomplete'.includes(c.type))
+		cols.forEach(c => {
+			let q = typeof c.query === 'string' ? toJSON(c.query) : c.query
+			if (q.coll) {
+				const ref = {refcoll: q.coll}
+				let id = true
+				if (c.type === 'select') {
+					const flds = strSplit(c.fields, ',')
+					if (flds[0] !== '_id') {
+						id = false
+					}
+				}
+				q = toJSON(formE.getAttribute('data-query'))
+				if (q && id) {
+					if (q.coll) {
+						ref.coll = q.coll
+						ref.field = c.name
+						refSet(ref)
+					} else if (q.field) {
+						const p = q.field.indexOf('.')
+						if (p > 0) {
+							ref.coll = q.field.substring(0,p)
+							ref.field = q.field.substring(p+1) + '.' + c.name
+							refSet(ref)
+						}
+					}
+				}
+			}
+		})
+	} else {
+		formE.querySelectorAll('select,[type=autocomplete]').forEach(el => {
+		})
+	}
+	
+	function refSet(ref) {
+		get({db: par.app, coll: '_references', where: {coll: ref.coll, field: ref.field, refcoll: ref.refcoll}})
+		.then(res => {
+			if (!res[0]) {
+				post({app: par.app, db: par.app, coll: '_references'}, ref).catch(console.log)
+			}
+		})
+		.catch(console.log)
+	}
 }
 
+
+/* 
+ * Reference check
+ */
+export const referenceCheck = par => {
+}
 
 
 

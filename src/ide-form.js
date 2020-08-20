@@ -174,28 +174,6 @@ export const containerEvents = cont => {
       el.querySelectorAll('.container').forEach(co => containerEvents(co))
     }
 
-    const copy = () => {
-			const msg = translate('A copy of this form will be create')
-		  const onOk = e => {
-		    const par = {coll: 'forms', where: {name: br.wo.value}}
-		    remote(par).then(res => {
-					if (res.err) return
-					if (!res[0]) return alert(translate('Form not found'))
-					const data = res[0]
-					delete data._id
-					data.name += '_COPY'
-					par.cmd = 'POST'
-					delete par.where
-					remote(par, data).then(res => {
-						if (res.err) return
-						reloadList()
-					})
-				})
-			}
-			
-			confirmModal(msg, onOk)
-    }
-
     show([
       {title: 'Add label', fn: label},
       {title: 'Add button', fn: button},
@@ -208,6 +186,31 @@ export const containerEvents = cont => {
       {title: 'Copy', fn: copy},
     ], e)
   })
+}
+
+/* 
+ *  Copy form
+ */
+export const copy = () => {
+	const msg = translate('A copy of this form will be create')
+  const onOk = e => {
+    const par = {coll: 'forms', where: {name: br.wo.value}}
+    remote(par).then(res => {
+			if (res.err) return
+			if (!res[0]) return alert(translate('Form not found'))
+			const data = res[0]
+			delete data._id
+			data.name += '_COPY'
+			par.cmd = 'POST'
+			delete par.where
+			remote(par, data).then(res => {
+				if (res.err) return
+				reloadList()
+			})
+		})
+	}
+	
+	confirmModal(msg, onOk)
 }
 
 

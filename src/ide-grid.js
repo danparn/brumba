@@ -8,6 +8,7 @@
 import { render } from 'web/inferno'
 import { strSplit, strCap } from './common'
 import { $, $$, br, modified } from './util'
+import { copy } from './ide-form'
 import { properties, toolsText } from './ide-props'
 import { pageWrapper } from './page'
 import { Grid } from './grid'
@@ -111,6 +112,8 @@ export const gridRender = (grid, root, nomodif, noevents) => {
       show([
         {title: 'Add column', fn: add},
         {title: 'Remove column', fn: remove},
+				{},
+				{title: 'Copy', fn: copy},
       ], e)
     
     })  

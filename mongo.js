@@ -9,7 +9,7 @@ import mongodb from 'mongodb'
 import fs from 'fs'
 import sharp from 'sharp'
 import { err, strSplit, objPick, objClone, objEmpty } from './lib/common.js'
-import { script, references } from './srv.js'
+import { script, referenceSet } from './srv.js'
 
 export const ObjectID = mongodb.ObjectID
 
@@ -434,7 +434,7 @@ console.log(st)
 		
 		const dat = (Buffer.isBuffer(data[0])) ? JSON.parse(Buffer.concat(data)) : data
 		if (dat.length === 0) return reject({err: err.data})
-		if (par.coll === 'forms') references(par, dat)
+		if (par.coll === 'forms') referenceSet(par, dat)
 		datc = objClone(dat)
 		const db = await database(par.db).catch(reject)
 		if (!db) return
@@ -576,47 +576,38 @@ const _references = par => {
 		const p = objClone(par)
 		p.db = p.app
 		p.coll = '_references'
-		p.where = {toColl: par.coll}
+		p.where = {refcoll: par.coll}
 		get(p)
 		.then(res => {
 			if (res.length === 0) return resolve(false)
 			const refs = res
+			check(refs.length-1)
 			
 			// check
-			const check = i => {
+			function check(i) {
 				if (i < 0) return resolve(false)
-				const ref = refs[i]
-				const p = {
+				const r = refs[i]
+				const q = {
 						db: par.db,
-						coll: ref.fromColl,
-						where: {$or: []},
+						coll: r.coll,
+						where: {},
 						result: 'count'
 					}
-				let w = {}
-				if (ref.fromField.substr(-3) == '_id') {
-					w[ref.fromField] = where._id
-				} else {
-					w[ref.fromField] = par.where._id
-				}
-				p.where.$or.push(w)
-				w = {}
-				w[ref.fromField + '.val'] = where._id
-				p.where.$or.push(w)
-				get(p)
+				q.where[r.field] = par.where._id
+				get(q)
 				.then(res => {
 					if (res.count === 0) {
 						check(i-1)
 					} else {
 						reject({
 							err: err.del,
-							msg: `${res.count} related records found in ${p.coll}`
+							msg: `${res.count} related records found in ${r.coll}`
 						})
 					}
 				})
 				.catch(reject)
 			}				
 			
-			check(refs.length-1)
 		})
 		.catch(reject)
 	})
