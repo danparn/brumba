@@ -95,7 +95,7 @@ Now lets reface our form:
 
 ![](images/form 9.png)
 
-2.7 Add a title label: left click the upper left container and **Add field**. Change the label text to Patient and the size to large. Delete the input. It is better to add a field , not a label, because it will keep fields alignment.
+2.7 Add a title label: left click the upper left container and **Add field**. Change the label text to Patient and the size to large. Delete the input. It is better to add a field , not a simple label, because it will keep fields alignment.
 
 ![](images/form 11.png)
 
@@ -123,7 +123,7 @@ Now lets reface our form:
 
 Now you can return to the application and complete patients profile with proper data.
 
-To mention:
+How to use image and file types in application:
 
 - photo field: use right click to upload an image, then save; use left click for full size view
 - id_file field: use right click to upload file, then save; use left click to view
@@ -150,7 +150,7 @@ To mention:
 
 ### 5. Form events
 
-The code in the events will be executed immediately after the form load.
+The code in the events will be executed immediately after the form load. All javascript events can be used, and Brumba specific events are added.
 
 5.1 How to import:
 
@@ -159,6 +159,25 @@ import { $, $$, e$, br, remote, createElement, report } from '/lib/util.js'
 import { notification, confirmModal } from '/lib/components.js'
 import { gridRender } from '/lib/grid.js'
 import { findForm } from '/lib/forms.js'
+```
+
+5.2 Form events defined and triggered by Brumba:
+
+- **retrieve** - after data retrieve, before updating form; can block
+- **update** - after form has updated/rendered it's data
+- **save** - before saving data; can block
+- **delete** - before deleting the current record; can block
+
+An event handler can block normal operation by using preventDefault().
+
+```
+import { $ } from '/lib/util.js'
+
+$('form').addEventListener('delete', e => {
+  if (...) {
+	e.preventDefault()
+  }
+})
 ```
 
 

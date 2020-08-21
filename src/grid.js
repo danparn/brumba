@@ -326,6 +326,7 @@ export class Grid extends Component {
     if (this.rowClick) {
 			this.rowClick(this.selected)
 		}
+		r.dispatchEvent(new Event('rowselected'))
   }
 
 	// cellDblClick

@@ -15,7 +15,7 @@ import { Grid, gridRefresh } from './grid'
 import sha256 from 'web/sha256'
 
 
-
+const eventMsg = 'Event blocked by handlers.'
 
 
 /* 
@@ -99,6 +99,9 @@ export const formRetrieve = (form, id) => {
 		if (res.err) return
 		if (res[0]) {
 			form.data = res[0]
+			if (!$(`form[name=${form.name}]`).dispatchEvent(new Event('retrieve', {cancelable: true}))) {
+				return alert(eventMsg)
+			}
 			formUpdate(form, form.data)
 		}
 	})
@@ -169,6 +172,8 @@ export const formUpdate = (formE, data) => {
 			}
 		}
 	})
+
+	formE.dispatchEvent(new Event('update'))
 }
 
 
@@ -270,13 +275,16 @@ export const formInput = (form, fields, required) => {
 
 
 /**
- * Form: save modified data
+ * Save modified data
  * @method
  * @param {element} formE
  */
 export const formSave = (formE) => {
 	const form = findForm(formE)
 	if (form && form.modified && form.query) {
+		if (!formE.dispatchEvent(new Event('save', {cancelable: true}))) {
+			return alert(eventMsg)
+		}
 		let rec = formInput(form)
 		if (!objEmpty(rec)) {
 			let coll
@@ -370,6 +378,9 @@ export const formSearch = () => {
 export const formDelete = () => {
 	const form = listForm()
 	if (form && form.data && form.data._id) {
+		if (!$(`form[name=${form.name}]`).dispatchEvent(new Event('delete', {cancelable: true}))) {
+			return alert(eventMsg)
+		}
 		deleteRecord({coll: form.query.coll, where: {_id: form.data._id}}, res => {
 			formList()
 			formUpdate(form, {})
