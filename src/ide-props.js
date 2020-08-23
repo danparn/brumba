@@ -256,9 +256,6 @@ console.log(value)
 					el.setAttribute('data-list', value)
 				}
         break
-      case 'order':
-        grid.reorder = value
-        break
       case 'style':
         styles.forEach(s => el.classList.remove(s.val))
         if (value) el.classList.add(value)
@@ -505,12 +502,6 @@ console.log(value)
                                 value: el.getAttribute('data-query') || ''}))
       }
       if (grid) {
-        let fields = ''
-        grid.columns.forEach(c => {
-          if (fields.length > 0) fields += ','
-          fields += c.name
-        })  
-        props.push(field('order', {type: 'textarea', value: fields}))
         props.push(field('edit form', {value: grid.form}))
         props.push(field('rows', {value: grid.rows}))
         props.push(field('fixed cols', {value: grid.fixed}))

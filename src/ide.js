@@ -14,7 +14,7 @@ import { $, $$, e$$, br, remote, modified, createElement, createStyle, createScr
 import { newPage, tileEvents, tabEvents } from './ide-page'
 import { pageRender, toggleList, pageWrapper } from './page'
 import { newForm, addFields, fieldEvents, itemEvents, containerEvents } from './ide-form'
-import { newGrid, gridRender } from './ide-grid'
+import { newGrid, gridRender, moveColumn } from './ide-grid'
 import { newReport, openReport } from './ide-report'
 import { properties } from './ide-props'
 import { Editor, openDialogEditor, dialogEditor, onApplay } from './ide-editor'
@@ -541,6 +541,7 @@ export const keyEvents = () => {
 			return																		// do nothing if Properties opened
 		}
 		const isReport = br.wo.name === 'reports'
+		const gridE = $('[data-grid]')
 		const selected = $$('.br-selected')
 		if (e.repeat) {
 			++count
@@ -598,6 +599,8 @@ export const keyEvents = () => {
     } else if (e.code === 'ArrowLeft') {
       if (isReport) {
 				reportArrows(-step, 0)
+			} else if (gridE) {
+				moveColumn(e, -1)
 			} else if (e.shiftKey) {
         setWidth(-1)
 			}
@@ -606,6 +609,8 @@ export const keyEvents = () => {
     } else if (e.code === 'ArrowRight') {
       if (isReport) {
 				reportArrows(step, 0)
+			} else if (gridE) {
+				moveColumn(e, 1)
 			} else if (e.shiftKey) {
         setWidth(1)
 			}

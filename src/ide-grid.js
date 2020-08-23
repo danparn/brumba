@@ -7,7 +7,7 @@
 
 import { render } from 'web/inferno'
 import { strSplit, strCap } from './common'
-import { $, $$, br, modified } from './util'
+import { $, $$, e$$, br, modified } from './util'
 import { copy } from './ide-form'
 import { properties, toolsText } from './ide-props'
 import { pageWrapper } from './page'
@@ -15,6 +15,7 @@ import { Grid } from './grid'
 import { show } from './basiccontext/basicContext'
 
 
+let gridGlobal
 
 
 /* 
@@ -55,6 +56,7 @@ export const newGrid = () => {
  */
 export const gridRender = (grid, root, nomodif, noevents) => {
 //console.log(`gridRender: nomodif=${nomodif}  noevents=${noevents}`)
+  gridGlobal = grid
   let data = []
   let rdata = {}
   let footer = {}
@@ -84,11 +86,13 @@ export const gridRender = (grid, root, nomodif, noevents) => {
   // events
   const form = $('form')
   if (!noevents) {
+		// click
     form.addEventListener('click', (e) => {
       e.preventDefault()
       $$('.is-selected').forEach(el => el.classList.remove('is-selected'))
       if ($('.br-props')) properties(form, grid)
     })
+    // contextmenu
     form.addEventListener('contextmenu', (e) => {
       e.preventDefault()
   
@@ -116,7 +120,7 @@ export const gridRender = (grid, root, nomodif, noevents) => {
 				{title: 'Copy', fn: copy},
       ], e)
     
-    })  
+    })
   }
 
   delete grid.data
@@ -129,5 +133,40 @@ export const gridRender = (grid, root, nomodif, noevents) => {
 
 
 
-
-
+/* 
+ *  Move column
+ */
+export const moveColumn = (e, direction) => {
+	const td = $('.is-selected')
+	if (td && e.ctrlKey) {
+		const grid = gridGlobal
+		let i = grid.columns.findIndex(c => c.name === td.textContent)
+		if (i > -1) {
+			let c
+			if (direction === -1 && i > 0) {
+				c = grid.columns[i]
+				grid.columns[i] = grid.columns[i-1]
+				--i
+				grid.columns[i] = c
+			} else if (direction === 1 && i < grid.columns.length-1) {
+				c = grid.columns[i]
+				grid.columns[i] = grid.columns[i+1]
+				++i
+				grid.columns[i] = c
+			}
+			if (c) {
+				const row = td.closest('tr')
+				let rows = $$('tr')
+				let r = 0
+				for (; r < rows.length; ++r) {
+					if (rows[r] === row) break 
+				}
+				gridRender(grid, $('[data-grid]'))
+				setTimeout(() => {
+					const tds = e$$($(`[name=row${r}]`), 'td')
+					tds[i].classList.add('is-selected')
+				}, 100)
+			}
+		}
+	}
+}

@@ -21,9 +21,9 @@ Take a look at this minimal [DEMO application](https://95.110.198.62:3000). Logi
 
 Then open the [IDE](https://95.110.198.62:3000/ide) and see it's structure.
 
-Here is a brief [IDE HowTo](https://95.110.198.62:3000/howto.html).
+A brief IDE howto.html in the doc folder and [online here](https://95.110.198.62:3000/doc/howto.html).
 
-[API reference](https://95.110.198.62:3000/doc)
+More detailed **documentation** in the **doc** folder and [online here](https://95.110.198.62:3000/doc).
 
 
 ### Installation
