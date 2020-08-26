@@ -6,8 +6,8 @@
 */
 
 import { render } from 'web/inferno'
-import { strSplit, strCap, toJSON, objClone, translate, decimals, objEmpty, timezone } from './common'
-import { $, e$, e$$, br, remote, createElement, modified, substArgs } from './util'
+import { strSplit, strCap, toJSON, objClone, decimals, objEmpty, timezone } from './common'
+import { $, e$, e$$, br, remote, createElement, modified, substArgs, translate } from './util'
 import { Dialog, posDialog, closeDialog, confirmModal, autocomplete, autocompleteText, 
 					notification, inputImageLoad, inputFile } from './components'
 import { addForm, findForm, listForm, getDetails, refreshForms } from './forms'
@@ -275,7 +275,7 @@ export const formInput = (form, fields, required) => {
 
 
 /**
- * Save modified data
+ * Form save. Save modified data
  * @method
  * @param {element} formE
  */
@@ -326,6 +326,9 @@ export const formSave = (formE) => {
 			}
 			
 			const par = {cmd: 'POST', coll: coll || form.query.coll}
+			if (form.query.db) {
+				par.db = form.query.db
+			}
 //console.log(par)
 //console.log(rec)
 //return
@@ -381,7 +384,11 @@ export const formDelete = () => {
 		if (!$(`form[name=${form.name}]`).dispatchEvent(new Event('delete', {cancelable: true}))) {
 			return alert(eventMsg)
 		}
-		deleteRecord({coll: form.query.coll, where: {_id: form.data._id}}, res => {
+		const par = {coll: form.query.coll, where: {_id: form.data._id}}
+		if (form.query.db) {
+			par.db = form.query.db
+		}
+		deleteRecord(par, res => {
 			formList()
 			formUpdate(form, {})
 			modified(false)
@@ -606,8 +613,12 @@ export const selectFromArrayQuery = (elem, data) => {
 		elem.append(createElement('<option value=""></option>'))
 		for (let i = 0, len = data.length; i < len; i++) {
 			let s = data[i]._txt || data[i]._id+''
-			s = translate(s, br.lang)
+			s = translate(s)
 			elem.append(createElement(`<option value="${data[i]._id}">${s}</option>`))
 		}
 	}
 }
+
+
+
+

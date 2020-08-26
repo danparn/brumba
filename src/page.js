@@ -9,7 +9,7 @@
 import { render } from 'web/inferno'
 import { toJSON, objEmpty } from './common'
 import { $, $$, e$, e$$, br, remote, modified, unselect, createElement, createStyle, createScript,
-				inputDate } from './util'
+				inputDate, translate } from './util'
 import { closeDialog } from './components'
 import { formInit, formList, formUpdate } from './form'
 import { formsInit, addForm, findForm, getDetails } from './forms'
@@ -64,7 +64,9 @@ export const pageOpen = (pageName) => {
 export const pageRender = (data, ide) => {
   const ws = br.ws
   if (data) {
-    ws.innerHTML = pageWrapper(data.html)
+		const pag = createElement(pageWrapper(data.html))
+		e$$(pag, 'label').forEach(l => l.textContent = translate(l.textContent))
+    ws.innerHTML = pag.outerHTML
     const isPage = $('.br-page') ? true : false
     if (data.css) {
       createStyle(data.css, isPage)
@@ -163,7 +165,7 @@ export const tabClick = (tab) => {
 /* 
  *  Page wrapper
  */
-export const pageWrapper = (page) => {
+export const pageWrapper = page => {
   const txt =  '<div class="columns">\
                   <div class="br-list column is-2 hidden"></div>\
                   <div class="br-content column">'+page+'</div>\

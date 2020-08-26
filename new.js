@@ -46,7 +46,7 @@ async function database() {
 	if (app) {	
 		// menu
 		data = {
-			"menu" : "\"Setup\"\n\t\"Users Admin\" pages._users\n\"IDE\" IDE\n",
+			"menu" : "\"Setup\"\n\t\"Locales\" forms._locales\n\t\"Users Admin\" pages._users\n\"IDE\" IDE\n",
 			"section" : "menu"
 		}
 		res = await db.collection('application').insertOne(data).catch(console.error)
@@ -71,6 +71,14 @@ async function database() {
 			"_id" : mongodb.ObjectId("5eca31984f5d7021e05cced1"),
 			"name" : "_options",
 			"html" : "<form name=\"_options\" data-grid=\"{&quot;rows&quot;:10,&quot;fixed&quot;:0,&quot;columns&quot;:[{&quot;name&quot;:&quot;description&quot;,&quot;header&quot;:&quot;Description&quot;},{&quot;name&quot;:&quot;code&quot;,&quot;header&quot;:&quot;Code&quot;}]}\" data-query=\"{\n  coll: '_options',\n  where: {type: '$menuid'},\n  sort: {$menuarg: 1}\n}\"></form>"
+		}
+		res = await db.collection('forms').insertOne(data).catch(console.error)
+		console.log(res.result)
+		data = {
+			"_id" : ObjectId("5f44c9301043b2551a739474"),
+			"name" : "_locales",
+			"html" : "<form name=\"_locales\" data-grid=\"{&quot;rows&quot;:10,&quot;fixed&quot;:0,&quot;columns&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;header&quot;:&quot;default&quot;}],&quot;dummy&quot;:true}\" data-query=\"{\ndb: &quot;$app&quot;,\ncoll: &quot;_locales&quot;\n}\"></form>",
+			"events" : "import { objClone } from '/lib/common.js'\nimport { $, remote, createElement } from '/lib/util.js'\nimport { findForm } from '/lib/forms.js'\nimport { gridRender } from '/lib/grid.js'\n\nconst gridE = $('.br-grid')\ngridE.before(createElement(`<input name=\"search_default\" style=\"margin-left: 35px;\" />`))\n\n$('[name=search_default]').addEventListener('change', e => {\n  //e.stopPropagation()\n  //e.preventDefault()\n  const val = e.target.value\n  const grid = findForm('_locales')\n  grid.query.where = {default: {'$regex': val, '$options': 'i'}}\n  grid.externRefresh()\n})"
 		}
 		res = await db.collection('forms').insertOne(data).catch(console.error)
 		console.log(res.result)

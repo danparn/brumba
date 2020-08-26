@@ -79,11 +79,11 @@ const reportEvents = () => {
     }
 
     const copy = () => {
-			confirmModal(translate('A copy of this report will be create'), e => {
+			confirmModal('A copy of this report will be create', e => {
 		    const par = {coll: 'reports', where: {name: br.wo.value}}
 		    remote(par).then(res => {
 					if (res.err) return
-					if (!res[0]) return alert(translate('Report not found'))
+					if (!res[0]) return alert('Report not found')
 					const data = res[0]
 					delete data._id
 					data.name += '_COPY'

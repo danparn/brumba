@@ -6,7 +6,7 @@
 */
 
 import { render, Component, createRef } from 'web/inferno'
-import { strSplit, objClone, toJSON, decimals, translate } from './common'
+import { strSplit, objClone, toJSON, decimals } from './common'
 import { $, e$, e$$, br, remote, createElement, childIndex } from './util'
 import { formInit, formUpdate, updateDetails, selectPopulate, selectFromArrayQuery, selectText, deleteRecord } from './form'
 import { findForm, addGrid, refreshForms, mainArgs } from './forms'
@@ -326,7 +326,7 @@ export class Grid extends Component {
     if (this.rowClick) {
 			this.rowClick(this.selected)
 		}
-		r.dispatchEvent(new Event('rowselected'))
+		e.target.parentElement.dispatchEvent(new Event('rowselected'))
   }
 
 	// cellDblClick
@@ -354,6 +354,9 @@ export class Grid extends Component {
 				const p = this.grid.query.field.indexOf('.')
 				par.coll = this.grid.query.field.substring(0, p)
 				par.field = this.grid.query.field.substring(p+1)
+			}
+			if (this.grid.query.db) {
+				par.db = this.grid.query.db
 			}
 			deleteRecord(par, res => {
 				if (!res.err) {

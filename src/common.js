@@ -332,19 +332,6 @@ export const toJSON = str => {
 
 
 
-/** 
- * Translate string to lang
- * @function
- * @param {string} str
- * @param {json} lang
- * @returns {string}
- */
-export const translate = (str, lang) => {
-	return str
-}
-
-
-
 
 /*
  * Set field values on formula

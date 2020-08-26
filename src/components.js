@@ -7,9 +7,9 @@
 
 import { render } from 'web/inferno';
 import MetisMenu from 'web/metismenujs'
-import { objLess, translate, toJSON, strSplit } from './common'
+import { objLess, toJSON, strSplit } from './common'
 import { Message } from "./inferno-bulma"
-import { $, e$, br, remote, modified, createElement } from './util'
+import { $, e$, br, remote, modified, createElement, translate } from './util'
 import { findForm } from './forms'
 
 
@@ -122,6 +122,7 @@ Dialog.defaultHooks = {
   }
 }
 
+// closeDialog
 export const closeDialog = (e) => {
   const dlg = br.dlg
   // remenber pos
@@ -139,7 +140,8 @@ export const closeDialog = (e) => {
 
   render(null, dlg)
 }
-  
+
+// posDialog
 export const posDialog = (type) => {
   closeDialog()
   if (localStorage && type) {
@@ -147,6 +149,7 @@ export const posDialog = (type) => {
     let pos = {top: '60px', left: '200px'}
     switch (type) {
       case 'props':
+      case 'locales':
         pos = localStorage.getItem('br.dialogPos.props') || {top: '100px', left: '700px'}
         break
       case 'css':

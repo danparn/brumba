@@ -7,7 +7,7 @@
 
 import { render } from 'web/inferno'
 import { FieldColumn, Label, Button } from './inferno-bulma'
-import { strSplit, strCap, translate } from './common'
+import { strSplit, strCap } from './common'
 import { br, $, $$, e$, e$$, remote, unselect, modified, createElement } from './util'
 import { renderToString, fileFromDb, fileUpload, imgLoad, confirmModal } from './components'
 import { properties, addRadio, toolsText } from './ide-props'
@@ -193,12 +193,12 @@ export const containerEvents = cont => {
  *  Copy form
  */
 export const copy = () => {
-	const msg = translate('A copy of this form will be create')
+	const msg = 'A copy of this form will be create'
   const onOk = e => {
     const par = {coll: 'forms', where: {name: br.wo.value}}
     remote(par).then(res => {
 			if (res.err) return
-			if (!res[0]) return alert(translate('Form not found'))
+			if (!res[0]) return alert('Form not found')
 			const data = res[0]
 			delete data._id
 			data.name += '_COPY'
@@ -339,39 +339,34 @@ export const imgContext = img => {
 
 
 
+
+
+
+
 /* 
- *  Drag and drop from Mozilla example
+ *  Drag and drop
  */
 let dragged
 
-
-/* events fired on the draggable target */
-/*document.addEventListener("drag", function(event) {
-
-}, false);*/
-
-document.addEventListener("dragstart", e => {
+document.addEventListener('dragstart', e => {
   if ('DIV,BUTTON,LABEL'.includes(e.target.tagName) &&
 				!e.target.classList.contains('message-header')) {
-    dragged = e.target;             // store a ref. on the dragged elem
+    dragged = e.target
     if (dragged.classList.contains('br-dialog')) {
-      e.target.style.opacity = 0.001;    // make it transparent
+      e.target.style.opacity = 0.001
     } else {
-      e.target.style.opacity = .2;    // make it transparent
+      e.target.style.opacity = .2
     }
   }
-}, false);
+}, false)
 
-document.addEventListener("dragend", e => {
+document.addEventListener('dragend', e => {
   if (e.target.tagName === 'DIV') {
-    e.target.style.opacity = "";    // reset the transparency
+    e.target.style.opacity = ''
   }
-}, false);
+}, false)
 
-
-
-/* events fired on the drop targets */
-document.addEventListener("dragover", e => {
-  e.preventDefault();   // prevent default to allow drop
-}, false);
+document.addEventListener('dragover', e => {
+  e.preventDefault()
+}, false)
 

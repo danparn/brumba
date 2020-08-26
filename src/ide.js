@@ -7,7 +7,7 @@
 
 
 import { render } from 'web/inferno'
-import { objLess, translate, hex24 } from './common'
+import { objLess, hex24 } from './common'
 import { Textarea } from './inferno-bulma'
 import { Navbar, Sidebar, closeSidebar, closeDialog, confirmModal, imgLoad, notification } from './components'
 import { $, $$, e$$, br, remote, modified, createElement, createStyle, createScript, loadCSS, unselect } from './util'
@@ -16,7 +16,7 @@ import { pageRender, toggleList, pageWrapper } from './page'
 import { newForm, addFields, fieldEvents, itemEvents, containerEvents } from './ide-form'
 import { newGrid, gridRender, moveColumn } from './ide-grid'
 import { newReport, openReport } from './ide-report'
-import { properties } from './ide-props'
+import { properties, locales } from './ide-props'
 import { Editor, openDialogEditor, dialogEditor, onApplay } from './ide-editor'
 
 // css
@@ -41,7 +41,7 @@ const Ide = (props) => {
   keyEvents()
     
   // tools
-  const tools = (e) => {
+  const tools = e => {
 	  $$('style.br-css').forEach(s => s.remove())
 		$$('script.br-events').forEach(s => s.remove())
     switch (e.target.name) {
@@ -83,7 +83,7 @@ const Ide = (props) => {
   }
   
   // menu
-  const getMenu = (e) => {
+  const getMenu = e => {
     closeSidebar()
     selected(e)
     par.coll = 'application'
@@ -103,23 +103,26 @@ const Ide = (props) => {
   // renderNav
   const renderNav = () => {
     const toolsText = (localStorage) ? localStorage.getItem('br.tools-text') : ''
-    const workonChange = (e) => {
+    const workonChange = e => {
       e.target.modified = true
       modified(true)
       if ($('.br-props')) properties($('.br-selected'))
     }
-    const onProperties = (e) => {
+    const onProperties = e => {
       properties($('.br-selected'))
     }
-    const onEditor = (e) => {
+    const onEditor = e => {
       dialogEditor(e.target.textContent)
     }
-    const onSave = (e) => {
+    const onSave = e => {
       save(() => {
         reloadList()
       })
     }
-    const onDel = (e) => {
+    const onLocales = e => {
+			locales($('.br-selected'))
+    }
+    const onDel = e => {
       del(() => {
         reloadList()
         render(null, br.ws)
@@ -136,6 +139,7 @@ const Ide = (props) => {
           <a onClick={onEditor}><i class="fa fa-code"></i><span>events</span></a>
           <a onClick={onEditor}><i class="fab fa-css3"></i><span>css</span></a>
           <a onClick={onEditor}><i class="fab fa-html5"></i><span>html</span></a>
+          <a onClick={onLocales}><i class="fa fa-globe"></i><span>locales</span></a>
           <a><input class="input is-small br-workon" onchange={workonChange} /></a>
           <a class="space" onClick={toggleList}><i class="fa fa-list-ol"></i><span>list</span></a>
           <a onClick={borders}><i class="fa fa-border-none"></i><span>borders</span></a>
@@ -210,7 +214,7 @@ const setEvents = () => {
 /* 
  *  Selected items
  */
-const selected = (e) => {
+const selected = e => {
   const wo = br.wo
   wo.value = e.target.text
   wo.name = e.target.name
@@ -234,7 +238,7 @@ const addItems = async (coll) => {
   }
   
   // menuItem
-  const menuItem = async (e) => {
+  const menuItem = async e => {
     closeSidebar()
     selected(e)
     open(e.target.name, e.target.id)
@@ -484,7 +488,7 @@ const save = (cb) => {
  *  Delete
  */
 const del = (cb) => {
-  const msg = translate('Are you sure you want to delete this page/form?')
+  const msg = 'Are you sure you want to delete this page/form?'
   const onOk = e => {
 		if (br.wo.id) {
 			const par = {cmd: 'DEL', db: br.app, coll: br.wo.name, where: {_id: br.wo.id}}

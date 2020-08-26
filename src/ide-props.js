@@ -5,13 +5,111 @@
  * This source code is licensed under the MIT license.
 */
 
-import { render } from 'web/inferno';
-import { strSplit, objAddProp } from './common'
+import { render } from 'web/inferno'
+import { strSplit, objAddProp, objEmpty } from './common'
 import { Dialog, posDialog } from './components'
-import { $, $$, e$, e$$, br, modified, createElement } from './util'
+import { $, $$, e$, e$$, br, remote, modified, createElement } from './util'
 import { FieldColumn, Label, Input, Select, Textarea } from './inferno-bulma'
 import { itemEvents } from './ide-form'
 import { gridRender } from './ide-grid'
+
+
+let localesColumns
+
+/* 
+ * Locales
+ */
+export const locales = async (el, grid) => {
+	let defval, res, but
+	if (grid && el) {
+		const col = grid.columns.find(c => c.name === el.textContent)
+		if (col) {
+			defval = col.header
+		}
+	} else if (el && ('LABEL,BUTTON'.includes(el.tagName) || el.type === 'button')) {
+		defval = el.textContent
+	}
+	
+	const newrec = {}
+	let data = {default: defval}
+	if (defval) {
+		res = await remote({db: br.app, coll: '_locales', where: {default: defval}})
+		if (!res.err && res[0]) {
+			data = res[0]
+		}
+	}
+
+  // handlerChange
+  const handlerChange = (e, value) => {
+		newrec[e.target.name] = value
+		if (!but) {
+			but = e$(br.dlg, 'input.button')
+		}
+		if (!but.classList.contains('is-primary')) {
+			but.classList.add('is-primary')
+		}
+	}
+  
+  // onSave
+  const onSave = e => {
+		if (!objEmpty(newrec)) {
+			if (data._id) {
+				newrec._id = data._id
+			} else {
+				newrec.default = data.default
+			}
+			remote({cmd: 'POST', db: br.app, coll: '_locales'}, newrec)
+			.then(res => {
+				if (!res.err) {
+					but.classList.remove('is-primary')
+				}
+			})
+		}
+	}
+  
+  // field
+  const field = (label, attr) => {
+    objAddProp(attr, 'class', 'is-small', true)
+    attr.name = label
+    if (label === 'default') {
+			attr.readonly = true
+		}
+    attr.handlerChange = handlerChange
+    return (
+      <FieldColumn labelAttr={{class: 'is-small is-one-third'}} controlAttr={{class: 'column'}} inputAttr={attr}>
+        {label}
+      </FieldColumn>
+    )
+  }
+  
+  let props = []
+
+  if (!localesColumns) {
+		res = await remote({db: br.app, coll: 'forms', where: {name: '_locales'}})
+		if (res.err) return
+		const html = createElement(res[0].html)
+		localesColumns = JSON.parse(html.getAttribute('data-grid')).columns
+	}
+	
+	localesColumns.forEach(c => {
+		props.push(field(c.name, {value: data[c.name] || ''}))
+	})
+	props.push(field('', {type: 'input-button', value: 'Save', onClick: onSave}))
+
+  posDialog('locales') 
+  render(
+    <Dialog class="br-locales br-props" title="Locales">
+      <div class="columns">
+      <div class="column">
+        {props}
+      </div>
+      </div>
+    </Dialog>,
+    br.dlg
+  )
+
+}
+
 
 
 
@@ -22,6 +120,7 @@ import { gridRender } from './ide-grid'
  *  Properties
  */
 export const properties = (element, grid) => {
+	if ($('.br-locales')) return locales(element, grid)
   let el = element || $('.br-page') || $('.br-report') || $('form')
   if (!el) {
     return alert('Please open a page or form first')

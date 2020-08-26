@@ -84,7 +84,7 @@ export const decimalSeparator = (1.1).toLocaleString().substring(1, 2)
 
 
 /** 
- * Remote query. It use alert() for errors (in code error messages).
+ * Remote. Fetch anvelope.
  * <br>Query parameters: par = {
  * <br><ul><ui>cmd: default 'GET' if coll, 'SRV' if script, 'REP' if report, 'POST' for data save, 'DEL' for delete
  * <br><ui>app: 'applicationName', default br.app (from login)
@@ -452,3 +452,26 @@ export const clientScript = async (scriptName, cb) => {
 	const module = await import(`/scripts/${br.app}/${scriptName}.js`).catch(alert)
 	if (cb) cb(module)
 }
+
+
+
+
+/** 
+ * Translate string to lang
+ * @function
+ * @param {string} str
+ * @param {json} lang
+ * @returns {string}
+ */
+export const translate = str => {
+	if (br.locales) {
+		const t = br.locales.find(r => r.default === str)
+		if (t) {
+			return t[br.lang] || str
+		}
+	}
+	return str
+}
+
+
+

@@ -16,6 +16,7 @@
     "clean-html": "^1.5.0",
     "codemirror": "^5.55.0",
     "connect": "^3.7.0",
+    "i18next": "^19.7.0",
     "inferno": "^7.4.2",
     "jsdom": "^16.4.0",
     "metismenujs": "^1.2.1",

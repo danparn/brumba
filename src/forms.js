@@ -169,6 +169,7 @@ export const refreshForms = () => {
 export const mainArgs = str => {
 	if (str) {
 		let qs = str.replace('$user', br.user)
+		qs = qs.replace('$app', br.app)
 		const uid = isNaN(br.userid) ? '"'+br.userid+'"' : br.userid
 		qs = qs.replace('$userid', uid)
 		if (br.menuid) {
