@@ -1,12 +1,9 @@
 brumba
 ======
 
-Brumba is a Web applications builder with *Node.js* and *MongoDb* on server.  
-
-Vanilla *javascript*, [*Bulma*](https://bulma.io/) UI, and *[Inferno](https://infernojs.org/)* on client.  
-
-ESM modules on both sides.  
-
+Brumba is a Web applications builder with *Node.js* and *MongoDb* on server.
+Vanilla *javascript*, [*Bulma*](https://bulma.io/) UI, and *[Inferno](https://infernojs.org/)* on client.
+ESM modules on both sides.
 Licensed under the MIT license.
 
 The goal is to encapsulate the most of the difficulties of the chain browser/communication/nodejs/mongodb and let you concentrate on:
