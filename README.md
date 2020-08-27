@@ -1,13 +1,15 @@
 brumba
 ======
 
-Brumba is a Web applications builder with *Node.js* and *MongoDb* on server, mostly vanilla *javascript* and *[Inferno](https://infernojs.org/)* (a faster React like) on client. ESM modules on both sides.
+Brumba is a Web applications builder with *Node.js* and *MongoDb* on server. 
+Vanilla *javascript*, [*Bulma*](https://bulma.io/) UI, and *[Inferno](https://infernojs.org/)* (a faster React) on client. 
+ESM modules on both sides.
 Licensed under the MIT license.
 
 The goal is to encapsulate the most of the difficulties of the chain browser/communication/nodejs/mongodb and let you concentrate on:
 - design your forms/pages/reports with facilitated approach
 - simplified query syntax {coll, fields, where, sort } mostly for records list, other retrieve/search/save/delete operations are implicit
-- form specific events and css
+- form specific events and CSS
 - server scripts
 - very simple database API: get/cursor, post, del, file)
 
