@@ -447,7 +447,7 @@ export const formList = () => {
 					const [name, as] = strSplit(fname, ' as ')
 					const col = {
 						name: name,
-						header: head || strCap(as || name).replace(/_/g, ' ')
+						header: translate(head || strCap(as || name).replace(/_/g, ' '))
 					}
 					if (as) col.as = as
 					const fld = e$(formE, `[name=${as || name}]`)

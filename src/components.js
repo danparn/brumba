@@ -296,15 +296,15 @@ export const confirmModal = (message, okHandler, color) => {
 			<div class="modal-background"></div>
 			<div class="modal-card">
 				<header class="modal-card-head">
-					<p class="modal-card-title">Confirmation needed</p>
+					<p class="modal-card-title">${translate('Confirmation needed')}</p>
 					<button class="delete" aria-label="close"></button>
 				</header>
 				<section class="modal-card-body">
 					${message}
 				</section>
 				<footer class="modal-card-foot">
-					<button class="button ${color} mod-ok">Ok</button>
-					<button class="button mod-close">Cancel</button>
+					<button class="button ${color} mod-ok">${translate('Ok')}</button>
+					<button class="button mod-close">${translate('Cancel')}</button>
 				</footer>
 			</div>
 		</div>

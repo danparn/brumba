@@ -474,4 +474,38 @@ export const translate = str => {
 }
 
 
+/*
+ * Translate all
+ */
+export const translateAll = htmlStr => {
+	const htm = createElement(htmlStr)
+	// label
+	e$$(htm, 'label').forEach(el => {
+		if (!el.classList.contains('radio')) {
+			el.textContent = translate(el.textContent)
+		}
+	})
+	// input
+	e$$(htm, 'input').forEach(el => {
+		['placeholder','help'].forEach(attr => {
+			if (el.hasAttribute(attr)) {
+				el.setAttribute(attr, translate(el.getAttribute(attr)))
+			}
+		})
+	})
+	// grid
+	const attr = 'data-grid'
+	const transGrid = el => {
+		const grid = JSON.parse(el.getAttribute(attr))
+		grid.columns.forEach(c => c.header = translate(c.header))
+		el.setAttribute(attr, JSON.stringify(grid))
+	}
+	if (htm.hasAttribute(attr)) {
+		transGrid(htm)
+	}
+	e$$(htm, attr).forEach(el => transGrid(el))
+	// tab
+	e$$(htm, '.tab span').forEach(el => el.textContent = translate(el.textContent))
+	return htm.outerHTML
+}
 

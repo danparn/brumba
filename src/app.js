@@ -42,7 +42,7 @@ const App = (props) => {
         <a id="br-save" title="save" onClick={save}><i class="fa fa-save"></i><span></span></a>
         <a title="search" onClick={formSearch}><i class="fa fa-search"></i><span></span></a>
         <a title="complex search" onClick={pageSearch}><i class="fa fa-search-plus"></i><span></span></a>
-        <a title="toggle list" class="space" onClick={toggleList}><i class="fa fa-list-ol"></i><span></span></a>
+        <a title="list" class="space" onClick={toggleList}><i class="fa fa-list-ol"></i><span></span></a>
         <a title="delete" class="align-right" onClick={formDelete}><i class="fa fa-trash"></i><span></span></a>
       </Navbar>
       <nav class="sidebar-nav" id="br-sidebar">

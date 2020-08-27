@@ -21,13 +21,19 @@ let localesColumns
  */
 export const locales = async (el, grid) => {
 	let defval, res, but
-	if (grid && el) {
-		const col = grid.columns.find(c => c.name === el.textContent)
-		if (col) {
-			defval = col.header
+	if (el) {
+		if (grid) {
+			const col = grid.columns.find(c => c.name === el.textContent)
+			if (col) {
+				defval = col.header
+			}
+		} else if (('LABEL,BUTTON'.includes(el.tagName) || el.type === 'button')) {
+			defval = el.textContent
+		} else if (el.tagName === 'INPUT') {
+			defval = el.getAttribute('placeholder')
+		} else if (el.classList.contains('tab')) {
+			defval = e$(el, 'span').textContent
 		}
-	} else if (el && ('LABEL,BUTTON'.includes(el.tagName) || el.type === 'button')) {
-		defval = el.textContent
 	}
 	
 	const newrec = {}

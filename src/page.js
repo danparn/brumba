@@ -9,7 +9,7 @@
 import { render } from 'web/inferno'
 import { toJSON, objEmpty } from './common'
 import { $, $$, e$, e$$, br, remote, modified, unselect, createElement, createStyle, createScript,
-				inputDate, translate } from './util'
+				inputDate, translateAll } from './util'
 import { closeDialog } from './components'
 import { formInit, formList, formUpdate } from './form'
 import { formsInit, addForm, findForm, getDetails } from './forms'
@@ -21,7 +21,7 @@ import { gridRender } from './grid'
 /* 
  *  Page open
  */
-export const pageOpen = (pageName) => {
+export const pageOpen = pageName => {
   const ws = br.ws
   $$('style.br-css').forEach(s => s.remove())
 	$$('script.br-events').forEach(s => s.remove())
@@ -64,9 +64,7 @@ export const pageOpen = (pageName) => {
 export const pageRender = (data, ide) => {
   const ws = br.ws
   if (data) {
-		const pag = createElement(pageWrapper(data.html))
-		e$$(pag, 'label').forEach(l => l.textContent = translate(l.textContent))
-    ws.innerHTML = pag.outerHTML
+    ws.innerHTML = pageWrapper(translateAll(data.html))
     const isPage = $('.br-page') ? true : false
     if (data.css) {
       createStyle(data.css, isPage)
@@ -112,7 +110,7 @@ export const pageInit = async (ide) => {
       const res = await remote(par)
       if (!res.err && res[0]) {
 				const rec = res[0]
-				tile.innerHTML = rec.html
+				tile.innerHTML = translateAll(rec.html)
         if (rec.css) {
           createStyle(rec.css)
         }
