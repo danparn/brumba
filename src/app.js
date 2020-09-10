@@ -8,7 +8,7 @@
 import { render } from 'web/inferno'
 import MetisMenu from 'web/metismenujs'
 import { Navbar, closeSidebar } from './components'
-import { $, $$, br, remote, createElement, loadCSS } from './util'
+import { $, $$, br, remote, createElement, loadCSS, translate } from './util'
 import { pageOpen, pageRender, toggleList, pageSearch } from './page';
 import { formList, formUpdate, formSave, formSearch, formDelete } from './form'
 import { gridRender } from './grid'
@@ -64,6 +64,7 @@ App.defaultHooks = {
 			.then(res => {
 				if (!res.err) {
 					br.locales = res
+					$$('a[title]').forEach(el => el.setAttribute('title', translate(el.getAttribute('title'))))
 				}
 			})
 		}

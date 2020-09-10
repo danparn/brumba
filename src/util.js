@@ -9,32 +9,35 @@ import { formInput } from './form'
 
 
 /** 
- * Globals - login info and other
- * <br>br = {
- * <br><ul><ui>app: 'applicationName'
- * <br><ui>db: 'databaseName'
- * <br><ui>usercode: '5f33f94ce1e692204f4d1697'
- * <br><ui>ws: DOM element - workspace container link, root
- * <br><ui>dlg: DOM element - dialogs container link
- * <br></ul>}
+ * Brumba globals
+ * @example
+ * br = {
+ *   app: 'applicationName',
+ *   db: 'databaseName',
+ *   usercode: '5f33f94ce1e692204f4d1697',
+ *   ws: DOM element,							// workspace container link (root element)
+ *   dlg: DOM element							// dialogs container link
+ * }
  */
 export let br = {}
 
 
 /** 
  * Alias of document.querySelector
- * <br>
- * <br>import { $ } from '/lib/util.js'
- * <br>const frm = $('form')
+ * @example
+ * import { $ } from '/lib/util.js'
+ * 
+ * const frm = $('form')
  */
 export const $ = document.querySelector.bind(document)       // alias
 
 
 /** 
  * Alias of document.querySelectorAll
- * <br>
- * <br>import { $$ } from '/lib/util.js'
- * <br>const frms = $$('form')
+ * @example
+ * import { $$ } from '/lib/util.js'
+ * 
+ * const forms = $$('form')
  */
 export const $$ = document.querySelectorAll.bind(document)   // alias
 
@@ -61,14 +64,15 @@ export const e$$ = (elem, sel) => (elem ? elem.querySelectorAll(sel) : [])
 
 /** 
  * Name selector syntax sugar
- * <br>n$$('foo,bar') is an abbreviation of document.querySelectorAll('[name=foo],[name=bar]')
  * @function
- * @param {string} nameList - Coma separated names list
+ * @param {string} names - Coma separated names list
  * @returns {NodeList}
+ * @example
+ * n$$('foo,bar') is an abbreviation of document.querySelectorAll('[name=foo],[name=bar]')
  */
-export const n$$ = nameList => {
+export const n$$ = names => {
 	let selector = ''
-	strSplit(nameList, ',').forEach(name => selector += `[name=${name}],`)
+	strSplit(names, ',').forEach(name => selector += `[name=${name}],`)
 	if (selector.length > 0) {
 		selector = selector.substring(0, selector.length-1)
 		return document.querySelectorAll(selector)
@@ -85,30 +89,31 @@ export const decimalSeparator = (1.1).toLocaleString().substring(1, 2)
 
 /** 
  * Remote. Fetch anvelope.
- * <br>Query parameters: par = {
- * <br><ul><ui>cmd: default 'GET' if coll, 'SRV' if script, 'REP' if report, 'POST' for data save, 'DEL' for delete
- * <br><ui>app: 'applicationName', default br.app (from login)
- * <br><ui>db: 'databaseName', default br.db (from login)
- * <br><ui>coll: 'collectionName'
- * <br><ui>script: 'scriptName.function', exludes coll
- * <br><ui>fields: 'fld1,fld2,...', returns only this fields; only with coll
- * <br><ui>concat: 'fieldName', returns only this embedded array field, merging all selected documents; only with coll; excludes fields
- * <br><ui>add: 'fld1,fld2,...', adds fields to concat result; only with concat
- * <br><ui>where: {_id: '...'}, query selector
- * <br><ui>sort: {fld1: 1, fld2: -1}, sort documents, 1 ascendin, -1 descending
- * <br><ui>args: {...}, more arguments if neaded
- * <br><ui>result: 'count', returns only the documents count
- * <br><ui>findOne: true, returns only one document
- * <br><ui>usercode: default br.usercode (from login)
- * <br></ul>}
- * <br>
  * @function
  * @param {object} par query parameters
  * @param {json} data data to send on server; only for POST
  * @param {string} type data type, default 'application/json'
- * @returns {Promise<json>}
+ * @returns {Promise<json>} promise
+ * @example
+ * Query parameters: par = {
+ *   cmd: default 'GET' if coll, 'SRV' if script, 'REP' if report, 'POST' for data save, 'DEL' for delete
+ *   app: 'applicationName', default br.app (from login)
+ *   db: 'databaseName', default br.db (from login)
+ *   coll: 'collectionName'
+ *   script: 'scriptName.function', exludes coll
+ *   fields: 'fld1,fld2,...', returns only this fields; only with coll
+ *   concat: 'fieldName', returns only this embedded array field, merging all selected documents; only with coll; excludes fields
+ *   add: 'fld1,fld2,...', adds fields to concat result; only with concat
+ *   where: {_id: '...'}, query selector, optional
+ *   sort: {fld1: 1, fld2: -1}, sort documents, 1 ascendin, -1 descending, optional
+ *   args: {...}, more arguments if neaded, optional
+ *   result: 'count', returns only the documents count, optional
+ *   findOne: true, returns only one document, optional
+ *   usercode: default br.usercode (from login)
+ * }
  * @example
  * import { remote } from '/lib/util.js'
+ * 
  * remote({coll: 'Patients', fields: 'firs_name,last_name', where:{active: true}, sort:{last_name: 1})
  * .then(res => {
  *   console.log(res)
@@ -235,7 +240,7 @@ export const unselect = () => $$('.br-selected').forEach(elem => elem.classList.
  * Child index in the children list
  * @function
  * @param {element} elem - child element
- * @returns {number}
+ * @returns {number} index
  */
 export const childIndex = elem => {
 	let i = 0
@@ -251,7 +256,7 @@ export const childIndex = elem => {
  * Create DOM element from string HTML syntax
  * @function
  * @param {string} str - html syntax
- * @returns {element}
+ * @returns {element} element
  */
 export const createElement = str => {
   const div = document.createElement('div')
@@ -287,12 +292,13 @@ export const loadCSS = (href) => {
 
 /** 
  * Validate inputs.
- * <br>If fields parameter undefined, all fields of the form are validated.
- * <br>All specified fields are considered required, some has type check.
- * <br>Returns the non valid element, or true if all valid.
  * @function
  * @param {string} fields - comma separated fields list
- * @returns {boolean|element}
+ * @returns {boolean|element} true/element
+ * 
+ * If fields parameter undefined, all fields of the form are validated.
+ * <br>All specified fields are considered required, some has type check.
+ * <br>Returns the non valid element, or true if all valid.
  */
 export const validate = fields => {
 	// valid
@@ -363,7 +369,8 @@ export const substArgs = (where, elem) => {
 
 
 /** 
- * Report call. All form inputs are passed as arguments.
+ * Report call.
+ * <br>All form inputs are passed as arguments.
  * @method
  * @param {string} formName
  * @param {string} reportName
@@ -390,13 +397,15 @@ export const report = (formName, reportName, args) => {
 
 
 /** 
- * Input date to 'yyyy-mm-dd' string. Separators accepted: . / -
- * <br>'1.1.17' will be converted to '2017-01-01'
- * <br>'1.1' will be converted to 'currentYear-01-01'
- * <br>'1' will be converted to 'currentYear-currentMonth-01'
+ * Input date.
+ * <br>Converst input to 'yyyy-mm-dd' string. Separators accepted: . / -
  * @function
  * @param {string} str - imput string
- * @returns {string}
+ * @returns {string} string
+ * @example
+ * '1.1.17' will be converted to '2017-01-01'
+ * '1.1' will be converted to 'currentYear-01-01'
+ * '1' will be converted to 'currentYear-currentMonth-01'
  */
 export const inputDate = str => {
 	const pad = n => n<10 ? '0'+n : n
@@ -434,14 +443,17 @@ export const createScript = (code, src, type) => {
 
 
 /** 
- * Client script. Dynamic import of a server saved module.
- * <br>It's methods canot be imported as usual, but called by module.method()
- * <br>
+ * Client script.
+ * <br>Dynamic import of a server saved module.
  * @method
  * @param {string} scriptName
  * @param {callback} cb
  * @example
+ * Dynamic import of a server saved module.
+ * It's methods canot be imported as usual, but called by module.method()
+ * 
  * import { clientScript } from '/lib/util.js'
+ * 
  * clientScript('scriptName', mod => {
  *   mod.methodName()
  *   ...
@@ -461,7 +473,7 @@ export const clientScript = async (scriptName, cb) => {
  * @function
  * @param {string} str
  * @param {json} lang
- * @returns {string}
+ * @returns {string} string
  */
 export const translate = str => {
 	if (br.locales) {
@@ -479,8 +491,8 @@ export const translate = str => {
  */
 export const translateAll = htmlStr => {
 	const htm = createElement(htmlStr)
-	// label
-	e$$(htm, 'label').forEach(el => {
+	// label, button
+	e$$(htm, 'label, button').forEach(el => {
 		if (!el.classList.contains('radio')) {
 			el.textContent = translate(el.textContent)
 		}
@@ -492,6 +504,9 @@ export const translateAll = htmlStr => {
 				el.setAttribute(attr, translate(el.getAttribute(attr)))
 			}
 		})
+		if (el.type === 'button') {
+			el.value = translate(el.value)
+		}
 	})
 	// grid
 	const attr = 'data-grid'

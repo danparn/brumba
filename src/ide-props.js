@@ -27,10 +27,14 @@ export const locales = async (el, grid) => {
 			if (col) {
 				defval = col.header
 			}
-		} else if (('LABEL,BUTTON'.includes(el.tagName) || el.type === 'button')) {
+		} else if ('LABEL,BUTTON'.includes(el.tagName)) {
 			defval = el.textContent
 		} else if (el.tagName === 'INPUT') {
-			defval = el.getAttribute('placeholder')
+			if (el.type === 'button') {
+				defval = el.value
+			} else {
+				defval = el.getAttribute('placeholder')
+			}
 		} else if (el.classList.contains('tab')) {
 			defval = e$(el, 'span').textContent
 		}

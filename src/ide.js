@@ -109,6 +109,7 @@ const Ide = (props) => {
       if ($('.br-props')) properties($('.br-selected'))
     }
     const onProperties = e => {
+      closeDialog()
       properties($('.br-selected'))
     }
     const onEditor = e => {

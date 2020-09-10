@@ -280,7 +280,7 @@ export const imgLoad = (db, img) => {
 
 
 /**
- * Opens a modal dialog asking for confirmation
+ * Opens a modal dialog asking for confirmation.
  * @method
  * @param {string} message - message to be displayed
  * @param {function} okHandler - ok button handler
@@ -484,7 +484,7 @@ const extraFields = (extraStr, rec, input) => {
 
 
 /**
- * Display a notification 
+ * Displays a notification.
  * @method
  * @param {string} message - message to be displayed
  */

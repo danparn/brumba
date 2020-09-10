@@ -6,7 +6,28 @@
 */
 
 /**
- *  Error codes
+ * Error codes.
+ * @example
+ * export const err = {
+ *   db: -1,       // database not found/opened
+ *   coll: -2,     // collection not found
+ *   unique: -3,   // not unique field
+ *   count: -4,    // count error
+ *   cursor: -5,   // cursor error
+ *   ins: -6,      // insert error
+ *   upd: -7,      // update error
+ *   del: -8,      // delete error
+ *   file: -9,     // file error
+ *   dupl: -10,    // duplicate record
+ *   param: -11,   // wrong parameters
+ *   data: -12,    // wrong data
+ *   gen: -13,     // generic
+ *   srv: -14,     // server
+ *   script: -15,  // script not found
+ *   user: -16,    // user not authenticated
+ *   trig: -17,    // trigger error
+ *   sock: -18     // socket error
+ * }
  */
 export const err = {
   db: -1,       // database not found/opened
@@ -45,7 +66,8 @@ export const hex24 = new RegExp('^[0-9a-fA-F]{24}$') // check for hex string of 
 
 
 /** 
- * Timezone, based on the system timezone.
+ * Timezone.
+ * <br>Based on the system timezone.
  * @function
  * @returns {number} +-milliseconds
  */
@@ -65,7 +87,7 @@ export const decimals = (value, dec) => Number(Math.round(value+'e'+dec)+'e-'+de
  * Capitalize string
  * @function
  * @param {string} str
- * @returns {string}
+ * @returns {string} string
  */
 export const strCap = str => (str.charAt(0).toUpperCase() + str.slice(1))
 
@@ -76,7 +98,7 @@ export const strCap = str => (str.charAt(0).toUpperCase() + str.slice(1))
  * @function
  * @param {string} str
  * @param {string} sep
- * @returns {string[]}
+ * @returns {string[]} string array
  */
 export const strSplit = (str, sep) => {
 	if (str && sep) {
@@ -99,14 +121,14 @@ export const strSplit = (str, sep) => {
 
 
 /** 
- * Get substring between delimiters
+ * Get substring between delimiters.
  * @function
  * @param {string} str
  * @param {string} from - from delimiter
  * @param {string} to - to delimiter
  * @param {number} startIndex - index to start, default 0
  * @param {boolean} include - if delimiters must be included in the return slice, default false
- * @returns {string}
+ * @returns {string} string
  */
 export const strGetBet = (str, from, to, startIndex, include) => {
 	if (str && from && to) {
@@ -128,7 +150,7 @@ export const strGetBet = (str, from, to, startIndex, include) => {
 
 
 /** 
- * Find any of chars in pattern
+ * Find any of chars in pattern.
  * @function
  * @param {string} str
  * @param {string} pat - pattern of chars
@@ -158,7 +180,7 @@ export const strFindAny = (str, pat, startIndex) => {
  * Is empty object?
  * @function
  * @param {object} obj
- * @returns {boolean}
+ * @returns {boolean} bool
  */
 export const objEmpty = obj => {
 	for (let key in obj) {
@@ -234,7 +256,8 @@ export const objLess = (obj, props) => {
 
 
 /** 
- * Delete properties of object. ATTENTION it will modify the original object.
+ * Delete properties of object.
+ * <br>ATTENTION it will modify the original object.
  * @method
  * @param {object} obj
  * @param {string} props - comma separated property names
@@ -298,7 +321,7 @@ export const objClone = (obj) => {
  * Parse string to JSON. More forgiving then the JSON.parse()
  * @function
  * @param {string} str
- * @returns {json}
+ * @returns {json} json
  */
 export const toJSON = str => {
 	if (str) {

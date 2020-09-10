@@ -91,7 +91,7 @@ export const formInit = (formE) => {
 /**
  * Form: retrieve, then update.
  * @method
- * @param {object} form
+ * @param {object} form - form object
  * @param {string} id - document id
  */
 export const formRetrieve = (form, id) => {
