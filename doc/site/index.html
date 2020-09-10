@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="None">
+  
+  
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <title>Brumba</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Overview";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="js/jquery-2.1.1.min.js" defer></script>
+  <script src="js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> Brumba</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Overview</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#support">Support</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="tutorials/form/">Form</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="tutorials/grid.md">Grid</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="tutorials/page.md">Page</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="tutorials/locales.md">Locales</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="reference/common/">Common</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="reference/util/">Util</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="reference/components/">Components</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="reference/form/">Form</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="reference/forms/">Forms</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="reference/grid/">Grid</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">Brumba</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Overview</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="welcome-to-brumba">Welcome to Brumba</h1>
+<p>Brumba is a Web applications builder using:.<br />
+-  <a href="https://nodejs.org/">Node.js</a> and <a href="https://www.mongodb.com/try/download/community">MongoDb</a> on server.<br />
+-  <a href="https://bulma.io/">Bulma</a> UI, and <a href="https://infernojs.org/">Inferno</a> on client.<br />
+-  ESM modules on both sides.<br />
+Licensed under the MIT license.</p>
+<p>The goal is to encapsulate the most of the difficulties of the chain browser/communication/nodejs/mongodb and let you concentrate on:</p>
+<ul>
+<li>design your forms/pages/reports with facilitated approach</li>
+<li>simplified query syntax</li>
+<li>implicit retrieve/search/save/delete operations</li>
+<li>form specific events and CSS</li>
+<li>server scripts</li>
+<li>very simple database API</li>
+</ul>
+<p>The application is saved entirely in a database with the same name. </p>
+<p>Take a look at this minimal <a href="https://95.110.198.62:3000">DEMO application</a>. Login:</p>
+<ul>
+<li>Application: brdemo</li>
+<li>Database: brdb</li>
+<li>User: demo</li>
+<li>Password: demodemo</li>
+</ul>
+<p>Then open the <a href="https://95.110.198.62:3000/ide">IDE</a> and see it's structure.</p>
+<p>A brief IDE howto.html in the doc folder and <a href="https://95.110.198.62:3000/doc/howto.html">online here</a>.</p>
+<p>More detailed <strong>documentation</strong> in the <strong>doc</strong> folder and <a href="https://95.110.198.62:3000/doc/site">online here</a>.</p>
+<h3 id="installation">Installation</h3>
+<ul>
+<li>
+<p>node.js (min ver.13) and mongodb (ver.4) must be installed and running</p>
+</li>
+<li>
+<p>download brumba</p>
+<pre><code>git clone https://github.com/danparn/brumba.git
+</code></pre>
+</li>
+<li>
+<p>move to brumba directory </p>
+</li>
+<li>
+<p>install dependences:</p>
+<pre><code>npm install
+</code></pre>
+</li>
+<li>
+<p>generate SSL key and auto certificate:</p>
+<pre><code>openssl genrsa -out brumba.key 2048
+openssl req -new -key brumba.key -out brumba.csr
+openssl x509 -req -in brumba.csr -signkey brumba.key -out brumba.cert
+</code></pre>
+</li>
+<li>
+<p>start the server: </p>
+<pre><code>node server webserverport mongohost:mongoport
+</code></pre>
+</li>
+<li>
+<p>the short command <strong>node server</strong> will default to:  <strong>node server 3000 localhost:27017</strong></p>
+</li>
+<li>
+<p>create application and database:</p>
+<pre><code>node new app yourapp
+node new db yourdb
+</code></pre>
+</li>
+<li>
+<p>open Brunba IDE  <a href="https://localhost:3000/ide">https://localhost:3000/ide</a> and login:</p>
+<ul>
+<li>Application: yourapp</li>
+<li>User: admin</li>
+<li>Password: brumba</li>
+</ul>
+</li>
+<li>
+<p>create forms/pages/reports/menu</p>
+</li>
+<li>
+<p>open application  <a href="https://localhost:3000">https://localhost:3000</a> and login:</p>
+<ul>
+<li>Application: yourapp</li>
+<li>Database: yourab</li>
+<li>User: admin</li>
+<li>Password: brumba</li>
+</ul>
+</li>
+<li>
+<p>create users and permissions</p>
+</li>
+<li>remember to change admin's default password</li>
+<li>enjoy</li>
+<li>
+<p>to manage application's users (for IDE access) login as:</p>
+<ul>
+<li>Application: yourapp</li>
+<li>Database: yourapp</li>
+</ul>
+</li>
+</ul>
+<h3 id="support">Support</h3>
+<p><a href="https://groups.google.com/forum/?fromgroups#!forum/brumba-1">Brumba Google Group</a> - For support and suggestions</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorials/form/" class="btn btn-neutral float-right" title="Form">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+        <span style="margin-left: 15px"><a href="tutorials/form/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.1.2
+Build Date UTC : 2020-09-10 08:23:56.952980+00:00
+-->

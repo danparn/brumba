@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Form - Brumba</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../../extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Form";
+    var mkdocs_page_input_path = "tutorials/form.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Brumba</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Form</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-new-form">1. New form</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-form-layout">2. Form layout</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3-field-types">3. Field types</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#4-form-css">4. Form CSS</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#5-form-events">5. Form events</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#6-form-html">6. Form HTML</a>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../grid.md">Grid</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../page.md">Page</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../locales.md">Locales</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Reference</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../reference/common/">Common</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../reference/util/">Util</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../reference/components/">Components</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../reference/form/">Form</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../reference/forms/">Forms</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../reference/grid/">Grid</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Brumba</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Tutorials &raquo;</li>
+        
+      
+    
+    <li>Form</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="form">Form</h1>
+<h3 id="1-new-form">1. New form</h3>
+<p>1.1 Enter IDE from https://localhost:3090/ide</p>
+<p>1.2 Open <strong>TOOLS</strong> menu and write down a comma separated list of fields like: </p>
+<p>first_name, last_name, pid, gender, birth_day, address, zip, city, county, country, email, mobile, social_status, photo, id_file, active</p>
+<p><img alt="" src="../images/form%201.png# scale" /></p>
+<p>then click <strong>new Form</strong>. The new created form will look like this:</p>
+<p><img alt="" src="../images/form%202.png" /></p>
+<p>1.3 This form needs a documents list for navigation, so click on the <strong>list</strong> toolbar button to set it. Only a left side empty space could be observed here.</p>
+<p>1.4 Click <strong>properties</strong> toolbar button to open the properties popup window. Be sure to be on the FORM tagName, and fill in query field with:</p>
+<pre><code>{
+coll: 'patients',
+fields: 'first_name,last_name',
+sort: {last_name: 1, first_name: 1}
+}
+</code></pre>
+
+<p>and list field with: </p>
+<pre><code>last_name+first_name as name
+</code></pre>
+
+<p>1.5 Change the proposed form name (current datetime) in the toolbar name input, with the proper name Patients. Now it will look like this:</p>
+<p><img alt="" src="../images/form%203.png" /></p>
+<p>1.6 Click the <strong>save</strong> toolbar button, or the usual <strong>CTRL+S</strong> keyboard shortcut. The new created form will be present in the FORMS menu for further use. It is not finished, but it's already functional, and can be used to input data. Just add a menu item (MENU section):  </p>
+<pre><code>&quot;Patients&quot; forms.Patients
+</code></pre>
+
+<p>under Setup with a leading tab, and save. Pay attention tab indentation is important in menu definition. It will look like this:</p>
+<p><img alt="" src="../images/form%204.png" /></p>
+<p>1.7 Now you can open the application from https://localhost:3090 open Setup/Patients menu and start inserting the first patients (just the name for now). As soon as you save the firs record, it will appear in the list on the left. Insert 2-3 more names to have a navigable list, and click on list items to see the record content in the form. This is an <strong>infinite scroll-able list</strong>. The list can be filtered by using the two search toolbar buttons, but more on this later.</p>
+<h3 id="2-form-layout">2. Form layout</h3>
+<p>A new form has four containers, divided in 2 columns and 2 row. The first row is intended as header and is empty by default. Use it for title or other header elements. Initially all fields are inserted in the left column. If you don't need a double column form, the right column will rest empty, for layout purpose only. Use <strong>CTRL+B</strong> or toolbar <strong>borders</strong> button to toggle containers border, witch are purely informative, and are not saved.</p>
+<p>Container management:</p>
+<ul>
+<li>add new column: from peer container context menu <strong>Add column</strong></li>
+<li>add row: from parent container context menu <strong>Add row</strong></li>
+<li>resize width: select container, then <strong>SHIFT+arrow left/righ</strong>t; last column not resizable</li>
+<li>delete: select container, then <strong>CTRL+DEL</strong></li>
+</ul>
+<p>Field management:</p>
+<ul>
+<li>add one: from container context menu <strong>Add label/button/field/image</strong></li>
+<li>add multiple: select a container, open <strong>TOOLS</strong> menu and write down a comma separated list of fields, then click <strong>add Fields</strong> menu</li>
+<li>move to other container:  drag and drop over the empty space of the new container</li>
+<li>move in bottom of the same container: drag and drop over the bottom empty space</li>
+<li>move over other field: drag and drop over the other field; it will finish right aside</li>
+<li>resize: select label/input, then <strong>SHIFT+arrow left/right</strong></li>
+<li>delete: select label/input, then <strong>CTRL+DEL</strong></li>
+</ul>
+<p>Now lets reface our form:</p>
+<p>2.1 Move photo and id_file fields to the right column, by dragging them one by one.</p>
+<p><img alt="form 5" src="../images/form%205.png" /></p>
+<p>2.2 Drag city over zip, then county over zip.</p>
+<p><img alt="" src="../images/form%206.png" /></p>
+<p>2.3 Select City and County labels, then delete them by CTRL+DEL.</p>
+<p>2.4 Open Properties, select label Zip and change it to Zip/City/Cnty.</p>
+<p><img alt="" src="../images/form%207.png" /></p>
+<p>2.5 Close properties. Select left container and enlarge it by SHIFT+arrow right like this:</p>
+<p><img alt="" src="../images/form%208.png" /></p>
+<p>2.6 Play with the width of zip, city and county to finish like this:</p>
+<p><img alt="" src="../images/form%209.png" /></p>
+<p>2.7 Add a title label: left click the upper left container and <strong>Add field</strong>. Change the label text to Patient and the size to large. Delete the input. It is better to add a field , not a simple label, because it will keep fields alignment.</p>
+<p><img alt="" src="../images/form%2011.png" /></p>
+<p>2.8 Save the form.</p>
+<h3 id="3-field-types">3. Field types</h3>
+<p>3.1 Open Properties popup and move it in a convenient place. </p>
+<p>3.2 Select gender and change it's type from text to radio. Select the first radio and change it's text from Label to M. Select the second radio and change it's text from Label to F.</p>
+<p><img alt="" src="../images/form%2010.png" /></p>
+<p>3.3 Select fields and change their type:</p>
+<ul>
+<li>birth_day =&gt; date</li>
+<li>email =&gt; email</li>
+<li>active =&gt; checkbox</li>
+<li>photo =&gt; image</li>
+<li>id_file =&gt; file</li>
+</ul>
+<p>3.4 Save form.</p>
+<p>Now you can return to the application and complete patients profile with proper data.</p>
+<p>How to use image and file types in application:</p>
+<ul>
+<li>photo field: use right click to upload an image, then save; use left click for full size view</li>
+<li>id_file field: use right click to upload file, then save; use left click to view</li>
+</ul>
+<h3 id="4-form-css">4. Form CSS</h3>
+<p>4.1 Select the title label in Properties and set it's <strong>for</strong> property to <strong>title</strong>.</p>
+<p>4.2 Open CSS editor from <strong>css</strong> toolbar button and write down:</p>
+<pre><code>[for=title] {
+  color: green;
+}
+</code></pre>
+
+<p>4.3 Click <strong>apply</strong> on the editor to see the change. Save form.</p>
+<p><img alt="" src="../images/form%2012.png" /></p>
+<h3 id="5-form-events">5. Form events</h3>
+<p>The code in the events will be executed immediately after the form load. All javascript events can be used, and Brumba specific events are added.</p>
+<p>5.1 How to import:</p>
+<pre><code>import { $, $$, e$, br, remote, createElement, report } from '/lib/util.js'
+import { notification, confirmModal } from '/lib/components.js'
+import { gridRender } from '/lib/grid.js'
+import { findForm } from '/lib/forms.js'
+</code></pre>
+
+<p>5.2 Form events defined and triggered by Brumba:</p>
+<ul>
+<li><strong>retrieve</strong> - after data retrieve, before updating form; can block</li>
+<li><strong>update</strong> - after form has updated/rendered it's data</li>
+<li><strong>save</strong> - before saving data; can block</li>
+<li><strong>delete</strong> - before deleting the current record; can block</li>
+</ul>
+<p>An event handler can block normal operation by using preventDefault().</p>
+<pre><code>import { $ } from '/lib/util.js'
+
+$('form').addEventListener('delete', e =&gt; {
+  if (...) {
+    e.preventDefault()
+  }
+})
+</code></pre>
+
+<h3 id="6-form-html">6. Form HTML</h3>
+<p>The <strong>html</strong> toolbar button opens the html editor of the form. It is useful for adding elements that IDE is not covering, or simply modify on the fly, if you know what you are doing. It is a very powerful tool that opens all the html capabilities, but even a dangerous one, because IDE could not be able to recover from some mistakes. So use it carefully, and make a copy before modifying. </p>
+<p>It is also useful for copying forms from one application to another. To make a local copy instead, use the <strong>Copy</strong> context menu and a clone of the form will be created with the _COPY suffix name.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../reference/common/" class="btn btn-neutral float-right" title="Common">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../.." class="btn btn-neutral" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../.." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../reference/common/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

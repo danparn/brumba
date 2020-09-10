@@ -1,0 +1,17 @@
+site_name: Brumba
+nav:
+ - Overview: index.md
+ - Tutorials:
+   - Form: tutorials/form.md
+   - Grid: tutorials/grid.md
+   - Page: tutorials/page.md
+   - Locales: tutorials/locales.md
+ - Reference:
+    - Common: reference/common.md
+    - Util: reference/util.md
+    - Components: reference/components.md
+    - Form: reference/form.md
+    - Forms: reference/forms.md
+    - Grid: reference/grid.md
+theme: readthedocs
+extra_css: [extra.css]

@@ -1,0 +1,6 @@
+img[src~="scale"] {
+  transform: scale(0.80);
+}
+h2, h3 {
+  margin-top: 100px;
+}

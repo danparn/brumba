@@ -8,7 +8,7 @@
 
 first_name, last_name, pid, gender, birth_day, address, zip, city, county, country, email, mobile, social_status, photo, id_file, active
 
-<img src="images/form 1.png"  />
+![](images/form 1.png# scale)
 
 then click **new Form**. The new created form will look like this:
 

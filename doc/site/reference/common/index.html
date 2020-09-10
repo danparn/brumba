@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Common - Brumba</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link href="../../extra.css" rel="stylesheet" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Common";
+    var mkdocs_page_input_path = "reference/common.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> Brumba</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Tutorials</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../tutorials/form/">Form</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../../tutorials/grid.md">Grid</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../../tutorials/page.md">Page</a>
+                    </li>
+                    <li class="toctree-l1"><a class="" href="../../tutorials/locales.md">Locales</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Reference</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Common</a>
+    <ul class="current">
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../util/">Util</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../components/">Components</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../form/">Form</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../forms/">Forms</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../grid/">Grid</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">Brumba</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Reference &raquo;</li>
+        
+      
+    
+    <li>Common</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="members">Members</h2>
+<dl>
+<dt><a href="#dateFormat">dateFormat</a></dt>
+<dd><p>Date format, default &#39;dd/mm/yyyy&#39;.</p>
+</dd>
+</dl>
+
+<h2 id="constants">Constants</h2>
+<dl>
+<dt><a href="#err">err</a></dt>
+<dd><p>Error codes.</p>
+</dd>
+<dt><a href="#hex24">hex24</a></dt>
+<dd><p>hex24 regular expresion, used for for mongodb ObjectId() check.</p>
+</dd>
+</dl>
+
+<h2 id="functions">Functions</h2>
+<dl>
+<dt><a href="#timezone">timezone()</a> ⇒ <code>number</code></dt>
+<dd><p>Timezone.
+<br>Based on the system timezone.</p>
+</dd>
+<dt><a href="#strCap">strCap(str)</a> ⇒ <code>string</code></dt>
+<dd><p>Capitalize string</p>
+</dd>
+<dt><a href="#strSplit">strSplit(str, sep)</a> ⇒ <code>Array.&lt;string&gt;</code></dt>
+<dd><p>Split string by separator, trim spaces and eliminates empty items</p>
+</dd>
+<dt><a href="#strGetBet">strGetBet(str, from, to, startIndex, include)</a> ⇒ <code>string</code></dt>
+<dd><p>Get substring between delimiters.</p>
+</dd>
+<dt><a href="#strFindAny">strFindAny(str, pat, startIndex)</a> ⇒ <code>number</code></dt>
+<dd><p>Find any of chars in pattern.</p>
+</dd>
+<dt><a href="#objEmpty">objEmpty(obj)</a> ⇒ <code>boolean</code></dt>
+<dd><p>Is empty object?</p>
+</dd>
+<dt><a href="#objPick">objPick(obj, props)</a> ⇒ <code>object</code></dt>
+<dd><p>Pick a selection of properties.</p>
+</dd>
+<dt><a href="#objLess">objLess(obj, props)</a> ⇒ <code>object</code></dt>
+<dd><p>Pick all properties less then props list, recursively.</p>
+</dd>
+<dt><a href="#objDel">objDel(obj, props)</a></dt>
+<dd><p>Delete properties of object.
+<br>ATTENTION it will modify the original object.</p>
+</dd>
+<dt><a href="#objClone">objClone(obj)</a> ⇒ <code>object</code></dt>
+<dd><p>Object clone</p>
+</dd>
+<dt><a href="#toJSON">toJSON(str)</a> ⇒ <code>json</code></dt>
+<dd><p>Parse string to JSON. More forgiving then the JSON.parse()</p>
+</dd>
+</dl>
+
+<p><a name="dateFormat"></a></p>
+<h2 id="dateformat">dateFormat</h2>
+<p>Date format, default 'dd/mm/yyyy'.</p>
+<p><a name="err"></a></p>
+<h2 id="err">err</h2>
+<p>Error codes.</p>
+<p><strong>Example</strong>  </p>
+<pre><code class="js">export const err = {
+  db: -1,       // database not found/opened
+  coll: -2,     // collection not found
+  unique: -3,   // not unique field
+  count: -4,    // count error
+  cursor: -5,   // cursor error
+  ins: -6,      // insert error
+  upd: -7,      // update error
+  del: -8,      // delete error
+  file: -9,     // file error
+  dupl: -10,    // duplicate record
+  param: -11,   // wrong parameters
+  data: -12,    // wrong data
+  gen: -13,     // generic
+  srv: -14,     // server
+  script: -15,  // script not found
+  user: -16,    // user not authenticated
+  trig: -17,    // trigger error
+  sock: -18     // socket error
+}
+</code></pre>
+
+<p><a name="hex24"></a></p>
+<h2 id="hex24">hex24</h2>
+<p>hex24 regular expresion, used for for mongodb ObjectId() check.</p>
+<p><a name="timezone"></a></p>
+<h2 id="timezone-number">timezone() ⇒ <code>number</code></h2>
+<p>Timezone.
+<br>Based on the system timezone.</p>
+<p><strong>Returns</strong>: <code>number</code> - +-milliseconds<br />
+<a name="strCap"></a></p>
+<h2 id="strcapstr-string">strCap(str) ⇒ <code>string</code></h2>
+<p>Capitalize string</p>
+<p><strong>Returns</strong>: <code>string</code> - string  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<p><a name="strSplit"></a></p>
+<h2 id="strsplitstr-sep-arraystring">strSplit(str, sep) ⇒ <code>Array.&lt;string&gt;</code></h2>
+<p>Split string by separator, trim spaces and eliminates empty items</p>
+<p><strong>Returns</strong>: <code>Array.&lt;string&gt;</code> - string array  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td>sep</td>
+<td><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<p><a name="strGetBet"></a></p>
+<h2 id="strgetbetstr-from-to-startindex-include-string">strGetBet(str, from, to, startIndex, include) ⇒ <code>string</code></h2>
+<p>Get substring between delimiters.</p>
+<p><strong>Returns</strong>: <code>string</code> - string  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td><code>string</code></td>
+<td></td>
+</tr>
+<tr>
+<td>from</td>
+<td><code>string</code></td>
+<td>from delimiter</td>
+</tr>
+<tr>
+<td>to</td>
+<td><code>string</code></td>
+<td>to delimiter</td>
+</tr>
+<tr>
+<td>startIndex</td>
+<td><code>number</code></td>
+<td>index to start, default 0</td>
+</tr>
+<tr>
+<td>include</td>
+<td><code>boolean</code></td>
+<td>if delimiters must be included in the return slice, default false</td>
+</tr>
+</tbody>
+</table>
+<p><a name="strFindAny"></a></p>
+<h2 id="strfindanystr-pat-startindex-number">strFindAny(str, pat, startIndex) ⇒ <code>number</code></h2>
+<p>Find any of chars in pattern.</p>
+<p><strong>Returns</strong>: <code>number</code> - Index of the first char found, -1 if non.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td><code>string</code></td>
+<td></td>
+</tr>
+<tr>
+<td>pat</td>
+<td><code>string</code></td>
+<td>pattern of chars</td>
+</tr>
+<tr>
+<td>startIndex</td>
+<td><code>number</code></td>
+<td>index to start, default 0</td>
+</tr>
+</tbody>
+</table>
+<p><a name="objEmpty"></a></p>
+<h2 id="objemptyobj-boolean">objEmpty(obj) ⇒ <code>boolean</code></h2>
+<p>Is empty object?</p>
+<p><strong>Returns</strong>: <code>boolean</code> - bool  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>obj</td>
+<td><code>object</code></td>
+</tr>
+</tbody>
+</table>
+<p><a name="objPick"></a></p>
+<h2 id="objpickobj-props-object">objPick(obj, props) ⇒ <code>object</code></h2>
+<p>Pick a selection of properties.</p>
+<p><strong>Returns</strong>: <code>object</code> - New object containing only selected properties.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>obj</td>
+<td><code>object</code></td>
+<td></td>
+</tr>
+<tr>
+<td>props</td>
+<td><code>string</code></td>
+<td>comma separated property names</td>
+</tr>
+</tbody>
+</table>
+<p><a name="objLess"></a></p>
+<h2 id="objlessobj-props-object">objLess(obj, props) ⇒ <code>object</code></h2>
+<p>Pick all properties less then props list, recursively.</p>
+<p><strong>Returns</strong>: <code>object</code> - New object containing non excluded properties.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>obj</td>
+<td><code>object</code></td>
+<td></td>
+</tr>
+<tr>
+<td>props</td>
+<td><code>string</code></td>
+<td>comma separated property names</td>
+</tr>
+</tbody>
+</table>
+<p><a name="objDel"></a></p>
+<h2 id="objdelobj-props">objDel(obj, props)</h2>
+<p>Delete properties of object.
+<br>ATTENTION it will modify the original object.</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>obj</td>
+<td><code>object</code></td>
+<td></td>
+</tr>
+<tr>
+<td>props</td>
+<td><code>string</code></td>
+<td>comma separated property names</td>
+</tr>
+</tbody>
+</table>
+<p><a name="objClone"></a></p>
+<h2 id="objcloneobj-object">objClone(obj) ⇒ <code>object</code></h2>
+<p>Object clone</p>
+<p><strong>Returns</strong>: <code>object</code> - New object, clone of the original.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>obj</td>
+<td><code>object</code></td>
+</tr>
+</tbody>
+</table>
+<p><a name="toJSON"></a></p>
+<h2 id="tojsonstr-json">toJSON(str) ⇒ <code>json</code></h2>
+<p>Parse string to JSON. More forgiving then the JSON.parse()</p>
+<p><strong>Returns</strong>: <code>json</code> - json  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str</td>
+<td><code>string</code></td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../util/" class="btn btn-neutral float-right" title="Util">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../../tutorials/form/" class="btn btn-neutral" title="Form"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../../tutorials/form/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../util/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
