@@ -38,9 +38,9 @@ More detailed **documentation** in the **doc** folder and [online here](https://
 
 		git clone https://github.com/danparn/brumba.git
 
-- move to brumba directory 
-- install dependences:
+- move to brumba directory and install dependences:
 
+		cd brumba
 		npm install
 
 - generate SSL key and auto certificate:
